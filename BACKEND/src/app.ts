@@ -1,10 +1,16 @@
-import express from 'express'
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
 
-const app = express()
-const port = 8080
+const app = express();
 
-app.use(express.json())
+dotenv.config();
 
-app.listen(port, () => { 
-    console.log("hola");
-})
+app.use(cors({ origin: ["http://localhost:5173/", "http://localhost:3000/"] }));
+app.use(express.json());
+
+app.use(express.json());
+
+app.listen(process.env.PORT, () => {
+  console.log("Servidor iniciado correctamente en http://localhost:8080/");
+});
