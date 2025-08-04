@@ -1,5 +1,5 @@
 import User from './UserModel'
-import getErrorMessage, { ErrorResponse } from '../Utils/errorHandling'
+import getErrorMessage, { ErrorResponse } from '../../Utils/errorHandling'
 
 
 class UserClass{

@@ -1,8 +1,7 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import User from '../User/UserModel'
+import User from '../components/User/UserModel'
 import getErrorMessage, { ErrorResponse } from '../Utils/errorHandling'
-import { log } from 'console';
 
 
 passport.use(

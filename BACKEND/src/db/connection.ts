@@ -1,7 +1,6 @@
 import { Sequelize } from "sequelize-typescript";
-import User from '../User/UserModel'
+import User from '../components/User/UserModel'
 import dotenv from 'dotenv'
-import { log } from "console";
 
 dotenv.config()
 

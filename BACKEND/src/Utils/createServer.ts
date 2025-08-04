@@ -2,7 +2,7 @@ import express from 'express'
 import cors from "cors"
 import morgan from "morgan"
 import "../db/connection"
-import userRouter from '../User/UserRoutes'
+import userRouter from '../components/User/UserRoutes'
 import passport from 'passport'
 import session from 'express-session'
 import connectSessionSequelize from 'connect-session-sequelize'
