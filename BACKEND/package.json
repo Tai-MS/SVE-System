@@ -2,6 +2,14 @@
   "name": "nueva-carpeta",
   "version": "0.0.0",
   "private": true,
+  "main": "app.ts",
+  "imports": {
+    "#utils/*": ".src/utils/*",
+    "#components/*": ".src/components/*",
+    "#database/*": ".src/database/*",
+    "#middleware/*": ".src/middleware/*",
+    "#schemas/*": ".src/schemas/*"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "nodemon",
@@ -37,6 +45,7 @@
     "@types/passport-google-oauth20": "^2.0.16",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
+    "ts-standard": "^12.0.2",
     "typescript": "^5.8.3"
   }
 }
