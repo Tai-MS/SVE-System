@@ -23,12 +23,17 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "multer": "^2.0.2",
+    "xlsx": "^0.18.5",
+    "zod": "^4.0.15"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.0.15",
+    "@types/xlsx": "^0.0.35",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "ts-standard": "^12.0.2",
