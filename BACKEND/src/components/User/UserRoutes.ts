@@ -1,15 +1,35 @@
-import { Router } from "express";
-import multer from "multer";
-import { UserController } from "./UserController";
+import express, { NextFunction, Request, Response } from "express";
+import userController from "./UserController";
+import passport from "../../config/passport";
 
-const userController = new UserController();
-const userRouter = Router();
-const upload = multer({ dest: "uploads/" });
+const router = express.Router();
 
-userRouter.post(
-  "/agregar",
-  upload.single("file"),
-  userController.agregarUsuarios
+router.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["https://www.googleapis.com/auth/plus.login", "email"],
+  })
 );
 
-export default userRouter;
+router.get(
+  "/auth/google/callback",
+  async (req: Request, res: Response, next: NextFunction) => {
+    await userController.loginGoogle(req, res, next);
+  }
+);
+
+router.get(
+  "/getUser",
+  async (req: Request, res: Response, next: NextFunction) => {
+    await userController.getUser(req, res, next);
+  }
+);
+
+router.post(
+  "/create",
+  async (req: Request, res: Response, next: NextFunction) => {
+    await userController.createUser(req, res, next);
+  }
+);
+
+export default router;

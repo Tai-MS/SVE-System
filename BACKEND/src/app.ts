@@ -1,18 +1,12 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
+import { create_server } from "./utils/createServer.ts";
 
-// import { userRouter } from "#components/User/UserRoutes.js";
+const app = create_server();
 
-const app = express();
+const PORT = process.env.PORT || 3030;
 
-dotenv.config();
-
-app.use(cors({ origin: ["http://localhost:5173/", "http://localhost:3000/"] }));
-
-app.use(express.json());
-
-// app.use("/user", userRouter);
+app.listen(PORT, () => {
+  console.log(`Puerto ${PORT}`);
+});
 
 app.listen(process.env.PORT, () => {
   console.log("Servidor iniciado correctamente en http://localhost:8080/");
