@@ -9,12 +9,12 @@ enum Role{
 }
 @Table({
     timestamps: true,
-    tableName: "user",
-    modelName: "User"
+    tableName: "usuario",
+    modelName: "Usuario"
 })
-class User extends Model{
+class Usuario extends Model{
     static async findByEmail(email: string) {
-        return await User.findOne({ 
+        return await Usuario.findOne({ 
             where: { email } 
         });
     }
@@ -24,7 +24,7 @@ class User extends Model{
      * PUEDE SERVIR PARA EL LOGIN DE GOOGLE
      */
     static async findByGoogleId(googleId: string){
-        return await User.findOne({
+        return await Usuario.findOne({
             where: {googleId}
         })
     }
@@ -52,13 +52,13 @@ class User extends Model{
         type: DataType.STRING,
         allowNull: false
     })
-    declare name: string
+    declare nombre: string
 
     @Column({
         type: DataType.STRING,
         allowNull: false
     })
-    declare lastName: string
+    declare apellido: string
 
     @Column({
         type: DataType.STRING,
@@ -71,14 +71,14 @@ class User extends Model{
         type: DataType.ENUM("ESTUDIANTE", "DIRECTIVO", "ADMINISTRADOR", "BEDELIA"),
         allowNull: false
     })
-    declare role: Role
+    declare rol: Role
 
     @Column({
         type: DataType.DATE,
         allowNull: false,
         defaultValue: DataType.NOW
     })
-    declare created_at: Date
+    declare creado: Date
 
     @Column({
         type: DataType.STRING,
@@ -90,13 +90,13 @@ class User extends Model{
         type: DataType.DATE,
         allowNull: true
     })
-    declare last_connection: Date | null
+    declare ultima_conexion: Date | null
 
     @Column({
         type: DataType.BOOLEAN,
         allowNull: false
     })
-    declare status: true
+    declare estado: true
 }
 
-export default User
+export default Usuario

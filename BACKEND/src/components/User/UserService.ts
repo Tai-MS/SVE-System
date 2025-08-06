@@ -1,22 +1,14 @@
 import userClass from "./UserPersistence"
 
-async function getAll(){
+async function traerTodos(){
     try {
-        return userClass.getAll()
+        return userClass.traerTodos()
     } catch (error) {
         return error
     }
 }
 
-async function getUser(email: String){
-    try {
-        return email
-    } catch (error) {
-        return error
-    }
-}
-
-async function createUser(email: String){
+async function traerUsuario(email: String){
     try {
         return email
     } catch (error) {
@@ -24,7 +16,7 @@ async function createUser(email: String){
     }
 }
 
-async function updateUser(email: String){
+async function crearUsuario(email: String){
     try {
         return email
     } catch (error) {
@@ -32,14 +24,15 @@ async function updateUser(email: String){
     }
 }
 
-async function login(email: string){
-    const date = new Date()
-
-    
-    return userClass.login(email)
+async function actualizarUsuario(email: String){
+    try {
+        return email
+    } catch (error) {
+        return error
+    }
 }
 
-async function disableUser(email: String){
+async function deshabilitarUsuario(email: String){
     try {
         return email
     } catch (error) {
@@ -48,10 +41,9 @@ async function disableUser(email: String){
 }
 
 export default {
-    getAll,
-    getUser,
-    login,
-    createUser,
-    updateUser,
-    disableUser
+    traerTodos,
+    traerUsuario,
+    crearUsuario,
+    actualizarUsuario,
+    deshabilitarUsuario
 }

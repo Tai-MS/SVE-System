@@ -6,9 +6,9 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-async function getAll(req: Request, res: Response, next: NextFunction){
+async function traerTodos(req: Request, res: Response, next: NextFunction){
     try {
-        const call = await UserService.getAll()
+        const call = await UserService.traerTodos()
 
         return res.status(200).send(call)
     } catch (error) {
@@ -16,11 +16,11 @@ async function getAll(req: Request, res: Response, next: NextFunction){
     }
 }
 
-async function getUser(req: Request, res: Response, next: NextFunction){
+async function traerUsuario(req: Request, res: Response, next: NextFunction){
     try {
         const email: string = req.query.email as string
 
-        const call = await UserService.getUser(email)
+        const call = await UserService.traerUsuario(email)
     
         res.status(200).send(call)
     } catch (error) {
@@ -29,11 +29,11 @@ async function getUser(req: Request, res: Response, next: NextFunction){
     
 }
 
-async function createUser(req: Request, res: Response, next: NextFunction){
+async function crearUsuario(req: Request, res: Response, next: NextFunction){
     try {
         const email: string = req.query.email as string
 
-        const call = await UserService.getUser(email)
+        const call = await UserService.traerUsuario(email)
     
         res.status(200).send(call)
     } catch (error) {
@@ -41,11 +41,11 @@ async function createUser(req: Request, res: Response, next: NextFunction){
     }
 }
 
-async function updateUser(req: Request, res: Response, next: NextFunction){
+async function actualizarUsuario(req: Request, res: Response, next: NextFunction){
     try {
         const email: string = req.query.email as string
 
-        const call = await UserService.getUser(email)
+        const call = await UserService.traerUsuario(email)
     
         res.status(200).send(call)
     } catch (error) {
@@ -53,26 +53,16 @@ async function updateUser(req: Request, res: Response, next: NextFunction){
     }
 }
 
-async function disableUser(req: Request, res: Response, next: NextFunction){
+async function deshabilitarUsuario(req: Request, res: Response, next: NextFunction){
     try {
         const email: string = req.query.email as string
 
-        const call = await UserService.getUser(email)
+        const call = await UserService.traerUsuario(email)
     
         res.status(200).send(call)
     } catch (error) {
         res.status(204).send(error)
     }
-}
-
-async function login(req: Request, res: Response, next: NextFunction) {
-    
-    const fields = req.body;
-    res.cookie('auth-token', res.locals.token, { httpOnly: true });
-    passport.authenticate('login', { failureRedirect: '/faillogin' })(req, res, async () => {
-        await UserService.login(fields);
-        return res.status(200).send("logeado")
-    });
 }
 
 async function loginGoogle(req: Request, res: Response, next: NextFunction) {
@@ -80,13 +70,6 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction) {
         if (error) {
             return next(error);
         }
-        console.log("///////////////////////");
-        console.log(error);
-        console.log("----------------------");
-        console.log(user);
-        console.log("----------------------")
-        console.log(info);
-        console.log("///////////////////////");
         
         if (!user) {
             return res.send("error");
@@ -101,10 +84,10 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction) {
 }
 
 export default {
-    getAll,
-    getUser,
-    createUser,
-    updateUser,
-    disableUser,
+    traerTodos,
+    traerUsuario,
+    crearUsuario,
+    actualizarUsuario,
+    deshabilitarUsuario,
     loginGoogle
 }

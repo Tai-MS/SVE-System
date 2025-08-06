@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
-import User from '../components/User/UserModel'
+import User from '#components/User/UserModel'
 import dotenv from 'dotenv'
+import getErrorMessage, { ErrorResponse } from "#Utils/errorHandling";
 
 dotenv.config()
 
@@ -14,15 +15,22 @@ const sequelize = new Sequelize({
     logging: false
 })
 sequelize.addModels([User])
-
-async function initializeDB() {
+/**
+ * Se conecta a la base de datos MySQL
+ */
+async function initializeDB(): Promise<void | ErrorResponse> {
     try {
         await sequelize.authenticate();
         console.log("DB conectada");
+        /**
+         * DESCOMENTAR PARA CREAR O SINCRONIZAR LAS TABLAS
+         */
         // await sequelize.sync({ force: true });
         console.log("DB sincronizada");
-    } catch (error) {
-        console.error("Error en la DB:", error);
+    } catch (error: unknown) {
+        return {
+            error: getErrorMessage(error)
+        }
     }
 }
 

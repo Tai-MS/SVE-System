@@ -1,9 +1,12 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import User from '../components/User/UserModel'
-import getErrorMessage, { ErrorResponse } from '../Utils/errorHandling'
+import User from '#components/User/UserModel'
+import getErrorMessage from '#Utils/errorHandling'
 
-
+/**
+ * Establece la estrategia de passport 
+ * para tomar los datos necesarios de la cuenta de Google
+ */
 passport.use(
     new GoogleStrategy({
         clientID: process.env.ID_CLIENT_OAUTH || '',
@@ -12,18 +15,10 @@ passport.use(
         },
         async function (token: string, tokenSecret: string, profile: passport.Profile, done){
             try {
-                
+                //Verifica si el email está en la base de datos
                 const email = profile.emails?.[0]?.value
                 if(typeof email === 'string'){
                     const user = await User.findByEmail(email)
-                    console.log("///////////PASSPORT////////////");
-                    console.log(email);
-                    console.log("++++++++++++++++++++++");
-                    console.log(user);
-                    console.log("++++++++++++++++++++++");
-                    console.log(user?.dataValues.id);
-                    
-                    console.log("///////////PASSPORT////////////");
                     if(user){
                         return done(null, user)
                     }else{
@@ -37,14 +32,13 @@ passport.use(
     )
 )
 
+//Serializa el usuario (guarda ciertos datos de la sesión)
 passport.serializeUser((user: any, done) => {
-    console.log("//////////////serialize//////////////");
-    console.log(user);
-    console.log("//////////////serialize//////////////");
     
   done(null, user?.dataValues.id);
 });
 
+//Deserializa el usuario
 passport.deserializeUser(async (email: string, done) => {
     try {
         const user = await User.findByEmail(email);

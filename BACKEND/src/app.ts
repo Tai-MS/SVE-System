@@ -1,4 +1,4 @@
-import {create_server} from "./Utils/createServer"
+import {create_server} from "#Utils/createServer"
 
 const app = create_server()
 
