@@ -1,43 +1,51 @@
+import CrearUsuarioDTO from "./UserDTO"
+import Usuario, { Role } from "./UserModel"
 import userClass from "./UserPersistence"
 
 async function traerTodos(){
-    try {
         return userClass.traerTodos()
-    } catch (error) {
-        return error
-    }
 }
 
-async function traerUsuario(email: String){
-    try {
-        return email
-    } catch (error) {
-        return error
-    }
+async function traerUsuario(dni: string): Promise<Usuario | string>{
+        const usuario = await userClass.traerUsuario(dni)
+        if(!usuario){
+            return `Usuario con el DNI: ${dni} no encontrado`
+        }
+        return usuario
 }
 
-async function crearUsuario(email: String){
-    try {
-        return email
-    } catch (error) {
-        return error
+async function crearUsuario(datos: CrearUsuarioDTO){
+    const {dni, nombre, apellido} = datos
+
+    if(!dni || !nombre || !apellido){
+        return "Faltan campos."
     }
+
+    const usuario = await userClass.traerUsuario(dni)
+
+    if(usuario){
+        return "Esta persona ya esta registrada"
+    }
+    console.log(datos);
+    
+    const datosFinal = {
+        ...datos,
+        email: dni + "@terciariourquiza.edu.ar",
+        estado: true,
+        creado: new Date,
+        rol: Role.ESTUDIANTE
+    }
+    const crear = await userClass.crearUsuario(datosFinal)
+
+    return crear
 }
 
 async function actualizarUsuario(email: String){
-    try {
         return email
-    } catch (error) {
-        return error
-    }
 }
 
 async function deshabilitarUsuario(email: String){
-    try {
         return email
-    } catch (error) {
-        return error
-    }
 }
 
 export default {

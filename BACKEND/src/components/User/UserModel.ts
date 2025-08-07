@@ -1,7 +1,6 @@
-import { DATE } from "sequelize";
-import { AllowNull, Column, DataType, Model, Table } from "sequelize-typescript";
+import { Column, DataType, Model, Table } from "sequelize-typescript";
 
-enum Role{
+export enum Role{
     ESTUDIANTE,
     DIRECTIVO,
     ADMINISTRADOR,
@@ -13,6 +12,12 @@ enum Role{
     modelName: "Usuario"
 })
 class Usuario extends Model{
+    static async findByDNI(dni: string) {
+        return await Usuario.findOne({ 
+            where: { dni } 
+        });
+    }
+
     static async findByEmail(email: string) {
         return await Usuario.findOne({ 
             where: { email } 
@@ -38,7 +43,7 @@ class Usuario extends Model{
 
     @Column({
         type: DataType.STRING,
-        allowNull: false
+        allowNull: true
     })
     declare googleId: string
 

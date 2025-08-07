@@ -1,66 +1,34 @@
-import User from './UserModel'
-import getErrorMessage, { ErrorResponse } from '#Utils/errorHandling'
+import CrearUsuarioDTO from './UserDTO'
+import Usuario from './UserModel'
 
 
 class UserClass{
-    async traerTodos(): Promise<User[] | ErrorResponse>{
-        try {
-            return await User.findAll()     
-        } catch (error: unknown) {
-            return {
-                error: getErrorMessage(error)
-            }
-        }
+    async traerTodos(): Promise<Usuario[]>{
+         return await Usuario.findAll()
     }
 
-    async traerUsuario(email: string): Promise<User | string | ErrorResponse>{
-        try {
-            const user= await User.findByEmail(email)
+    async traerUsuario(dni: string): Promise<Usuario | null>{
+        const user= await Usuario.findByDNI(dni)
+           
+        return user
+    }
+
+    async crearUsuario(datos: CrearUsuarioDTO){
+        const crear = await Usuario.create(datos)
+        return crear
+    }
+
+    async actualizarUsuario(data: Usuario){
+            const {dni, nombre, apellido} = data
+            const user= await Usuario.findByDNI(dni)
             
             if(!user){
                 return "Usuario no encontrado"
             }
-            return user
-        } catch (error: unknown) {
-            return {
-                error: getErrorMessage(error)
-            }
-        }
-    }
-
-    async crearUsuario(){
-        try {
-            return "await User.findByEmail()"
-        } catch (error: unknown) {
-            return {
-                error: getErrorMessage(error)
-            }
-        }
-    }
-
-    async actualizarUsuario(data: User){
-        try {
-            const {email, nombre, apellido} = data
-            const user= await User.findByEmail(email)
-            
-            if(!user){
-                return "Usuario no encontrado"
-            }
-        } catch (error: unknown) {
-            return {
-                error: getErrorMessage(error)
-            }
-        }
     }
 
     async deshabilitarUsuario(){
-        try {
             return "await User.findByEmail()"
-        } catch (error: unknown) {
-            return {
-                error: getErrorMessage(error)
-            }
-        }
     }
 }
 

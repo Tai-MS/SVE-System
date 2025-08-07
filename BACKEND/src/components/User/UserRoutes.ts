@@ -1,7 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express'
 import userController from './UserController'
 import passport from '#config/passport'
-// import passport from '../../config/passport'
 
 const router = express.Router()
 
@@ -24,6 +23,10 @@ router.get(
     await userController.loginGoogle(req, res, next)
   }
 );
+
+router.get("/obtenerTodos", async(req: Request, res: Response, next: NextFunction) => {
+  await userController.traerTodos(req, res, next)
+})
 
 router.get("/obtenerUsuario", async(req: Request, res: Response, next: NextFunction) => {
     await userController.traerUsuario(req, res, next)

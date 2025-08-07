@@ -17,6 +17,8 @@ passport.use(
             try {
                 //Verifica si el email está en la base de datos
                 const email = profile.emails?.[0]?.value
+                console.log((profile as any)._raw);
+                
                 if(typeof email === 'string'){
                     const user = await User.findByEmail(email)
                     if(user){
