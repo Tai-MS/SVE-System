@@ -1,5 +1,5 @@
 import CrearUsuarioDTO from "./UserDTO"
-import Usuario, { Role } from "./UserModel"
+import Usuario, { Rol } from "./UserModel"
 import userClass from "./UserPersistence"
 
 async function traerTodos(){
@@ -26,15 +26,15 @@ async function crearUsuario(datos: CrearUsuarioDTO){
     if(usuario){
         return "Esta persona ya esta registrada"
     }
-    console.log(datos);
     
     const datosFinal = {
         ...datos,
         email: dni + "@terciariourquiza.edu.ar",
         estado: true,
         creado: new Date,
-        rol: Role.ESTUDIANTE
+        rol: Rol.ESTUDIANTE
     }
+    
     const crear = await userClass.crearUsuario(datosFinal)
 
     return crear

@@ -8,7 +8,7 @@ class UserClass{
     }
 
     async traerUsuario(dni: string): Promise<Usuario | null>{
-        const user= await Usuario.findByDNI(dni)
+        const user= await Usuario.encontrarPorDNI(dni)
            
         return user
     }
@@ -20,7 +20,7 @@ class UserClass{
 
     async actualizarUsuario(data: Usuario){
             const {dni, nombre, apellido} = data
-            const user= await Usuario.findByDNI(dni)
+            const user= await Usuario.encontrarPorDNI(dni)
             
             if(!user){
                 return "Usuario no encontrado"

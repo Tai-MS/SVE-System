@@ -1,10 +1,10 @@
 import { Column, DataType, Model, Table } from "sequelize-typescript";
 
-export enum Role{
-    ESTUDIANTE,
-    DIRECTIVO,
-    ADMINISTRADOR,
-    BEDELIA
+export enum Rol{
+    ESTUDIANTE = "ESTUDIANTE",
+    DIRECTIVO = "DIRECTIVO",
+    ADMINISTRADOR = "ADMINISTRADOR",
+    BEDELIA = "BEDELIA"
 }
 @Table({
     timestamps: true,
@@ -12,13 +12,13 @@ export enum Role{
     modelName: "Usuario"
 })
 class Usuario extends Model{
-    static async findByDNI(dni: string) {
+    static async encontrarPorDNI(dni: string) {
         return await Usuario.findOne({ 
             where: { dni } 
         });
     }
 
-    static async findByEmail(email: string) {
+    static async encontrarPorEmail(email: string) {
         return await Usuario.findOne({ 
             where: { email } 
         });
@@ -76,7 +76,7 @@ class Usuario extends Model{
         type: DataType.ENUM("ESTUDIANTE", "DIRECTIVO", "ADMINISTRADOR", "BEDELIA"),
         allowNull: false
     })
-    declare rol: Role
+    declare rol: Rol
 
     @Column({
         type: DataType.DATE,
