@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Header from "./Header";
+import Footer from "./Footer";
 interface LoginProps {
     setUser: (username: string) => void;
 }
@@ -90,6 +91,7 @@ function Login({ setUser }: LoginProps) {
                 </form>
             </div>
         </div>
+    <Footer />
     </>
   )
 
