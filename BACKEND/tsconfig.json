@@ -34,7 +34,7 @@
       "#Utils/*": ["./src/Utils/*"],
       "#components/*": ["./src/components/*"],
       "#db/*": ["./src/db/*"],
-      "#middleware/*": ["./src/middleware/*"],
+      "#middlewares/*": ["./src/middlewares/*"],
       "#schemas/*": ["./src/schemas/*"],
       "#config/*":["./src/config/*"]
      },                                      /* Specify a set of entries that re-map imports to additional lookup locations. */

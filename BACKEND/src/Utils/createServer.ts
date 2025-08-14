@@ -7,6 +7,7 @@ import passport from 'passport'
 import session from 'express-session'
 import connectSessionSequelize from 'connect-session-sequelize'
 import sequelize  from '#db/connection' 
+import cookieParser from 'cookie-parser'
 
 /**
  * Se encarga de levantar el servidor 
@@ -33,6 +34,7 @@ export const create_server = () => {
             origin: true, 
             credentials: true 
         }))
+        .use(cookieParser())
         .use(
             session({
                 secret: process.env.SESSION_SECRET || "secret_key",

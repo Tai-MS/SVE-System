@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express'
 import userController from './UserController'
 import passport from '#config/passport'
 
+
 const router = express.Router()
 
 /**
@@ -10,7 +11,7 @@ const router = express.Router()
 router.get(
   "/google",
   passport.authenticate("google", {
-    scope: ["https://www.googleapis.com/auth/plus.login", "email"],
+    scope: ["profile", "email"],
   })
 );
 
@@ -19,7 +20,8 @@ router.get(
  * para tomar los datos de la cuenta
  */
 router.get(
-  "/auth/google/callback", async(req: Request, res: Response, next: NextFunction) => {
+  "/auth/google/callback", 
+  async(req: Request, res: Response, next: NextFunction) => {
     await userController.loginGoogle(req, res, next)
   }
 );
@@ -38,6 +40,10 @@ router.post("/crearUsuario", async(req: Request, res: Response, next: NextFuncti
 
 router.put("/actualizar/{usuario}", async(req: Request, res: Response, next: NextFunction) => {
   await userController.actualizarUsuario(req, res, next)
+})
+
+router.post("/iniciarSesion", async(req: Request, res: Response, next: NextFunction) => {
+  await userController.inciarSesion(req, res, next)
 })
 
 export default router

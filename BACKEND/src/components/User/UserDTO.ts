@@ -1,13 +1,29 @@
-import { Role } from "./UserModel"
+import { Rol } from "./UserModel"
 
-type CrearUsuarioDTO = {
+export type CrearUsuarioDTO = {
     dni: string,
     nombre: string,
     apellido: string,
+    contraseña?: string,
     estado?: Boolean,
-    rol?: Role,
+    rol?: Rol,
     creado?: Date,
     email?: string
 }
 
-export default CrearUsuarioDTO
+export type ActualizarUsuarioDTO = {
+    dni: string,
+    contraseña?: string,
+    nombre?: string,
+    apellido?: string,
+    estado?: Boolean,
+    rol?: Rol,
+    creado?: Date,
+    email?: string,
+    token?: string
+}
+
+export type IniciarSesionDTO = {
+    email: string,
+    contraseña: string
+}

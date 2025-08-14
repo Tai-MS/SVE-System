@@ -1,4 +1,4 @@
-import CrearUsuarioDTO from './UserDTO'
+import { CrearUsuarioDTO, ActualizarUsuarioDTO } from './UserDTO'
 import Usuario from './UserModel'
 
 
@@ -18,13 +18,18 @@ class UserClass{
         return crear
     }
 
-    async actualizarUsuario(data: Usuario){
-            const {dni, nombre, apellido} = data
-            const user= await Usuario.encontrarPorDNI(dni)
+    async actualizarUsuario(data: ActualizarUsuarioDTO): Promise<Usuario | string>{
+            
+            const user= await Usuario.encontrarPorDNI(data.dni)
             
             if(!user){
                 return "Usuario no encontrado"
             }
+
+            Usuario.update(
+                {token: data.token}, 
+                {where: {dni: data.dni}})
+            return user
     }
 
     async deshabilitarUsuario(){

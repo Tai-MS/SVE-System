@@ -4,11 +4,14 @@ import UserService from './UserService'
 import passport from 'passport';
 import User from './UserModel';
 import dotenv from 'dotenv'
-import CrearUsuarioDTO from './UserDTO';
+import {CrearUsuarioDTO, IniciarSesionDTO} from './UserDTO';
+import { generarContraseña } from '#Utils/generarContraseña';
+import { generarToken } from '#middlewares/auth';
+
 
 dotenv.config()
-
-async function traerTodos(req: Request, res: Response, next: NextFunction){
+const clave = process.env.SECRET_KEY || "clave_secreta"
+async function traerTodos(req: Request, res: Response, next: NextFunction): Promise<Response>{
     try {
         const call = await UserService.traerTodos()
 
@@ -50,12 +53,59 @@ async function traerUsuario(req: Request, res: Response, next: NextFunction): Pr
     
 }
 
-async function crearUsuario(req: Request, res: Response, next: NextFunction){
+async function inciarSesion(req: Request, res: Response, next: NextFunction): Promise<Response>{
     try {
+        const data = {
+            email: req.body.email,
+            contraseña: req.body.contraseña
+        }
+
+        if(!data.email || !data.contraseña){
+            return res.status(400).json({
+                error: "Bad request",
+                message: "Campos incompletos."
+            })
+        }
+
+        const iniciar_sesion = await UserService.iniciarSesion(data)
+        if (typeof iniciar_sesion === 'string') {
+            return res.status(400).json({
+            error: "Bad request",
+            message: iniciar_sesion 
+        })
+}
+        console.log("++++++++++++++++++++++++");
+        console.log(iniciar_sesion);
+        console.log("++++++++++++++++++++++++");
+        const token = await generarToken(iniciar_sesion)
+        
+        return res
+                .cookie("auth-token", token, {
+                    maxAge: 360 * 100 * 24
+                })
+                .status(200).json({
+                    status: 200,
+                    success: true,
+                    message: "logeado",
+                    token: token
+                });
+    } catch (error: unknown) {
+        return res.status(500).json({
+            error: "Internal server error",
+            message: getErrorMessage(error)
+        })
+    }
+
+}
+
+async function crearUsuario(req: Request, res: Response, next: NextFunction): Promise<Response>{
+    try {
+        const contraseña_generada = generarContraseña(10)  
         const datos: CrearUsuarioDTO = {
             dni: req.body.dni,
             apellido: req.body.apellido,
-            nombre: req.body.nombre
+            nombre: req.body.nombre,
+            contraseña: contraseña_generada
         }
         const crear = await UserService.crearUsuario(datos)
         if(!crear){
@@ -63,7 +113,7 @@ async function crearUsuario(req: Request, res: Response, next: NextFunction){
                 error: crear
             })
         }
-        res.status(200).send(crear)
+        return res.status(200).send(crear)
     } catch (error) {
         return res.status(500).json({
             error: "Internal server error",
@@ -72,13 +122,13 @@ async function crearUsuario(req: Request, res: Response, next: NextFunction){
     }
 }
 
-async function actualizarUsuario(req: Request, res: Response, next: NextFunction){
+async function actualizarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response>{
     try {
         const email: string = req.query.email as string
 
         const call = await UserService.traerUsuario(email)
     
-        res.status(200).send(call)
+        return res.status(200).send(call)
     } catch (error) {
         return res.status(500).json({
             error: "Internal server error",
@@ -87,13 +137,13 @@ async function actualizarUsuario(req: Request, res: Response, next: NextFunction
     }
 }
 
-async function deshabilitarUsuario(req: Request, res: Response, next: NextFunction){
+async function deshabilitarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response>{
     try {
         const email: string = req.query.email as string
 
         const call = await UserService.traerUsuario(email)
     
-        res.status(200).send(call)
+        return res.status(200).send(call)
     } catch (error) {
         return res.status(500).json({
             error: "Internal server error",
@@ -102,7 +152,7 @@ async function deshabilitarUsuario(req: Request, res: Response, next: NextFuncti
     }
 }
 
-async function loginGoogle(req: Request, res: Response, next: NextFunction) {
+async function loginGoogle(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     passport.authenticate('google', async (error: unknown, user: User, info: any) => {
         if (error) {
             return next(error);
@@ -111,11 +161,30 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction) {
         if (!user) {
             return res.send("error");
         }
+        
+        const token = await generarToken(user)
+            
         req.logIn(user, function(error) {
             if (error) {
                 return next(error);
             }
-            return res.json(user);
+            const email = user.email
+            const datos = {
+                dni: user.dni,
+                email: email, 
+                token: token
+            }
+            UserService.actualizarUsuario(datos)
+            return res
+                .cookie("auth-token", token, {
+                    maxAge: 360 * 100 * 24
+                })
+                .status(200).json({
+                    status: 200,
+                    success: true,
+                    message: "logeado",
+                    token: token
+                });
         });
     })(req, res, next);
 }
@@ -124,6 +193,7 @@ export default {
     traerTodos,
     traerUsuario,
     crearUsuario,
+    inciarSesion,
     actualizarUsuario,
     deshabilitarUsuario,
     loginGoogle

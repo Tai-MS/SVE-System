@@ -3,6 +3,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '#components/User/UserModel'
 import getErrorMessage from '#Utils/errorHandling'
 import UserService from '#components/User/UserService';
+import { generarContraseña } from '#Utils/generarContraseña';
 
 /**
  * Establece la estrategia de passport 

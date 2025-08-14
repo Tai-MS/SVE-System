@@ -1,4 +1,7 @@
-import CrearUsuarioDTO from "./UserDTO"
+import { generarContraseña } from "#Utils/generarContraseña"
+import { hashContraseña } from "#Utils/hashContraseña"
+import bcrypt from 'bcrypt';
+import  { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO } from "./UserDTO"
 import Usuario, { Rol } from "./UserModel"
 import userClass from "./UserPersistence"
 
@@ -11,10 +14,25 @@ async function traerUsuario(dni: string): Promise<Usuario | string>{
         if(!usuario){
             return `Usuario con el DNI: ${dni} no encontrado`
         }
+        
         return usuario
 }
 
-async function crearUsuario(datos: CrearUsuarioDTO){
+async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string>{
+    const usuario = await Usuario.encontrarPorEmail(data.email)
+    
+    if(!usuario){
+        return "Email no encontrado"
+    }
+    const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
+    if(!comprar_contraseña){
+        return "Contraseña equivocada"
+    }
+
+    return usuario
+}
+
+async function crearUsuario(datos: CrearUsuarioDTO): Promise<Usuario | string>{
     const {dni, nombre, apellido} = datos
 
     if(!dni || !nombre || !apellido){
@@ -26,9 +44,11 @@ async function crearUsuario(datos: CrearUsuarioDTO){
     if(usuario){
         return "Esta persona ya esta registrada"
     }
-    
+    const contraseña_generada = generarContraseña()
+    const hashear_contraseña = await hashContraseña(contraseña_generada)
     const datosFinal = {
         ...datos,
+        contraseña: hashear_contraseña,
         email: dni + "@terciariourquiza.edu.ar",
         estado: true,
         creado: new Date,
@@ -40,8 +60,9 @@ async function crearUsuario(datos: CrearUsuarioDTO){
     return crear
 }
 
-async function actualizarUsuario(email: String){
-        return email
+async function actualizarUsuario(datos: ActualizarUsuarioDTO): Promise<Usuario | string>{
+    const usuario = await userClass.actualizarUsuario(datos)
+    return usuario
 }
 
 async function deshabilitarUsuario(email: String){
@@ -52,6 +73,7 @@ export default {
     traerTodos,
     traerUsuario,
     crearUsuario,
+    iniciarSesion,
     actualizarUsuario,
     deshabilitarUsuario
 }

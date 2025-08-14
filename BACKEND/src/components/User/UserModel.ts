@@ -45,6 +45,12 @@ class Usuario extends Model{
         type: DataType.STRING,
         allowNull: true
     })
+    declare contraseña: string
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: true
+    })
     declare googleId: string
 
     @Column({
@@ -102,6 +108,12 @@ class Usuario extends Model{
         allowNull: false
     })
     declare estado: true
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: true
+    })
+    declare token: string
 }
 
 export default Usuario
