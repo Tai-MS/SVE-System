@@ -4,6 +4,7 @@ import User from '#components/User/UserModel'
 import getErrorMessage from '#Utils/errorHandling'
 import UserService from '#components/User/UserService';
 import { generarContraseña } from '#Utils/generarContraseña';
+import { hashContraseña } from '#Utils/hashContraseña';
 
 /**
  * Establece la estrategia de passport 
@@ -28,10 +29,13 @@ passport.use(
                     if(user){
                         return done(null, user)
                     }else if(perfil["hd"] === "terciariourquiza.edu.ar" && perfil["email_verified"] === true){
+                        const contraseña_generada = generarContraseña()
+                        const hashear_contraseña = await hashContraseña(contraseña_generada)
                         const datos = {
                             nombre: perfil["family_name"],
                             apellido: perfil["given_name"],
-                            dni: perfil["email"].split("@")[0]
+                            dni: perfil["email"].split("@")[0],
+                            contraseña: hashear_contraseña,
                         }
                         const crearUsuario = await UserService.crearUsuario(datos)
                         // return done(null, false, {message: "Email no registrado"})

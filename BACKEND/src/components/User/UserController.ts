@@ -2,9 +2,9 @@ import getErrorMessage from '#Utils/errorHandling';
 import { NextFunction, Request, Response } from 'express';
 import UserService from './UserService'
 import passport from 'passport';
-import User from './UserModel';
+import User, { UserCreation } from './UserModel';
 import dotenv from 'dotenv'
-import {CrearUsuarioDTO, IniciarSesionDTO} from './UserDTO';
+import {CrearUsuarioDTO, DatosBasicos, IniciarSesionDTO} from './UserDTO';
 import { generarContraseña } from '#Utils/generarContraseña';
 import { generarToken } from '#middlewares/auth';
 
@@ -101,7 +101,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
 async function crearUsuario(req: Request, res: Response, next: NextFunction): Promise<Response>{
     try {
         const contraseña_generada = generarContraseña(10)  
-        const datos: CrearUsuarioDTO = {
+        const datos: DatosBasicos = {
             dni: req.body.dni,
             apellido: req.body.apellido,
             nombre: req.body.nombre,

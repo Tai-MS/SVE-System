@@ -4,11 +4,21 @@ export type CrearUsuarioDTO = {
     dni: string,
     nombre: string,
     apellido: string,
+    email: string,
     contraseña?: string,
-    estado?: Boolean,
     rol?: Rol,
-    creado?: Date,
-    email?: string
+    // Optional fields with correct names
+    google_id?: string | null,
+    activo?: boolean,
+    created_at?: Date,
+    updated_at?: Date
+}
+
+export type DatosBasicos = {
+    dni: string,
+    apellido: string,
+    contraseña: string,
+    nombre: string
 }
 
 export type ActualizarUsuarioDTO = {

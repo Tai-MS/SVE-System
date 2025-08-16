@@ -1,8 +1,8 @@
 import { generarContraseña } from "#Utils/generarContraseña"
 import { hashContraseña } from "#Utils/hashContraseña"
 import bcrypt from 'bcrypt';
-import  { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO } from "./UserDTO"
-import Usuario, { Rol } from "./UserModel"
+import  { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO, DatosBasicos } from "./UserDTO"
+import Usuario, { Rol, UserCreation } from "./UserModel"
 import userClass from "./UserPersistence"
 
 async function traerTodos(){
@@ -24,7 +24,7 @@ async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string>{
     if(!usuario){
         return "Email no encontrado"
     }
-    const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
+    const comprar_contraseña = bcrypt.compare(data.contraseña, usuario.contraseña)
     if(!comprar_contraseña){
         return "Contraseña equivocada"
     }
@@ -32,7 +32,7 @@ async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string>{
     return usuario
 }
 
-async function crearUsuario(datos: CrearUsuarioDTO): Promise<Usuario | string>{
+async function crearUsuario(datos: DatosBasicos): Promise<Usuario | string>{
     const {dni, nombre, apellido} = datos
 
     if(!dni || !nombre || !apellido){
@@ -50,7 +50,7 @@ async function crearUsuario(datos: CrearUsuarioDTO): Promise<Usuario | string>{
         ...datos,
         contraseña: hashear_contraseña,
         email: dni + "@terciariourquiza.edu.ar",
-        estado: true,
+        activo: true,
         creado: new Date,
         rol: Rol.ESTUDIANTE
     }
