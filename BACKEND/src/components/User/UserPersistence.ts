@@ -1,70 +1,39 @@
-import User from './UserModel'
-import getErrorMessage, { ErrorResponse } from '../../Utils/errorHandling'
+import { CrearUsuarioDTO, ActualizarUsuarioDTO } from './UserDTO'
+import Usuario, { UserCreation } from './UserModel'
 
 
 class UserClass{
-    async getAll(): Promise<User[] | ErrorResponse>{
-        try {
-            return await User.findAll()     
-        } catch (error: unknown) {
-            return {
-                error: getErrorMessage(error)
-            }
-        }
+    async traerTodos(): Promise<Usuario[]>{
+         return await Usuario.findAll()
     }
 
-    async getUser(email: string){
-        try {
-            return await User.findByEmail(email)
-        } catch (error: unknown) {
-            return {
-                error: getErrorMessage(error)
-            }
-        }
+    async traerUsuario(dni: string): Promise<Usuario | null>{
+        const user= await Usuario.encontrarPorDNI(dni)
+           
+        return user
     }
 
-    async createUser(){
-        try {
+    async crearUsuario(datos: UserCreation){
+        const crear = await Usuario.create(datos)
+        return crear
+    }
+
+    async actualizarUsuario(data: ActualizarUsuarioDTO): Promise<Usuario | string>{
+            
+            const user= await Usuario.encontrarPorDNI(data.dni)
+            
+            if(!user){
+                return "Usuario no encontrado"
+            }
+
+            Usuario.update(
+                {token: data.token}, 
+                {where: {dni: data.dni}})
+            return user
+    }
+
+    async deshabilitarUsuario(){
             return "await User.findByEmail()"
-        } catch (error: unknown) {
-            return {
-                error: getErrorMessage(error)
-            }
-        }
-    }
-
-    async login(email: string){
-        try {
-            const existingUser = await this.getUser(email)
-            if (!existingUser) {
-                return 1
-            }
-            return true
-        } catch (error: unknown) {
-            return {
-                error: getErrorMessage(error)
-            }
-        }
-    }
-
-    async updateUser(){
-        try {
-            return "await User.findByEmail()"
-        } catch (error: unknown) {
-            return {
-                error: getErrorMessage(error)
-            }
-        }
-    }
-
-    async disableUser(){
-        try {
-            return "await User.findByEmail()"
-        } catch (error: unknown) {
-            return {
-                error: getErrorMessage(error)
-            }
-        }
     }
 }
 

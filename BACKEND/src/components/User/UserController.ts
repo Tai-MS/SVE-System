@@ -1,143 +1,222 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
-import UserService from "./UserService";
-import passport from "passport";
-import User from "./UserModel";
-import dotenv from "dotenv";
-import XLSX from "xlsx";
-import { excelSchema } from "../../schemas/userSchemas";
-import { Usuarios } from "../../schemas/userSchemas";
+import getErrorMessage from "#Utils/errorHandling"
+import { NextFunction, Request, Response } from "express"
+import UserService from "./UserService"
+import passport from "passport"
+import User, { UserCreation } from "./UserModel"
+import { CrearUsuarioDTO, DatosBasicos, IniciarSesionDTO } from "./UserDTO"
+import { generarContraseña } from "#Utils/generarContraseña"
+import { generarToken } from "#middlewares/auth"
+import { excelSchema, Usuarios } from "#schemas/userSchemas"
+import dotenv from "dotenv"
+import XLSX from "xlsx"
 
-dotenv.config();
+dotenv.config()
 
-async function getAll(req: Request, res: Response, next: NextFunction) {
+const clave = process.env.SECRET_KEY || "clave_secreta"
+async function traerTodos(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const call = await UserService.getAll();
+    const call = await UserService.traerTodos()
 
-    return res.status(200).send(call);
+    return res.status(200).send(call)
   } catch (error) {
-    res.status(204).send(error);
+    return res.status(500).json({
+      error: "Internal server error",
+      message: getErrorMessage(error),
+    })
   }
 }
 
-async function getUser(req: Request, res: Response, next: NextFunction) {
+async function traerUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const email: string = req.query.email as string;
+    const dni: string = req.query.dni as string
 
-    const call = await UserService.getUser(email);
+    if (!dni) {
+      return res.status(400).json({
+        error: "Bad request",
+        message: "Se requiere el parametro: DNI",
+      })
+    }
 
-    res.status(200).send(call);
-  } catch (error) {
-    res.status(204).send(error);
+    const usuario = await UserService.traerUsuario(dni)
+
+    if (!usuario) {
+      return res.status(204).json({
+        message: "Usuario no encontrado",
+      })
+    }
+
+    return res.status(200).json(usuario)
+  } catch (error: unknown) {
+    return res.status(500).json({
+      error: "Internal server error",
+      message: getErrorMessage(error),
+    })
   }
 }
 
-async function createUser(req: Request, res: Response, next: NextFunction) {
+async function inciarSesion(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const email: string = req.query.email as string;
+    const data = {
+      email: req.body.email,
+      contraseña: req.body.contraseña,
+    }
 
-    const call = await UserService.getUser(email);
+    if (!data.email || !data.contraseña) {
+      return res.status(400).json({
+        error: "Bad request",
+        message: "Campos incompletos.",
+      })
+    }
 
-    res.status(200).send(call);
-  } catch (error) {
-    res.status(204).send(error);
+    const iniciar_sesion = await UserService.iniciarSesion(data)
+    if (typeof iniciar_sesion === "string") {
+      return res.status(400).json({
+        error: "Bad request",
+        message: iniciar_sesion,
+      })
+    }
+    console.log("++++++++++++++++++++++++")
+    console.log(iniciar_sesion)
+    console.log("++++++++++++++++++++++++")
+    const token = await generarToken(iniciar_sesion)
+
+    return res
+      .cookie("auth-token", token, {
+        maxAge: 360 * 100 * 24,
+      })
+      .status(200)
+      .json({
+        status: 200,
+        success: true,
+        message: "logeado",
+        token: token,
+      })
+  } catch (error: unknown) {
+    return res.status(500).json({
+      error: "Internal server error",
+      message: getErrorMessage(error),
+    })
   }
 }
 
-async function ImportarUsuarios(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+async function crearUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const file = (req as unknown as { file: Express.Multer.File }).file;
-    const workbook = XLSX.readFile(file.path);
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const data = XLSX.utils.sheet_to_json(sheet);
-    const verify = await excelSchema.safeParseAsync(data);
-    if (!verify.success) {
+    const contraseña_generada = generarContraseña(10)
+    const datos: DatosBasicos = {
+      dni: req.body.dni,
+      apellido: req.body.apellido,
+      nombre: req.body.nombre,
+      contraseña: contraseña_generada,
+    }
+    const crear = await UserService.crearUsuario(datos)
+    if (!crear) {
+      return res.status(203).json({
+        error: crear,
+      })
+    }
+    return res.status(200).send(crear)
+  } catch (error) {
+    return res.status(500).json({
+      error: "Internal server error",
+      message: getErrorMessage(error),
+    })
+  }
+}
+
+async function actualizarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
+  try {
+    const email: string = req.query.email as string
+
+    const call = await UserService.traerUsuario(email)
+
+    return res.status(200).send(call)
+  } catch (error) {
+    return res.status(500).json({
+      error: "Internal server error",
+      message: getErrorMessage(error),
+    })
+  }
+}
+
+async function deshabilitarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
+  try {
+    const email: string = req.query.email as string
+
+    const call = await UserService.traerUsuario(email)
+
+    return res.status(200).send(call)
+  } catch (error) {
+    return res.status(500).json({
+      error: "Internal server error",
+      message: getErrorMessage(error),
+    })
+  }
+}
+
+async function loginGoogle(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+  passport.authenticate("google", async (error: unknown, user: User, info: any) => {
+    if (error) {
+      return next(error)
+    }
+
+    if (!user) {
+      return res.send("error")
+    }
+
+    const token = await generarToken(user)
+
+    req.logIn(user, function (error) {
+      if (error) {
+        return next(error)
+      }
+      const email = user.email
+      const datos = {
+        dni: user.dni,
+        email: email,
+        token: token,
+      }
+      UserService.actualizarUsuario(datos)
+      return res
+        .cookie("auth-token", token, {
+          maxAge: 360 * 100 * 24,
+        })
+        .status(200)
+        .json({
+          status: 200,
+          success: true,
+          message: "logeado",
+          token: token,
+        })
+    })
+  })(req, res, next)
+}
+
+async function ImportarUsuarios(req: Request, res: Response, next: NextFunction) {
+  try {
+    const archivoCasting = (req as unknown as { file: Express.Multer.File }).file
+    const archivo = XLSX.readFile(archivoCasting.path)
+    const hoja = archivo.Sheets[archivo.SheetNames[0]]
+    const datos = XLSX.utils.sheet_to_json(hoja)
+    const verificacion_datos = await excelSchema.safeParseAsync(datos)
+    if (!verificacion_datos.success) {
       res.status(400).json({
         respuesta: "Los datos del excel no son compatibles para la importación",
-      });
+      })
     }
-    const resultado = await UserService.guardarUsuariosInportados(
-      data as Usuarios
-    );
+    const resultado = await UserService.guardarUsuariosInportados(datos as Usuarios)
+    console.log(verificacion_datos.data)
   } catch (err) {
-    console.log(err);
+    console.log(err)
   }
-}
-
-async function updateUser(req: Request, res: Response, next: NextFunction) {
-  try {
-    const email: string = req.query.email as string;
-
-    const call = await UserService.getUser(email);
-
-    res.status(200).send(call);
-  } catch (error) {
-    res.status(204).send(error);
-  }
-}
-
-async function disableUser(req: Request, res: Response, next: NextFunction) {
-  try {
-    const email: string = req.query.email as string;
-
-    const call = await UserService.getUser(email);
-
-    res.status(200).send(call);
-  } catch (error) {
-    res.status(204).send(error);
-  }
-}
-
-async function login(req: Request, res: Response, next: NextFunction) {
-  const fields = req.body;
-  res.cookie("auth-token", res.locals.token, { httpOnly: true });
-  passport.authenticate("login", { failureRedirect: "/faillogin" })(
-    req,
-    res,
-    async () => {
-      await UserService.login(fields);
-      return res.status(200).send("logeado");
-    }
-  );
-}
-
-async function loginGoogle(req: Request, res: Response, next: NextFunction) {
-  passport.authenticate(
-    "google",
-    async (error: unknown, user: User, info: any) => {
-      if (error) {
-        return next(error);
-      }
-      console.log("///////////////////////");
-      console.log(error);
-      console.log("----------------------");
-      console.log(user);
-      console.log("----------------------");
-      console.log(info);
-      console.log("///////////////////////");
-
-      if (!user) {
-        return res.send("error");
-      }
-      req.logIn(user, function (error) {
-        if (error) {
-          return next(error);
-        }
-        return res.send("logeado");
-      });
-    }
-  )(req, res, next);
 }
 
 export default {
-  getAll,
-  getUser,
-  createUser,
-  updateUser,
-  disableUser,
+  traerTodos,
+  traerUsuario,
+  crearUsuario,
+  inciarSesion,
+  actualizarUsuario,
+  deshabilitarUsuario,
   loginGoogle,
   ImportarUsuarios,
-};
+}

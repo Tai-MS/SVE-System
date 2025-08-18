@@ -1,9 +1,15 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import User from '../components/User/UserModel'
-import getErrorMessage, { ErrorResponse } from '../Utils/errorHandling'
+import User from '#components/User/UserModel'
+import getErrorMessage from '#Utils/errorHandling'
+import UserService from '#components/User/UserService';
+import { generarContraseña } from '#Utils/generarContraseña';
+import { hashContraseña } from '#Utils/hashContraseña';
 
-
+/**
+ * Establece la estrategia de passport 
+ * para tomar los datos necesarios de la cuenta de Google
+ */
 passport.use(
     new GoogleStrategy({
         clientID: process.env.ID_CLIENT_OAUTH || '',
@@ -12,22 +18,31 @@ passport.use(
         },
         async function (token: string, tokenSecret: string, profile: passport.Profile, done){
             try {
-                
+                //Verifica si el email está en la base de datos
+                //Si no esta, verifica si es perteneciente a la institucion
+                //(ademas de la verificacion que hace google). Si forma parte, crea su
+                //registro en la DB
                 const email = profile.emails?.[0]?.value
+                const perfil = JSON.parse((profile as any)._raw)
                 if(typeof email === 'string'){
-                    const user = await User.findByEmail(email)
-                    console.log("///////////PASSPORT////////////");
-                    console.log(email);
-                    console.log("++++++++++++++++++++++");
-                    console.log(user);
-                    console.log("++++++++++++++++++++++");
-                    console.log(user?.dataValues.id);
-                    
-                    console.log("///////////PASSPORT////////////");
+                    const user = await User.encontrarPorEmail(email)
                     if(user){
                         return done(null, user)
+                    }else if(perfil["hd"] === "terciariourquiza.edu.ar" && perfil["email_verified"] === true){
+                        const contraseña_generada = generarContraseña()
+                        const hashear_contraseña = await hashContraseña(contraseña_generada)
+                        const datos = {
+                            nombre: perfil["family_name"],
+                            apellido: perfil["given_name"],
+                            dni: perfil["email"].split("@")[0],
+                            contraseña: hashear_contraseña,
+                        }
+                        const crearUsuario = await UserService.crearUsuario(datos)
+                        // return done(null, false, {message: "Email no registrado"})
+                        return done(null, crearUsuario)
+
                     }else{
-                        return done(null, false, {message: "Email no registrado"})
+                        return done(null, false, {message: "Acceso no autorizado"})
                     }
                 }
             } catch (error: unknown) {
@@ -37,17 +52,16 @@ passport.use(
     )
 )
 
+//Serializa el usuario (guarda ciertos datos de la sesión)
 passport.serializeUser((user: any, done) => {
-    console.log("//////////////serialize//////////////");
-    console.log(user);
-    console.log("//////////////serialize//////////////");
     
   done(null, user?.dataValues.id);
 });
 
+//Deserializa el usuario
 passport.deserializeUser(async (email: string, done) => {
     try {
-        const user = await User.findByEmail(email);
+        const user = await User.encontrarPorEmail(email);
         done(null, user);
     } catch (error: unknown) {
         const err = getErrorMessage(error)

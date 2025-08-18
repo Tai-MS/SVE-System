@@ -1,3 +1,6 @@
+/**
+ * Manejador de errores personalizado para TS
+ */
 const getErrorMessage = (error: unknown): string => {
     let message: string 
 
@@ -14,6 +17,7 @@ const getErrorMessage = (error: unknown): string => {
     return message
 }
 
+//Setea el tipo de las respuestas
 export type ErrorResponse = {
     error: string
 }
