@@ -24,7 +24,7 @@ async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string>{
     if(!usuario){
         return "Email no encontrado"
     }
-    const comprar_contraseña = bcrypt.compare(data.contraseña, usuario.contraseña)
+    const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
     if(!comprar_contraseña){
         return "Contraseña equivocada"
     }
