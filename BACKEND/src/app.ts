@@ -1,13 +1,11 @@
-import { create_server } from "./utils/createServer.ts";
+import { create_server } from "./utils/createServer";
 
 const app = create_server();
 
 const PORT = process.env.PORT || 3030;
 
-app.listen(PORT, () => {
-  console.log(`Puerto ${PORT}`);
-});
-
 app.listen(process.env.PORT, () => {
-  console.log("Servidor iniciado correctamente en http://localhost:8080/");
+  console.log(
+    `Servidor iniciado correctamente en http://localhost:${process.env.PORT}/`
+  );
 });

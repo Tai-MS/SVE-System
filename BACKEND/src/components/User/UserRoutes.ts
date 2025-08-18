@@ -1,8 +1,10 @@
 import express, { NextFunction, Request, Response } from "express";
 import userController from "./UserController";
+import multer from "multer";
 import passport from "../../config/passport";
 
 const router = express.Router();
+const upload = multer({ dest: "uploads/" });
 
 router.get(
   "/google",
@@ -31,5 +33,7 @@ router.post(
     await userController.createUser(req, res, next);
   }
 );
+
+router.post("/add", upload.single("file"), userController.ImportarUsuarios);
 
 export default router;

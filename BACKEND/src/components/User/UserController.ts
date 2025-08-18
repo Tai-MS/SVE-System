@@ -4,6 +4,8 @@ import passport from "passport";
 import User from "./UserModel";
 import dotenv from "dotenv";
 import XLSX from "xlsx";
+import { excelSchema } from "../../schemas/userSchemas";
+import { Usuarios } from "../../schemas/userSchemas";
 
 dotenv.config();
 
@@ -41,8 +43,25 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function addUser(req: Request, res: Response) {
+async function ImportarUsuarios(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
+    const file = (req as unknown as { file: Express.Multer.File }).file;
+    const workbook = XLSX.readFile(file.path);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(sheet);
+    const verify = await excelSchema.safeParseAsync(data);
+    if (!verify.success) {
+      res.status(400).json({
+        respuesta: "Los datos del excel no son compatibles para la importación",
+      });
+    }
+    const resultado = await UserService.guardarUsuariosInportados(
+      data as Usuarios
+    );
   } catch (err) {
     console.log(err);
   }
@@ -120,4 +139,5 @@ export default {
   updateUser,
   disableUser,
   loginGoogle,
+  ImportarUsuarios,
 };

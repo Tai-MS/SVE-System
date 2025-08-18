@@ -1,4 +1,6 @@
 import userClass from "./UserPersistence";
+import User from "./UserModel";
+import { Usuarios } from "./typesUser";
 
 async function getAll() {
   try {
@@ -46,6 +48,16 @@ async function disableUser(email: String) {
   }
 }
 
+async function guardarUsuariosInportados(usuarios: Usuarios) {
+  try {
+    for (const usuario of usuarios) {
+      const guardado = await User.create(usuario);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 export default {
   getAll,
   getUser,
@@ -53,4 +65,5 @@ export default {
   createUser,
   updateUser,
   disableUser,
+  guardarUsuariosInportados,
 };
