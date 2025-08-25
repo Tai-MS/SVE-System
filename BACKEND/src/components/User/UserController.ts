@@ -74,10 +74,16 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
         message: iniciar_sesion,
       })
     }
-    console.log("++++++++++++++++++++++++")
-    console.log(iniciar_sesion)
-    console.log("++++++++++++++++++++++++")
+
     const token = await generarToken(iniciar_sesion)
+    console.log("++++++++++++++++++++++++")
+    console.log(token)
+    console.log("++++++++++++++++++++++++")
+    const usuarioParaActualizar = {
+      dni: data.email.split("@")[0],
+      token: token
+    }
+    await UserService.actualizarUsuario(usuarioParaActualizar)
 
     return res
       .cookie("auth-token", token, {

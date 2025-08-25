@@ -12,5 +12,5 @@ export function generarContraseña(longitud: number = 8): string {
   console.log("+++++++++++++++++++")
   console.log(contraseña)
   console.log("+++++++++++++++++++")
-  return contraseña
+  return "contraseña"
 }
