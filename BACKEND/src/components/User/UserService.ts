@@ -5,6 +5,7 @@ import { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO, DatosBasicos }
 import Usuario, { Rol, UserCreation } from "./UserModel"
 import userClass from "./UserPersistence"
 import { Usuarios } from "#schemas/userSchemas"
+import { usuarioI } from "./UserDTO"
 
 async function traerTodos() {
   return userClass.traerTodos()
@@ -25,7 +26,7 @@ async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string> 
   if (!usuario) {
     return "Email no encontrado"
   }
-  const comprar_contraseña = bcrypt.compare(data.contraseña, usuario.contraseña)
+  const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
   if (!comprar_contraseña) {
     return "Contraseña equivocada"
   }
@@ -33,7 +34,7 @@ async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string> 
   return usuario
 }
 
-async function crearUsuario(datos: DatosBasicos): Promise<Usuario | string> {
+async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
   const { dni, nombre, apellido } = datos
 
   if (!dni || !nombre || !apellido) {
@@ -70,7 +71,26 @@ async function deshabilitarUsuario(email: String) {
   return email
 }
 
-async function guardarUsuariosInportados(datos: Usuarios) {}
+async function guardarAlumnosImportados(datos: Usuarios) {
+  // Guardar cada registro en la DB
+  for (let alumno of datos) {
+    const [apellido, nombre] = alumno["Apellido y nombre"].split(",").map((s) => s.trim())
+    const dniLimpio = alumno.Documento.replace(/^DNI\s*-\s*/, "")
+    const contraseña_generada = generarContraseña()
+    const hashear_contraseña = await hashContraseña(contraseña_generada)
+    await Usuario.create({
+      nombre,
+      apellido,
+      dni: dniLimpio,
+      telefono: alumno.Teléfono,
+      email: dniLimpio + "@terciariourquiza.edu.ar",
+      anioIngreso: alumno["Año de ingreso"],
+      rol: Rol.ESTUDIANTE,
+      contraseña: hashear_contraseña,
+    })
+  }
+  return { status: 200, mensaje: "Los alumnos se importaron correctamente en la base de datos" }
+}
 
 export default {
   traerTodos,
@@ -79,5 +99,5 @@ export default {
   iniciarSesion,
   actualizarUsuario,
   deshabilitarUsuario,
-  guardarUsuariosInportados,
+  guardarAlumnosImportados,
 }

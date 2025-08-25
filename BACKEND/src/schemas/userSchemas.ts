@@ -1,21 +1,14 @@
-import z from "zod";
+import z from "zod"
+import { UsuarioExcel } from "#components/User/UserDTO"
 
-export interface Usuario {
-  ID: number;
-  Nombre: string;
-  Carrera: string;
-  Año: number;
-  Comision: number;
-}
-
-export type Usuarios = Usuario[];
+export type Usuarios = UsuarioExcel[]
 
 export const excelSchema = z.array(
   z.object({
-    ID: z.int(),
-    Nombre: z.string(),
-    Carrera: z.string(),
-    Año: z.int(),
-    Comision: z.int(),
+    "Apellido y nombre": z.string(),
+    Documento: z.string(),
+    Teléfono: z.string(),
+    Email: z.email(),
+    "Año de ingreso": z.int(),
   })
-);
+)

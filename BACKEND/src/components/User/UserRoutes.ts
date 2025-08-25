@@ -44,6 +44,6 @@ router.post("/iniciarSesion", async (req: Request, res: Response, next: NextFunc
   await userController.inciarSesion(req, res, next)
 })
 
-router.post("/add", upload.single("file"), userController.ImportarUsuarios)
+router.post("/importarAlumnos", upload.single("file"), userController.ImportarAlumnos)
 
 export default router
