@@ -13,6 +13,7 @@ export async function generarToken(data: Usuario){
             clave, 
             {expiresIn: "1d"})
 
+            
     return token
 
 } 

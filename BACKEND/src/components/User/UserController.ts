@@ -10,7 +10,6 @@ import { generarToken } from '#middlewares/auth';
 
 
 dotenv.config()
-const clave = process.env.SECRET_KEY || "clave_secreta"
 async function traerTodos(req: Request, res: Response, next: NextFunction): Promise<Response>{
     try {
         const call = await UserService.traerTodos()

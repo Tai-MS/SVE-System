@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import  { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO, DatosBasicos } from "./UserDTO"
 import Usuario, { Rol, UserCreation } from "./UserModel"
 import userClass from "./UserPersistence"
+import transport from "#Utils/mailer";
 
 async function traerTodos(){
         return userClass.traerTodos()
@@ -24,7 +25,8 @@ async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string>{
     if(!usuario){
         return "Email no encontrado"
     }
-    const comprar_contraseña = bcrypt.compare(data.contraseña, usuario.contraseña)
+    const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
+
     if(!comprar_contraseña){
         return "Contraseña equivocada"
     }
@@ -46,6 +48,18 @@ async function crearUsuario(datos: DatosBasicos): Promise<Usuario | string>{
     }
     const contraseña_generada = generarContraseña()
     const hashear_contraseña = await hashContraseña(contraseña_generada)
+
+    await transport.sendMail({
+        from: process.env.USER_MAILER,
+        to: dni + "@terciariourquiza.edu.ar",
+        subject: 'Cuenta creada',
+        html: `
+            <div>
+                <p>Tu contraseña es: ${contraseña_generada}</p>
+            </div>
+        `
+    })
+
     const datosFinal = {
         ...datos,
         contraseña: hashear_contraseña,
