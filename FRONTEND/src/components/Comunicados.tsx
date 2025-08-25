@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { MouseEvent, ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 import {
   Avatar,
   Button,
@@ -7,10 +7,13 @@ import {
   Card,
   CardContent,
   Typography,
-  Menu,
-  MenuItem
+  List,
+  ListItem,
+  ListItemText,
+  ListItemButton,
+  Collapse
 } from '@mui/material';
-import { ArrowDropDown } from '@mui/icons-material';
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 interface Comunicado {
   id: number;
@@ -21,18 +24,10 @@ interface Comunicado {
 }
 
 export default function Comunicados() {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const [open, setOpen] = useState(false);
   const [comunicados, setComunicados] = useState<Comunicado[]>([]);
   const [nuevoComunicado, setNuevoComunicado] = useState<string>('');
 
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const publicarComunicado = () => {
     if (nuevoComunicado.trim() !== '') {
@@ -55,25 +50,49 @@ export default function Comunicados() {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <aside className="w-64 bg-purple-100 p-4">
+      <aside className="w-56 h-screen border-r bg-purple-100 p-2">
         <img src="/logoterciario.png" alt="Logo" className="h-12 w-12 rounded-full object-cover" />
-        <ul className="space-y-4">
-          <li><button className="w-full text-left">Anuncios</button></li>
-          <li><button className="w-full text-left">Carreras</button></li>
-          <li><button className="w-full text-left">Alumnos</button></li>
-          <li>
-            <button
-              className="w-full text-left flex items-center justify-between"
-              onClick={handleClick}
-            >
-              Mensajes <ArrowDropDown />
-            </button>
-            <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-              <MenuItem onClick={handleClose}>Mensajes Recibidos</MenuItem>
-              <MenuItem onClick={handleClose}>Mensajes Enviados</MenuItem>
-            </Menu>
-          </li>
-        </ul>
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemText primary="Anuncios" />
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemText primary="Unidades Curriculares" />
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemText primary="Alumnos" />
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => setOpen(!open)}>
+              <ListItemText primary="Mensajes" />
+              {open ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+          </ListItem>
+
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem disablePadding>
+                <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemText primary="Recibidos" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemText primary="Enviados" />
+                </ListItemButton>
+              </ListItem>
+            </List>
+          </Collapse>
+        </List>
       </aside>
 
       {/* Main Content */}
