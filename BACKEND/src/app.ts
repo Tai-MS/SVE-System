@@ -1,10 +1,11 @@
-import express from 'express'
+import { initializeDB } from "#db/connection"
+import { create_server } from "#Utils/createServer"
 
-const app = express()
-const port = 8080
+const app = create_server()
 
-app.use(express.json())
+const PORT = process.env.PORT || 3030
 
-app.listen(port, () => { 
-    console.log("hola");
+app.listen(PORT, () => {
+  initializeDB()
+  console.log(`Puerto ${PORT}`)
 })
