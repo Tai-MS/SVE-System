@@ -58,7 +58,16 @@ async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
     creado: new Date(),
     rol: Rol.ESTUDIANTE,
   }
-
+  await transport.sendMail({
+          from: process.env.USER_MAILER,
+          to: dni + "@terciariourquiza.edu.ar",
+          subject: 'Cuenta creada',
+          html: `
+              <div>
+                  <p>Tu contraseña es: ${contraseña_generada}</p>
+              </div>
+          `
+      })
   const crear = await userClass.crearUsuario(datosFinal)
 
   return crear
@@ -89,6 +98,16 @@ async function guardarAlumnosImportados(datos: Usuarios) {
       anioIngreso: alumno["Año de ingreso"],
       rol: Rol.ESTUDIANTE,
       contraseña: hashear_contraseña,
+    })
+    await transport.sendMail({
+        from: process.env.USER_MAILER,
+        to: dniLimpio + "@terciariourquiza.edu.ar",
+        subject: 'Cuenta creada',
+        html: `
+            <div>
+                <p>Tu contraseña es: ${contraseña_generada}</p>
+            </div>
+        `
     })
   }
   return { status: 200, mensaje: "Los alumnos se importaron correctamente en la base de datos" }
