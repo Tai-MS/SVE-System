@@ -20,6 +20,7 @@ async function traerUsuario(dni: string): Promise<Usuario | string> {
   return usuario
 }
 
+
 async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string> {
   const usuario = await Usuario.encontrarPorEmail(data.email)
 
