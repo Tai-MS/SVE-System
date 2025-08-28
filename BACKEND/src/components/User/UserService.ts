@@ -1,79 +1,104 @@
 import { generarContraseña } from "#Utils/generarContraseña"
 import { hashContraseña } from "#Utils/hashContraseña"
-import bcrypt from 'bcrypt';
-import  { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO, DatosBasicos } from "./UserDTO"
+import bcrypt from "bcrypt"
+import { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO, DatosBasicos } from "./UserDTO"
 import Usuario, { Rol, UserCreation } from "./UserModel"
 import userClass from "./UserPersistence"
+import { Usuarios } from "#schemas/userSchemas"
+import { usuarioI } from "./UserDTO"
 
-async function traerTodos(){
-        return userClass.traerTodos()
+async function traerTodos() {
+  return userClass.traerTodos()
 }
 
-async function traerUsuario(dni: string): Promise<Usuario | string>{
-        const usuario = await userClass.traerUsuario(dni)
-        if(!usuario){
-            return `Usuario con el DNI: ${dni} no encontrado`
-        }
-        
-        return usuario
+async function traerUsuario(dni: string): Promise<Usuario | string> {
+  const usuario = await userClass.traerUsuario(dni)
+  if (!usuario) {
+    return `Usuario con el DNI: ${dni} no encontrado`
+  }
+
+  return usuario
 }
 
-async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string>{
-    const usuario = await Usuario.encontrarPorEmail(data.email)
-    
-    if(!usuario){
-        return "Email no encontrado"
-    }
-    const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
-    if(!comprar_contraseña){
-        return "Contraseña equivocada"
-    }
 
-    return usuario
+async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string> {
+  const usuario = await Usuario.encontrarPorEmail(data.email)
+
+  if (!usuario) {
+    return "Email no encontrado"
+  }
+  const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
+  if (!comprar_contraseña) {
+    return "Contraseña equivocada"
+  }
+
+  return usuario
 }
 
-async function crearUsuario(datos: DatosBasicos): Promise<Usuario | string>{
-    const {dni, nombre, apellido} = datos
+async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
+  const { dni, nombre, apellido } = datos
 
-    if(!dni || !nombre || !apellido){
-        return "Faltan campos."
-    }
+  if (!dni || !nombre || !apellido) {
+    return "Faltan campos."
+  }
 
-    const usuario = await userClass.traerUsuario(dni)
+  const usuario = await userClass.traerUsuario(dni)
 
-    if(usuario){
-        return "Esta persona ya esta registrada"
-    }
+  if (usuario) {
+    return "Esta persona ya esta registrada"
+  }
+  const contraseña_generada = generarContraseña()
+  const hashear_contraseña = await hashContraseña(contraseña_generada)
+  const datosFinal = {
+    ...datos,
+    contraseña: hashear_contraseña,
+    email: dni + "@terciariourquiza.edu.ar",
+    activo: true,
+    creado: new Date(),
+    rol: Rol.ESTUDIANTE,
+  }
+
+  const crear = await userClass.crearUsuario(datosFinal)
+
+  return crear
+}
+
+async function actualizarUsuario(datos: ActualizarUsuarioDTO): Promise<Usuario | string> {
+  const usuario = await userClass.actualizarUsuario(datos)
+  return usuario
+}
+
+async function deshabilitarUsuario(email: String) {
+  return email
+}
+
+async function guardarAlumnosImportados(datos: Usuarios) {
+  // Guardar cada registro en la DB
+  for (let alumno of datos) {
+    const [apellido, nombre] = alumno["Apellido y nombre"].split(",").map((s) => s.trim())
+    const dniLimpio = alumno.Documento.replace(/^DNI\s*-\s*/, "")
     const contraseña_generada = generarContraseña()
     const hashear_contraseña = await hashContraseña(contraseña_generada)
-    const datosFinal = {
-        ...datos,
-        contraseña: hashear_contraseña,
-        email: dni + "@terciariourquiza.edu.ar",
-        activo: true,
-        creado: new Date,
-        rol: Rol.ESTUDIANTE
-    }
-    
-    const crear = await userClass.crearUsuario(datosFinal)
-
-    return crear
-}
-
-async function actualizarUsuario(datos: ActualizarUsuarioDTO): Promise<Usuario | string>{
-    const usuario = await userClass.actualizarUsuario(datos)
-    return usuario
-}
-
-async function deshabilitarUsuario(email: String){
-        return email
+    await Usuario.create({
+      nombre,
+      apellido,
+      dni: dniLimpio,
+      telefono: alumno.Teléfono,
+      email: dniLimpio + "@terciariourquiza.edu.ar",
+      anioIngreso: alumno["Año de ingreso"],
+      rol: Rol.ESTUDIANTE,
+      contraseña: hashear_contraseña,
+    })
+  }
+  return { status: 200, mensaje: "Los alumnos se importaron correctamente en la base de datos" }
 }
 
 export default {
-    traerTodos,
-    traerUsuario,
-    crearUsuario,
-    iniciarSesion,
-    actualizarUsuario,
-    deshabilitarUsuario
+  traerTodos,
+  traerUsuario,
+  crearUsuario,
+  iniciarSesion,
+  actualizarUsuario,
+  deshabilitarUsuario,
+  guardarAlumnosImportados,
 }
