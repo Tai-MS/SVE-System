@@ -12,12 +12,9 @@ import XLSX from "xlsx"
 import { usuarioI } from "./UserDTO"
 
 dotenv.config()
-
-const clave = process.env.SECRET_KEY || "clave_secreta"
-
-async function traerTodos(req: Request, res: Response, next: NextFunction): Promise<Response> {
-  try {
-    const call = await UserService.traerTodos()
+async function traerTodos(req: Request, res: Response, next: NextFunction): Promise<Response>{
+    try {
+        const call = await UserService.traerTodos()
 
     return res.status(200).send(call)
   } catch (error) {
@@ -77,10 +74,16 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
         message: iniciar_sesion,
       })
     }
-    console.log("++++++++++++++++++++++++")
-    console.log(iniciar_sesion)
-    console.log("++++++++++++++++++++++++")
+
     const token = await generarToken(iniciar_sesion)
+    console.log("++++++++++++++++++++++++")
+    console.log(token)
+    console.log("++++++++++++++++++++++++")
+    const usuarioParaActualizar = {
+      dni: data.email.split("@")[0],
+      token: token
+    }
+    await UserService.actualizarUsuario(usuarioParaActualizar)
 
     return res
       .cookie("auth-token", token, {

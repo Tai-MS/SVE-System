@@ -4,6 +4,7 @@ import bcrypt from "bcrypt"
 import { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO, DatosBasicos } from "./UserDTO"
 import Usuario, { Rol, UserCreation } from "./UserModel"
 import userClass from "./UserPersistence"
+import transport from "#Utils/mailer";
 import { Usuarios } from "#schemas/userSchemas"
 import { usuarioI } from "./UserDTO"
 
@@ -21,16 +22,17 @@ async function traerUsuario(dni: string): Promise<Usuario | string> {
 }
 
 
-async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string> {
-  const usuario = await Usuario.encontrarPorEmail(data.email)
+async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string>{
+    const usuario = await Usuario.encontrarPorEmail(data.email)
+    
+    if(!usuario){
+        return "Email no encontrado"
+    }
+    const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
 
-  if (!usuario) {
-    return "Email no encontrado"
-  }
-  const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
-  if (!comprar_contraseña) {
-    return "Contraseña equivocada"
-  }
+    if(!comprar_contraseña){
+        return "Contraseña equivocada"
+    }
 
   return usuario
 }
@@ -57,7 +59,16 @@ async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
     creado: new Date(),
     rol: Rol.ESTUDIANTE,
   }
-
+  await transport.sendMail({
+          from: process.env.USER_MAILER,
+          to: dni + "@terciariourquiza.edu.ar",
+          subject: 'Cuenta creada',
+          html: `
+              <div>
+                  <p>Tu contraseña es: ${contraseña_generada}</p>
+              </div>
+          `
+      })
   const crear = await userClass.crearUsuario(datosFinal)
 
   return crear
@@ -88,6 +99,16 @@ async function guardarAlumnosImportados(datos: Usuarios) {
       anioIngreso: alumno["Año de ingreso"],
       rol: Rol.ESTUDIANTE,
       contraseña: hashear_contraseña,
+    })
+    await transport.sendMail({
+        from: process.env.USER_MAILER,
+        to: dniLimpio + "@terciariourquiza.edu.ar",
+        subject: 'Cuenta creada',
+        html: `
+            <div>
+                <p>Tu contraseña es: ${contraseña_generada}</p>
+            </div>
+        `
     })
   }
   return { status: 200, mensaje: "Los alumnos se importaron correctamente en la base de datos" }
