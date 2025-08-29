@@ -1,6 +1,5 @@
 import { DataTypes, InferAttributes, Model, Optional } from "sequelize"
 import { sequelize } from "#db/connection"
-import { AllowNull, DataType } from "sequelize-typescript"
 import { usuarioI } from "./UserDTO"
 
 export enum Rol {
@@ -13,7 +12,7 @@ export enum Rol {
 export type UserCreation = Optional<usuarioI, "id">
 
 class Usuario extends Model<InferAttributes<Usuario>, UserCreation> implements usuarioI {
-  declare id: number
+  declare id: string
   declare nombre: string
   declare apellido: string
   declare dni: string
@@ -42,13 +41,13 @@ class Usuario extends Model<InferAttributes<Usuario>, UserCreation> implements u
 
 Usuario.init(
   {
-    id: { primaryKey: true, type: DataType.UUID, defaultValue: DataType.UUIDV4 },
+    id: { primaryKey: true, type: DataTypes.UUID, defaultValue: DataTypes.UUID },
     nombre: { type: DataTypes.STRING(100), allowNull: false },
     apellido: { type: DataTypes.STRING(100), allowNull: false },
     dni: { type: DataTypes.STRING(20), allowNull: false, unique: true },
-    telefono: { type: DataType.STRING, allowNull: true },
+    telefono: { type: DataTypes.STRING, allowNull: true },
     email: { type: DataTypes.STRING(255), allowNull: false, unique: true },
-    anioIngreso: { type: DataType.INTEGER, allowNull: false },
+    anioIngreso: { type: DataTypes.INTEGER, allowNull: false },
     rol: { type: DataTypes.ENUM(...Object.values(Rol)), allowNull: false },
     contraseña: { type: DataTypes.STRING(255), allowNull: false },
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
