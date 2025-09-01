@@ -1,6 +1,11 @@
 export type comunicadosAttributes = {
-  id?: number
+  id?: string
   id_usuario: string
   titulo: string
   descripcion: string
+  eliminado: boolean
+  archivos?: string
+  general?: boolean
+  division?: string
+  id_comision?: string
 }

@@ -41,7 +41,7 @@ class Usuario extends Model<InferAttributes<Usuario>, UserCreation> implements u
 
 Usuario.init(
   {
-    id: { primaryKey: true, type: DataTypes.UUID, defaultValue: DataTypes.UUID },
+    id: { primaryKey: true, type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4 },
     nombre: { type: DataTypes.STRING(100), allowNull: false },
     apellido: { type: DataTypes.STRING(100), allowNull: false },
     dni: { type: DataTypes.STRING(20), allowNull: false, unique: true },
