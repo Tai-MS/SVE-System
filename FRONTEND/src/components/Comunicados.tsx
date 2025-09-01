@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import type { ChangeEvent } from 'react';
+import { useState, useEffect } from "react";
+import type { ChangeEvent } from "react";
 import {
   Avatar,
   Button,
@@ -11,8 +11,8 @@ import {
   ListItem,
   ListItemText,
   ListItemButton,
-  Collapse
-} from '@mui/material';
+  Collapse,
+} from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 interface Comunicado {
@@ -26,20 +26,39 @@ interface Comunicado {
 export default function Comunicados() {
   const [open, setOpen] = useState(false);
   const [comunicados, setComunicados] = useState<Comunicado[]>([]);
-  const [nuevoComunicado, setNuevoComunicado] = useState<string>('');
+  const [nuevoComunicado, setNuevoComunicado] = useState<string>("");
 
+  // Obtener comunicados de la API
+  useEffect(() => {
+    fetch("http://localhost:3030/comunicados/")
+      .then((res) => res.json())
+      .then((data) => setComunicados(data))
+      .catch((err) => console.error("Error cargando comunicados:", err));
+  }, []);
 
+  // Publicar un nuevo comunicado
   const publicarComunicado = () => {
-    if (nuevoComunicado.trim() !== '') {
-      const nuevo: Comunicado = {
-        id: Date.now(),
-        autor: 'Admin',
-        titulo: 'Nuevo Comunicado',
+    if (nuevoComunicado.trim() !== "") {
+      const nuevo = {
+        autor: "Admin",
+        titulo: "Nuevo Comunicado",
         fecha: new Date().toLocaleString(),
-        contenido: nuevoComunicado
+        contenido: nuevoComunicado,
       };
-      setComunicados([nuevo, ...comunicados]);
-      setNuevoComunicado('');
+
+      fetch("http://localhost:3030/comunicados/crearComunicado", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(nuevo),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setComunicados([data, ...comunicados]);
+          setNuevoComunicado("");
+        })
+        .catch((err) => console.error("Error publicando comunicado:", err));
     }
   };
 
@@ -51,10 +70,14 @@ export default function Comunicados() {
     <div className="flex h-screen">
       {/* Sidebar */}
       <aside className="w-56 h-screen border-r bg-purple-100 p-2">
-        <img src="/logoterciario.png" alt="Logo" className="h-12 w-12 rounded-full object-cover" />
+        <img
+          src="/logoterciario.png"
+          alt="Logo"
+          className="h-12 w-12 rounded-full object-cover"
+        />
         <List>
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton selected>
               <ListItemText primary="Anuncios" />
             </ListItemButton>
           </ListItem>
@@ -100,9 +123,15 @@ export default function Comunicados() {
         <div className="flex justify-between items-center mb-8">
           <Typography variant="h6">Comunicados</Typography>
           <div>
-            <Button variant="text" className="mr-2">Principal</Button>
-            <Button variant="text" className="mr-2 font-bold">REGENCIA</Button>
-            <Button variant="contained" color="inherit">Salir</Button>
+            <Button variant="text" className="mr-2">
+              Principal
+            </Button>
+            <Button variant="text" className="mr-2 font-bold">
+              REGENCIA
+            </Button>
+            <Button variant="contained" color="inherit">
+              Salir
+            </Button>
           </div>
         </div>
 
@@ -118,7 +147,11 @@ export default function Comunicados() {
             onChange={handleChange}
           />
           <div className="flex justify-end mt-2">
-            <Button variant="contained" color="secondary" onClick={publicarComunicado}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={publicarComunicado}
+            >
               Publicar
             </Button>
           </div>
