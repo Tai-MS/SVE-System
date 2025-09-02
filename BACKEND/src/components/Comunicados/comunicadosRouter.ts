@@ -9,5 +9,9 @@ comunicadosRouter.post(
   "/crearComunicado",
   async (req, res) => await comunicadosController.creacionDeComunicado(req, res)
 )
+comunicadosRouter.get(
+  "/mirarComunicado/:id",
+  async (req, res) => await comunicadosController.obtenerUnComunicado(req, res)
+)
 
 export default comunicadosRouter

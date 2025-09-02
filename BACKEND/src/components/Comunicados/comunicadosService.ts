@@ -1,5 +1,6 @@
 import Comunicado from "./comunicadosModel"
 import { comunicadosAttributes } from "./comunicadosDTO"
+import { Transaction } from "sequelize"
 
 export class ComunicadoService {
   traerComunicados = async () => {
@@ -11,10 +12,58 @@ export class ComunicadoService {
     return { status: 200, respuesta }
   }
   crearComunicado = async (data: comunicadosAttributes) => {
-    const { archivos, ...datosComunicado } = data
+    const t = await Comunicado.sequelize!.transaction()
+    try {
+      if (data.archivos !== undefined) {
+        const { archivos, ...datosComunicado } = data
 
-    await Comunicado.create(datosComunicado)
+        await Comunicado.create(datosComunicado, { transaction: t })
+      } else {
+        await Comunicado.create(data, { transaction: t })
+      }
 
-    return { status: 201, respuesta: "El comunicado se ha subido correctamente" }
+      await t.commit()
+      return { status: 201, respuesta: "El comunicado se ha subido correctamente" }
+    } catch (err) {
+      await t.rollback()
+      console.log(err)
+      return { status: 500, respuesta: "Ocurrio un error en el servidor al momento de subir el comunicado" }
+    }
+  }
+  filtrarComunicado = async (id: string) => {
+    const respuesta = await Comunicado.findByPk(id)
+    if (!respuesta) {
+      return { status: 404, respuesta: "No se encontró el comunicado" }
+    }
+    return { status: 200, respuesta }
+  }
+  actualizarComunicado = async (id: string, data: comunicadosAttributes) => {
+    const t = await Comunicado.sequelize!.transaction()
+    try {
+      if (data.archivos !== undefined) {
+        const { archivos, ...datosComunicado } = data
+
+        await Comunicado.update(datosComunicado, {
+          where: {
+            id,
+          },
+          transaction: t,
+        })
+      } else {
+        await Comunicado.update(data, {
+          where: {
+            id,
+          },
+          transaction: t,
+        })
+      }
+
+      await t.commit()
+      return { status: 201, respuesta: "El comunicado se ha subido correctamente" }
+    } catch (err) {
+      await t.rollback()
+      console.log(err)
+      return { status: 500, respuesta: "Error en el servidor al momento de actualizar el comunicado" }
+    }
   }
 }
