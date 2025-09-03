@@ -6,7 +6,7 @@ import User, { UserCreation } from "./UserModel"
 import { CrearUsuarioDTO, DatosBasicos, IniciarSesionDTO } from "./UserDTO"
 import { generarContraseña } from "#Utils/generarContraseña"
 import { generarToken } from "#middlewares/auth"
-import { excelSchema, Usuarios } from "#schemas/userSchemas"
+import { excelSchema, Usuarios } from "#components/User/userSchemas"
 import dotenv from "dotenv"
 import XLSX from "xlsx"
 import { usuarioI } from "./UserDTO"
@@ -192,26 +192,22 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
 }
 
 async function ImportarAlumnos(req: Request, res: Response) {
-  try {
-    // Genera un JSON a partir del archivo .xlsx
-    const archivoCasting = (req as unknown as { file: Express.Multer.File }).file
-    const archivo = XLSX.readFile(archivoCasting.path)
-    const hoja = archivo.Sheets[archivo.SheetNames[0]]
-    const datos = XLSX.utils.sheet_to_json(hoja)
-    // Verifica con ZOD que los campos del JSON sean correctos
-    const verificacion_datos = await excelSchema.safeParseAsync(datos)
-    if (!verificacion_datos.success) {
-      res.status(400).json({
-        respuesta: "Los datos del excel no son compatibles para la importación",
-        error: verificacion_datos.error,
-      })
-    }
-    // Envia los registros al Services para subirlos a la DB
-    const resultado = await UserService.guardarAlumnosImportados(verificacion_datos.data as Usuarios)
-    res.status(resultado.status).json(resultado.mensaje)
-  } catch (err) {
-    console.log(err)
+  // Genera un JSON a partir del archivo .xlsx
+  const archivoCasting = (req as unknown as { file: Express.Multer.File }).file
+  const archivo = XLSX.readFile(archivoCasting.path)
+  const hoja = archivo.Sheets[archivo.SheetNames[0]]
+  const datos = XLSX.utils.sheet_to_json(hoja)
+  // Verifica con ZOD que los campos del JSON sean correctos
+  const verificacion_datos = await excelSchema.safeParseAsync(datos)
+  if (!verificacion_datos.success) {
+    res.status(400).json({
+      respuesta: "Los datos del excel no son compatibles para la importación",
+      error: verificacion_datos.error,
+    })
   }
+  // Envia los registros al Services para subirlos a la DB
+  const resultado = await UserService.guardarAlumnosImportados(verificacion_datos.data as Usuarios)
+  res.status(resultado.status).json(resultado.respuesta)
 }
 
 export default {
