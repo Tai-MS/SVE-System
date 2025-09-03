@@ -5,6 +5,7 @@ import { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO, DatosBasicos }
 import Usuario, { Rol } from "./UserModel"
 import userClass from "./UserPersistence"
 import { Usuarios } from "#components/User/userSchemas"
+import transport from "#Utils/mailer";
 import { usuarioI } from "./UserDTO"
 import sequelize from "#db/connection"
 
@@ -21,16 +22,19 @@ async function traerUsuario(dni: string): Promise<Usuario | string> {
   return usuario
 }
 
-async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string> {
-  const usuario = await Usuario.encontrarPorEmail(data.email)
 
-  if (!usuario) {
-    return "Email no encontrado"
-  }
-  const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
-  if (!comprar_contraseña) {
-    return "Contraseña equivocada"
-  }
+async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string>{
+    const usuario = await Usuario.encontrarPorEmail(data.email)
+    
+    if(!usuario){
+        return "Email no encontrado"
+    }
+    const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
+
+
+    if(!comprar_contraseña){
+        return "Contraseña equivocada"
+    }
 
   return usuario
 }
@@ -57,7 +61,16 @@ async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
     creado: new Date(),
     rol: Rol.ESTUDIANTE,
   }
-
+  await transport.sendMail({
+          from: process.env.USER_MAILER,
+          to: dni + "@terciariourquiza.edu.ar",
+          subject: 'Cuenta creada',
+          html: `
+              <div>
+                  <p>Tu contraseña es: ${contraseña_generada}</p>
+              </div>
+          `
+      })
   const crear = await userClass.crearUsuario(datosFinal)
 
   return crear
@@ -95,6 +108,16 @@ async function guardarAlumnosImportados(datos: Usuarios) {
           { transaction: t }
         )
       }
+    })
+      await transport.sendMail({
+      from: process.env.USER_MAILER,
+      to: dniLimpio + "@terciariourquiza.edu.ar",
+      subject: 'Cuenta creada',
+      html: `
+          <div>
+              <p>Tu contraseña es: ${contraseña_generada}</p>
+          </div>
+      `
     })
     return { status: 200, mensaje: "Los alumnos se importaron correctamente en la base de datos" }
   } catch (err) {

@@ -1,1 +1,45 @@
+
 @import "tailwindcss";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #BFB6C8;
+} 
+
+body{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at center, 
+  rgba(70, 76, 199, 0.26) 0%, 
+  rgba(89, 80, 221, 0.70) 33%, 
+  rgba(125, 74, 213, 1) 100%
+)
+}
+
+h1 {
+  font-size: 3em;
+  line-height: 1.1;
+}
+
+input {
+  padding: 0.2em;
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+

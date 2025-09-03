@@ -1,12 +1,11 @@
-import './App.css'
-import Comunicados from './components/Comunicados.tsx'
-// import Dashboard from './components/Materias.tsx'
-function App() {
-
+const [user, setUser] = useState<string | null>(null)
   return (
     <>
-      <Comunicados/>
-      {/* <Dashboard/> */}
+
+    <Login setUser={setUser}/>
+    {user && <div>Logged in as: {user}</div>}
+
+
     </>
   )
 }
