@@ -1,11 +1,15 @@
 import Comunicado from "./comunicadosModel"
 import { comunicadosAttributes } from "./comunicadosDTO"
-import { Transaction } from "sequelize"
+import { Transaction, where } from "sequelize"
 
 export class ComunicadoService {
   traerComunicados = async () => {
-    const respuesta = await Comunicado.findAll()
-    if (respuesta!) {
+    const respuesta = await Comunicado.findAll({
+      where: {
+        eliminado: false,
+      },
+    })
+    if (!respuesta) {
       return { status: 404, respuesta: "No hay ningún comunicado" }
     }
 
@@ -59,11 +63,20 @@ export class ComunicadoService {
       }
 
       await t.commit()
-      return { status: 201, respuesta: "El comunicado se ha subido correctamente" }
+      return { status: 201, respuesta: "El comunicado se ha actualizaco correctamente" }
     } catch (err) {
       await t.rollback()
       console.log(err)
       return { status: 500, respuesta: "Error en el servidor al momento de actualizar el comunicado" }
+    }
+  }
+  eliminarComunicado = async (id: string) => {
+    try {
+      await Comunicado.update({ eliminado: true }, { where: { id } })
+      return { status: 200, respuesta: "El comunicado se elimino correctamente" }
+    } catch (err) {
+      console.log(err)
+      return { status: 500, respuesta: "Ocurrio un error en el servidor al momento de eliminar el comununicado" }
     }
   }
 }

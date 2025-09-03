@@ -2,15 +2,20 @@ import { ComunicadoService } from "./comunicadosService"
 import { Request, Response } from "express"
 import { comunicadoSchema } from "./comunicadoSchemas"
 import { comunicadosAttributes } from "./comunicadosDTO"
+import { arch } from "os"
 
 const comunicadoService = new ComunicadoService()
 
 export class ComunicadoController {
-  todosLosComunicados = async (req: Request, res: Response) => {
+  obtenerTodos = async (req: Request, res: Response) => {
     const respuesta = await comunicadoService.traerComunicados()
     res.status(respuesta.status).json(respuesta.respuesta)
   }
-  creacionDeComunicado = async (req: Request, res: Response) => {
+  crear = async (req: Request, res: Response) => {
+    const archivos = req.file?.buffer
+    if (archivos) {
+      req.body.archivos = archivos
+    }
     const verificacion = await comunicadoSchema.safeParseAsync(req.body)
     if (!verificacion.success) {
       res.status(400).json({ respuesta: "Los datos ingresados para crear un comunicado son incorrectos" })
@@ -19,12 +24,12 @@ export class ComunicadoController {
       res.status(respuesta.status).json(respuesta.respuesta)
     }
   }
-  obtenerUnComunicado = async (req: Request, res: Response) => {
+  filtrar = async (req: Request, res: Response) => {
     const id_comunicado = req.params.id
     const respuesta = await comunicadoService.filtrarComunicado(id_comunicado as string)
     res.status(respuesta.status).json(respuesta.respuesta)
   }
-  actualizarUnComunicado = async (req: Request, res: Response) => {
+  actualizar = async (req: Request, res: Response) => {
     const id_comunicado = req.params.id
     const verificacion = await comunicadoSchema.safeParseAsync(req.body)
     if (!verificacion.success) {
@@ -36,5 +41,10 @@ export class ComunicadoController {
       )
       res.status(respuesta.status).json(respuesta.respuesta)
     }
+  }
+  eliminar = async (req: Request, res: Response) => {
+    const id_comunicado = req.params.id_comunicado
+    const respuesta = await comunicadoService.eliminarComunicado(id_comunicado as string)
+    res.status(respuesta.status).json(respuesta.respuesta)
   }
 }

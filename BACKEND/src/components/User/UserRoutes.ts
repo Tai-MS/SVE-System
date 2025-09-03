@@ -1,10 +1,9 @@
 import express, { NextFunction, Request, Response } from "express"
 import userController from "./UserController"
 import passport from "#config/passport"
-import multer from "multer"
+import upload from "#Utils/multer"
 
 const router = express.Router()
-const upload = multer({ dest: "uploads/" })
 
 /**
  * Endpoint al que debe apuntar el boton de login
