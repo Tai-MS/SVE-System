@@ -17,7 +17,7 @@ export class ComunicadoController {
   creacionDeComunicado = async (req: Request, res: Response) => {
     try {
       const verificacion = await comunicadoSchema.safeParseAsync(req.body)
-      if (verificacion.success!) {
+      if (!verificacion.success) {
         res.status(400).json({ respuesta: "Los datos ingresados para crear un comunicado son incorrectos" })
       }
 

@@ -4,7 +4,7 @@ import { comunicadosAttributes } from "./comunicadosDTO"
 export class ComunicadoService {
   traerComunicados = async () => {
     const respuesta = await Comunicado.findAll()
-    if (respuesta!) {
+    if (!respuesta) {
       return { status: 404, respuesta: "No hay ningún comunicado" }
     }
 
