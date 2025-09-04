@@ -1,6 +1,24 @@
 export type archivoAttributes = {
-  id?: number
+  id?: string
   ruta: string
-  modulo: "comunicado" | "tarea" | "trabajo"
-  moduloId: number
+  modulo: string
+  moduloId: string
+}
+
+export type archivo = {
+  fieldname: string
+  originalname: string
+  encoding: string
+  mimetype: string
+  buffer: Buffer
+  size: number
+}
+
+export type archivos = Array<archivo>
+
+export type archivoValidation = {
+  archivo: object
+  tipo: string
+  modulo: string
+  moduloId: string
 }

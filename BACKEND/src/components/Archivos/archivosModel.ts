@@ -13,15 +13,15 @@ class Archivo extends Model<archivoCreation, archivoAttributes> {
 
 Archivo.init(
   {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    id: { type: DataTypes.UUID, primaryKey: true, defaultValue: DataTypes.UUIDV4 },
     ruta: { type: DataTypes.STRING, allowNull: false },
     modulo: {
-      type: DataTypes.ENUM("Comunicado", "trabajoNoCalificado", "trabajoCalificado", "materialTrabajo"),
+      type: DataTypes.ENUM("Comunicado", "Trabajos-Materiales"),
       allowNull: false,
     },
-    moduloId: { type: DataTypes.INTEGER, allowNull: false },
+    moduloId: { type: DataTypes.UUID, allowNull: false, defaultValue: DataTypes.UUIDV4 },
   },
-  { sequelize, tableName: "archivos", timestamps: true, createdAt: "subido", updatedAt: "actulizado" }
+  { sequelize, tableName: "archivos", timestamps: true, createdAt: "subido", updatedAt: "actualizado" }
 )
 
 export default Archivo
