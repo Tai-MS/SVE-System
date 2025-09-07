@@ -4,6 +4,7 @@ import morgan from "morgan"
 import "../db/connection"
 import userRouter from "#components/User/UserRoutes"
 import comunicadosRouter from "#components/Comunicados/comunicadosRouter"
+import archivoRouter from "#components/Archivos/archivoRouter"
 import passport from "passport"
 import session from "express-session"
 import connectSessionSequelize from "connect-session-sequelize"
@@ -50,6 +51,7 @@ export const create_server = () => {
     .use(passport.session())
     .use("/usuarios", userRouter)
     .use("/comunicados", comunicadosRouter)
+    .use("/archivos", archivoRouter)
 
   sessionStore.sync()
 

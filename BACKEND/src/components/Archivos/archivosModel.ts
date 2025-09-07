@@ -9,6 +9,8 @@ class Archivo extends Model<archivoCreation, archivoAttributes> {
   declare ruta: string
   declare modulo: string
   declare moduloId: number
+  declare subido: Date
+  declare actualizado: Date
 }
 
 Archivo.init(

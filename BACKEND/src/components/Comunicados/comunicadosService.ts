@@ -1,6 +1,9 @@
 import Comunicado from "./comunicadosModel"
 import { comunicadosAttributes } from "./comunicadosDTO"
-import { Transaction, where } from "sequelize"
+import { ArchivoService } from "#components/Archivos/archivoService"
+import Usuario from "#components/User/UserModel"
+
+const archivoService = new ArchivoService()
 
 export class ComunicadoService {
   traerComunicados = async () => {
@@ -8,6 +11,11 @@ export class ComunicadoService {
       where: {
         eliminado: false,
       },
+      include: {
+        model: Usuario,
+        attributes: ["nombre", "apellido"],
+      },
+      order: [["actualizado", "ASC"]],
     })
     if (!respuesta) {
       return { status: 404, respuesta: "No hay ningún comunicado" }
@@ -20,7 +28,10 @@ export class ComunicadoService {
     try {
       if (data.archivos !== undefined) {
         const { archivos, ...datosComunicado } = data
-
+        const creacionDeArchivos = await archivoService.crear(archivos, "Comunicados", datosComunicado.id_usuario)
+        if (creacionDeArchivos.status !== 200) {
+          new Error("Ocurrio un error a la hora de subir las imagenes")
+        }
         await Comunicado.create(datosComunicado, { transaction: t })
       } else {
         await Comunicado.create(data, { transaction: t })

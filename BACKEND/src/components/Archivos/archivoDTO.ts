@@ -3,6 +3,8 @@ export type archivoAttributes = {
   ruta: string
   modulo: string
   moduloId: string
+  subido?: Date
+  actualizado?: Date
 }
 
 export type archivo = {

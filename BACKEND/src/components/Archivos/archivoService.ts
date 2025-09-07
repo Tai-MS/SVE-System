@@ -7,21 +7,19 @@ export class ArchivoService {
     const t = await Archivo.sequelize!.transaction()
     try {
       for (const archivo of archivos) {
-        if (archivo.fieldname === "img") {
-          const url = imageURLTrasnform(archivo)
-          const imagenSubida = await uploadImage(url, archivo.originalname, modulo)
-          if (!imagenSubida.success) {
-            return { status: 500, respuesta: "Ocurrio un error al momento de subir la imagen a la base de datos" }
-          } else {
-            await Archivo.create(
-              {
-                ruta: imagenSubida.msg,
-                modulo,
-                moduloId: id,
-              },
-              { transaction: t }
-            )
-          }
+        const url = imageURLTrasnform(archivo)
+        const imagenSubida = await uploadImage(url, archivo.originalname, modulo)
+        if (!imagenSubida.success) {
+          return { status: 500, respuesta: "Ocurrio un error al momento de subir la imagen a la base de datos" }
+        } else {
+          await Archivo.create(
+            {
+              ruta: imagenSubida.msg,
+              modulo,
+              moduloId: id,
+            },
+            { transaction: t }
+          )
         }
       }
       await t.commit()
