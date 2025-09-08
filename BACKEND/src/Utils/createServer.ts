@@ -3,6 +3,7 @@ import cors from "cors"
 import morgan from "morgan"
 import "../db/connection"
 import userRouter from "#components/User/UserRoutes"
+import comunicadosRouter from "#components/Comunicados/comunicadosRouter"
 import passport from "passport"
 import session from "express-session"
 import connectSessionSequelize from "connect-session-sequelize"
@@ -47,7 +48,8 @@ export const create_server = () => {
     )
     .use(passport.initialize())
     .use(passport.session())
-    .use("/user", userRouter)
+    .use("/usuarios", userRouter)
+    .use("/comunicados", comunicadosRouter)
 
   sessionStore.sync()
 

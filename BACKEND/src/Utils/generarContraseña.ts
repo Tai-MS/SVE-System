@@ -1,6 +1,11 @@
 import crypto from "crypto"
 
 export function generarContraseña(longitud: number = 8): string {
+
+  if(process.env.ENV === "dev"){
+      return "contraseña"
+  }
+
   const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*"
   const valoresAleatorios = new Uint32Array(longitud)
   crypto.getRandomValues(valoresAleatorios)
@@ -12,5 +17,5 @@ export function generarContraseña(longitud: number = 8): string {
   console.log("+++++++++++++++++++")
   console.log(contraseña)
   console.log("+++++++++++++++++++")
-  return "contraseña"
+  return contraseña
 }
