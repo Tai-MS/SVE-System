@@ -75,6 +75,7 @@ export function useAuth(): AuthReturn {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
+    localStorage.removeItem("userId");
     setToken(null);
     setUser(null);
   };
