@@ -10,6 +10,7 @@ import { excelSchema, Usuarios } from "#components/User/userSchemas"
 import dotenv from "dotenv"
 import XLSX from "xlsx"
 import { usuarioI } from "./UserDTO"
+import { datosDelToken } from "#middlewares/auth"
 
 dotenv.config()
 async function traerTodos(req: Request, res: Response, next: NextFunction): Promise<Response>{
@@ -68,6 +69,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
     }
 
     const iniciar_sesion = await UserService.iniciarSesion(data)
+    console.log(iniciar_sesion);
     if (typeof iniciar_sesion === "string") {
       return res.status(400).json({
         error: "Bad request",
@@ -76,6 +78,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
     }
 
     const token = await generarToken(iniciar_sesion)
+    const dato = await datosDelToken(token)
     console.log("++++++++++++++++++++++++")
     console.log(token)
     console.log("++++++++++++++++++++++++")
@@ -91,6 +94,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
       })
       .status(200)
       .json({
+        id: dato.id,
         status: 200,
         success: true,
         message: "logeado",
@@ -164,13 +168,14 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
     }
 
     const token = await generarToken(user)
-
+    const dato = await datosDelToken(token)
     req.logIn(user, function (error) {
       if (error) {
         return next(error)
       }
       const email = user.email
       const datos = {
+        id: dato.id,
         dni: user.dni,
         email: email,
         token: token,
