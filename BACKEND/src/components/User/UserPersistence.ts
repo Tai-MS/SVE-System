@@ -22,6 +22,7 @@ class UserClass{
             
             const user= await Usuario.encontrarPorDNI(data.dni)
             
+            
             if(!user){
                 return "Usuario no encontrado"
             }

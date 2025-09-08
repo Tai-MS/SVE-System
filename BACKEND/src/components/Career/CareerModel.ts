@@ -2,7 +2,7 @@ import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequ
 import { sequelize } from "#db/connection"
 
 export class Career extends Model<InferAttributes<Career>, InferCreationAttributes<Career>> {
-  declare id: number
+  declare id: string
   declare nombre: string
   declare duracion_meses: number
   declare activo: boolean
@@ -10,8 +10,7 @@ export class Career extends Model<InferAttributes<Career>, InferCreationAttribut
 Career.init(
   {
     id: {
-      type: DataTypes.BIGINT.UNSIGNED,
-      autoIncrement: true,
+      type: DataTypes.STRING,
       primaryKey: true,
     },
     nombre: { type: DataTypes.STRING(150), allowNull: false, unique: true },

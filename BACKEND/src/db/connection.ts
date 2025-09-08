@@ -1,3 +1,5 @@
+import { Career } from "#components/Career/CareerModel";
+import { cargar } from "#Utils/cargarCarreras";
 import getErrorMessage, { ErrorResponse } from "#Utils/errorHandling";
 
 import { Sequelize } from "sequelize"
@@ -26,14 +28,20 @@ export async function initializeDB(): Promise<void | ErrorResponse> {
         import('#components/User/UserModel');
         import('#components/Period/PeriodModel')
         import('#components/Career/CareerModel')
-        import('#components/CUType/CurricularUnitType')
         import('#components/CurricularUnit/CurricularUnitModel')
         /**
          * DESCOMENTAR PARA CREAR O SINCRONIZAR LAS TABLAS
          */
-        await sequelize.sync({ force: true });
+        console.log("hola");
+        
+        // await sequelize.drop(); // elimina todas las tablas
+        console.log("as");
+        // await sequelize.sync({ force: true });
+        console.log("as");
+        // cargar()
         console.log("DB sincronizada");
     } catch (error: unknown) {
+      console.error("Error en initializeDB:", error);
         return {
             error: getErrorMessage(error)
         }

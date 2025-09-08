@@ -8,6 +8,10 @@ import session from "express-session"
 import connectSessionSequelize from "connect-session-sequelize"
 import sequelize from "#db/connection"
 import cookieParser from "cookie-parser"
+import { verificarToken } from "#middlewares/auth"
+import rutasPublicasRouter from '#components/PublicRoutes/rutasPublicas'
+import UnidadCurricularRouter from "#components/CurricularUnit/CurricularUnitRoutes"
+import CarreraRouter from "#components/Career/CarreraRoutes"
 
 /**
  * Se encarga de levantar el servidor
@@ -24,7 +28,7 @@ export const create_server = () => {
     checkExpirationInterval: 15 * 60 * 1000,
     expiration: 24 * 60 * 60 * 1000,
   })
-
+  
   app
     .disable("x-powered-by")
     .use(morgan("dev"))
@@ -45,11 +49,13 @@ export const create_server = () => {
         saveUninitialized: false,
       })
     )
+    .use("/public", rutasPublicasRouter) //MODIFICAR ENDPOINTS PARA PRODUCCIÓN
+    .use("/carreras", CarreraRouter)
+    .use("/unidadcurricular", UnidadCurricularRouter)
     .use(passport.initialize())
     .use(passport.session())
+    // .use(verificarToken)
     .use("/user", userRouter)
-
-  sessionStore.sync()
 
   // Sincronizar el store de sesiones
   sessionStore.sync()

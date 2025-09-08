@@ -7,6 +7,7 @@ import userClass from "./UserPersistence"
 import transport from "#Utils/mailer";
 import { Usuarios } from "#schemas/userSchemas"
 import { usuarioI } from "./UserDTO"
+import { InferCreationAttributes } from "sequelize"
 
 async function traerTodos() {
   return userClass.traerTodos()
@@ -73,9 +74,66 @@ async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
   return crear
 }
 
-async function actualizarUsuario(datos: ActualizarUsuarioDTO): Promise<Usuario | string> {
-  const usuario = await userClass.actualizarUsuario(datos)
-  return usuario
+async function actualizarUsuario(datos: Partial<InferCreationAttributes<Usuario>>): Promise<Usuario | string> {
+
+  const dni = datos.dni
+  
+  const actualizarCampos: Partial<InferCreationAttributes<Usuario>> = {};
+  
+  if (dni !== null && dni !== undefined) {
+    actualizarCampos.dni = datos.dni;
+  }else{
+    return "DNI requerido"
+  }
+
+  const usuario = await Usuario.encontrarPorDNI(dni)
+  
+  if (datos.email !== null && datos.email !== undefined) {
+    actualizarCampos.email = datos.email;
+  }
+
+  if (datos.nombre !== null && datos.nombre !== undefined) {
+    actualizarCampos.nombre = datos.nombre;
+  }
+
+  if (datos.apellido !== null && datos.apellido !== undefined) {
+    actualizarCampos.apellido = datos.apellido;
+  }
+
+  if (datos.telefono !== null && datos.telefono !== undefined) {
+    actualizarCampos.telefono = datos.telefono;
+  }
+
+  if (datos.anioIngreso !== null && datos.anioIngreso !== undefined) {
+    actualizarCampos.anioIngreso = datos.anioIngreso;
+  }
+
+  if (datos.contraseña !== null && datos.contraseña !== undefined) {
+    actualizarCampos.contraseña = datos.contraseña;
+  }
+
+  if (datos.activo !== null && datos.activo !== undefined) {
+    actualizarCampos.activo = datos.activo;
+  }
+
+  if (datos.ultima_conexion !== null && datos.ultima_conexion !== undefined) {
+    actualizarCampos.ultima_conexion = datos.ultima_conexion;
+  }
+
+  if (datos.token !== null && datos.token !== undefined) {
+    actualizarCampos.token = datos.token;
+  }
+
+  if (datos.carrera_id_fk !== null && datos.carrera_id_fk !== undefined) {
+    actualizarCampos.carrera_id_fk = datos.carrera_id_fk;
+  }
+
+  await Usuario.update(actualizarCampos, {
+    where: { dni: datos.dni }
+  })
+
+  
+  return "usuario actualizado"
 }
 
 async function deshabilitarUsuario(email: String) {

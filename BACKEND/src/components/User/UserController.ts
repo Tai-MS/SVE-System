@@ -3,13 +3,15 @@ import { NextFunction, Request, Response } from "express"
 import UserService from "./UserService"
 import passport from "passport"
 import User, { UserCreation } from "./UserModel"
-import { CrearUsuarioDTO, DatosBasicos, IniciarSesionDTO } from "./UserDTO"
+import { ActualizarUsuarioDTO, CrearUsuarioDTO, DatosBasicos, IniciarSesionDTO } from "./UserDTO"
 import { generarContraseña } from "#Utils/generarContraseña"
-import { generarToken } from "#middlewares/auth"
+import { datosDelToken, generarToken } from "#middlewares/auth"
 import { excelSchema, Usuarios } from "#schemas/userSchemas"
 import dotenv from "dotenv"
 import XLSX from "xlsx"
 import { usuarioI } from "./UserDTO"
+import Usuario from "./UserModel"
+import { InferCreationAttributes } from "sequelize"
 
 dotenv.config()
 async function traerTodos(req: Request, res: Response, next: NextFunction): Promise<Response>{
@@ -59,14 +61,14 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
       email: req.body.email,
       contraseña: req.body.contraseña,
     }
-
+    
     if (!data.email || !data.contraseña) {
       return res.status(400).json({
         error: "Bad request",
         message: "Campos incompletos.",
       })
     }
-
+    
     const iniciar_sesion = await UserService.iniciarSesion(data)
     if (typeof iniciar_sesion === "string") {
       return res.status(400).json({
@@ -74,8 +76,10 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
         message: iniciar_sesion,
       })
     }
-
+    
     const token = await generarToken(iniciar_sesion)
+    const dato = await datosDelToken(token)
+    console.log(dato.id);
     console.log("++++++++++++++++++++++++")
     console.log(token)
     console.log("++++++++++++++++++++++++")
@@ -95,6 +99,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
         success: true,
         message: "logeado",
         token: token,
+
       })
   } catch (error: unknown) {
     return res.status(500).json({
@@ -125,9 +130,22 @@ async function crearUsuario(req: Request, res: Response, next: NextFunction): Pr
 
 async function actualizarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const email: string = req.query.email as string
+    const datos: Partial<InferCreationAttributes<Usuario>> = {
+      id: req.body.id,
+      dni: req.body.dni,
+      email: req.body.email,
+      nombre: req.body.nombre || null,
+      apellido: req.body.apellido || null,
+      telefono: req.body.telefono || null,
+      anioIngreso: req.body.anioIngreso || null,
+      contraseña: req.body.contraseña || null,
+      activo: req.body.activo || null,
+      ultima_conexion: req.body.ultima_conexion || null,
+      token: req.body.token || null,
+      carrera_id_fk: req.body.carrera_id_fk || null
+    }
 
-    const call = await UserService.traerUsuario(email)
+    const call = await UserService.actualizarUsuario(datos)
 
     return res.status(200).send(call)
   } catch (error) {
@@ -154,7 +172,10 @@ async function deshabilitarUsuario(req: Request, res: Response, next: NextFuncti
 }
 
 async function loginGoogle(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+  console.log(req);
   passport.authenticate("google", async (error: unknown, user: User, info: any) => {
+    
+    
     if (error) {
       return next(error)
     }

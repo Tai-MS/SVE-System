@@ -18,17 +18,24 @@ export async function generarToken(data: Usuario){
     return token
 } 
 
+export async function datosDelToken(token: string){
+    const decodificado = jwt.verify(token, clave) as jwt.JwtPayload
+    const dni = decodificado.dni
+    const rol = decodificado.rol
+    const id = decodificado.id
+    console.log(dni)
+    console.log(rol)
+    return {dni: dni, rol: rol, id: id}
+}
+
 export async function verificarToken(req: Request, res: Response, next: NextFunction){
     const token = req.cookies['auth-token'];
     if (!token) return res.status(401).send('Accesso denegado');
     
     try {
-        console.log('verify', token);
-        const decodificado = jwt.verify(token, clave) as jwt.JwtPayload;
-
-        const dni = decodificado.dni;
+        const datosToken = await datosDelToken(token)
         
-        const usuario = await UserService.traerUsuario(dni)
+        const usuario = await UserService.traerUsuario(datosToken.dni)
         
         if(!usuario){
             throw Error; 

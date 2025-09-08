@@ -18,6 +18,7 @@ passport.use(
       callbackURL: `http://localhost:${process.env.PORT}/user/auth/google/callback`,
     },
     async function (token: string, tokenSecret: string, profile: passport.Profile, done) {
+      console.log(passport)
       try {
         //Verifica si el email está en la base de datos
         //Si no esta, verifica si es perteneciente a la institucion
@@ -58,11 +59,15 @@ passport.use(
 
 //Serializa el usuario (guarda ciertos datos de la sesión)
 passport.serializeUser((user: any, done) => {
+  console.log(user);
+  
   done(null, user?.dataValues.id)
 })
 
 //Deserializa el usuario
 passport.deserializeUser(async (email: string, done) => {
+  console.log(email);
+
   try {
     const user = await User.encontrarPorEmail(email)
     done(null, user)
