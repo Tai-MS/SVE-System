@@ -1,7 +1,7 @@
 // import { useState } from "react";
 // import Login from "./components/Login";
-// import Comunicados from "./pages/Comunicados/Comunicados";
-import CrearComunicado from "./pages/Comunicados/CrearComunicado";
+import Comunicados from "./pages/Comunicados/Comunicados";
+// import CrearComunicado from "./pages/Comunicados/CrearComunicado";
 
 const App = () => {
   // const [user, setUser] = useState<string | null>(null);
@@ -10,7 +10,8 @@ const App = () => {
       {/* <Login setUser={setUser} />
       {user && <div>Logged in as: {user}</div>}
        */}
-      <CrearComunicado />
+      <Comunicados />
+      {/* <CrearComunicado /> */}
     </>
   );
 };

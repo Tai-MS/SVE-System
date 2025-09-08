@@ -54,6 +54,7 @@ export default function Comunicados() {
   useEffect(() => {
     fetch("http://localhost:8080/comunicados/")
       .then((res) => res.json())
+      .then((data: Comunicado[]) => setComunicados(data))
       .catch((err) => console.error("Error cargando comunicados:", err));
   }, []);
 
@@ -76,7 +77,7 @@ export default function Comunicados() {
     })
       .then((res) => res.json())
       .then((data: Comunicado) => {
-        setComunicados((prev) => [data, ...prev]);
+        setComunicados([data, ...comunicados]);
         setNuevoComunicado("");
       })
       .catch((err) => console.error("Error publicando comunicado:", err));
@@ -154,28 +155,15 @@ export default function Comunicados() {
             </Button>
           </div>
         </div>
-
-        <div className="mb-6">
-          <TextField
-            multiline
-            fullWidth
-            rows={4}
-            placeholder="Anuncia algo al alumnado"
-            variant="outlined"
-            className="bg-white"
-            value={nuevoComunicado}
-            onChange={handleChange}
-          />
-          <div className="flex justify-end mt-2">
+          <div className="flex center mt-2">
             <Button
               variant="contained"
               color="secondary"
               onClick={publicarComunicado}
             >
-              Publicar
+              Ir a publicar
             </Button>
           </div>
-        </div>
 
         {comunicados.map((item) => (
           <Card key={item.id || Math.random()} className="mb-4">
