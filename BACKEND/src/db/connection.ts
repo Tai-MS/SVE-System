@@ -19,22 +19,26 @@ export const sequelize = new Sequelize(
   }
 )
 
-export const updateDB = async () => {
-  try {
-    import("#components/User/UserModel")
-    import("#components/Period/PeriodModel")
-    import("#components/Career/CareerModel")
-    import("#components/CUType/CurricularUnitType")
-    import("#components/CurricularUnit/CurricularUnitModel")
-    import("#components/Archivos/archivosModel")
-    import("#components/Comunicados/comunicadosModel")
-    await sequelize.sync({ alter: true })
-    process.env.PORT === "8080"
-      ? console.log("DB local actualizada correctamente!")
-      : console.log("DB remota actualizada correctamente!")
-  } catch (err) {
-    console.log("Error a la hora de actualiza la DB: ", err)
-  }
+
+export async function initializeDB(): Promise<void | ErrorResponse> {
+    try {
+        await sequelize.authenticate();
+        console.log("DB conectada");
+        import('#components/User/UserModel');
+        import('#components/Period/PeriodModel')
+        import('#components/Career/CareerModel')
+        import('#components/CUType/CurricularUnitType')
+        import('#components/CurricularUnit/CurricularUnitModel')
+        /**
+         * DESCOMENTAR PARA CREAR O SINCRONIZAR LAS TABLAS
+         */
+        // await sequelize.sync({ force: true });
+        console.log("DB sincronizada");
+    } catch (error: unknown) {
+        return {
+            error: getErrorMessage(error)
+        }
+    }
 }
 
 export const connectDB = async () => {

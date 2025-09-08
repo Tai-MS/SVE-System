@@ -19,7 +19,7 @@ function Login({ login }: LoginProps) {
     const success = await login(username, password);
 
     if (success) {
-      navigate("/"); // Redirigir al home
+      navigate("/comunicados"); // Redirigir al home
     } else {
       setError("Credenciales inválidas");
     }
@@ -71,7 +71,7 @@ function Login({ login }: LoginProps) {
                         hover:border-indigo-800 transition-colors duration-300"
               type="button"
               onClick={async () => {
-                window.location.href = import.meta.env.VITE_BACKURL + "/user/auth/google/callback";
+                window.location.href = import.meta.env.VITE_BACKURL + "/user/google";
               }}
             >
               Iniciar Sesión con Google

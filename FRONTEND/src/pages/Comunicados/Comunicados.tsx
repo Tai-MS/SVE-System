@@ -62,8 +62,7 @@ export default function Comunicados() {
   
   // Publicar un nuevo comunicado
   const handleRedirect = () => {
-    navigate("/comunicados/crear/" + localStorage.getItem("id"));
-    // 5cbc96ee-e74b-4476-a15b-145d27c801c0
+    navigate("/comunicados/crear/" + localStorage.getItem("userId"));
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
