@@ -31,7 +31,7 @@ export async function initializeDB(): Promise<void | ErrorResponse> {
         /**
          * DESCOMENTAR PARA CREAR O SINCRONIZAR LAS TABLAS
          */
-        await sequelize.sync({ force: true });
+        // await sequelize.sync({ force: true });
         console.log("DB sincronizada");
     } catch (error: unknown) {
         return {

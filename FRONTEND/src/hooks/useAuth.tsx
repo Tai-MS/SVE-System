@@ -58,7 +58,7 @@ export function useAuth(): AuthReturn {
         console.log(data);
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", username);
-        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("userId", data.id);
         setToken(data.token);
         setUser(username);
         return true;
