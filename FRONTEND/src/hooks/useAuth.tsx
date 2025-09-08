@@ -55,7 +55,6 @@ export function useAuth(): AuthReturn {
       const data = await res.json();
 
       if (data.success && data.token) {
-        console.log(data);
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", username);
         localStorage.setItem("userId", data.id);
