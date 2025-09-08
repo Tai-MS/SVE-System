@@ -1,4 +1,11 @@
-export default function Header() {
+import {type JSX} from "react";
+
+interface HeaderProps {
+  user?: string | null;
+  onLogout?: () => void;
+}
+
+export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
   return (
     <header className="fixed top-0 left-0 w-full bg-white shadow-md px-6 py-4 z-50">
       <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -12,8 +19,17 @@ export default function Header() {
             <li className="hover:text-blue-400 cursor-pointer">Inicio</li>
             <li className="hover:text-blue-400 cursor-pointer">Acerca</li>
             <li className="hover:text-blue-400 cursor-pointer">Contacto</li>
+              {user && onLogout && (
+            <button
+              onClick={onLogout}
+              className="ml-4 bg-red-500 px-3 py-1 rounded text-white hover:bg-red-700"
+            >
+            Logout
+            </button>)}
           </ul>
         </nav>
+
+   
       </div>
     </header>
   );
