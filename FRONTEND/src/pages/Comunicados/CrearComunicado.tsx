@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
-
+import { useNavigate } from "react-router-dom";
 interface Comunicado {
   id_usuario: string;
   titulo: string;
@@ -9,12 +9,12 @@ interface Comunicado {
 
 const CrearComunicado: React.FC = () => {
   const [comunicado, setComunicado] = useState<Comunicado>({
-    id_usuario: "1e5b6bc0-b761-4d07-aaba-da11887a498a",
+    id_usuario: "5cbc96ee-e74b-4476-a15b-145d27c801c0",
     titulo: "",
     descripcion: "",
     img: [],
   });
-
+const navigate = useNavigate();
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -49,6 +49,7 @@ const CrearComunicado: React.FC = () => {
 
       const dataJson = await res.json();
       console.log("Respuesta backend:", dataJson);
+      navigate("/comunicados");
     } catch (err) {
       console.error("Error al enviar comunicado:", err);
     }

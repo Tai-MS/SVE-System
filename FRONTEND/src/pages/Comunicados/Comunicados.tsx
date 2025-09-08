@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Avatar,
   Button,
@@ -41,7 +42,7 @@ interface Comunicado {
   general?: boolean;
   division?: number;
   id_comision?: string;
-  usuario?: Usuario;
+  Usuario?: Usuario;
   creado?: string | Date;
 }
 
@@ -49,6 +50,7 @@ export default function Comunicados() {
   const [open, setOpen] = useState(false);
   const [comunicados, setComunicados] = useState<Comunicado[]>([]);
   const [nuevoComunicado, setNuevoComunicado] = useState<string>("");
+  const navigate = useNavigate();
 
   // Obtener comunicados de la API
   useEffect(() => {
@@ -57,30 +59,11 @@ export default function Comunicados() {
       .then((data: Comunicado[]) => setComunicados(data))
       .catch((err) => console.error("Error cargando comunicados:", err));
   }, []);
-
+  
   // Publicar un nuevo comunicado
-  const publicarComunicado = () => {
-    if (!nuevoComunicado.trim()) return;
-
-    const nuevo: Comunicado = {
-      id_usuario: "0311b037-c1fa-46b1-8dde-5b7f7b669445", // reemplazar con ID real
-      titulo: "Nuevo Comunicado",
-      descripcion: nuevoComunicado,
-      eliminado: false,
-      creado: new Date().toISOString(),
-    };
-
-    fetch("http://localhost:8080/comunicados/crearComunicado", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(nuevo),
-    })
-      .then((res) => res.json())
-      .then((data: Comunicado) => {
-        setComunicados([data, ...comunicados]);
-        setNuevoComunicado("");
-      })
-      .catch((err) => console.error("Error publicando comunicado:", err));
+  const handleRedirect = () => {
+    navigate("/comunicados/crear/" + localStorage.getItem("id"));
+    // 5cbc96ee-e74b-4476-a15b-145d27c801c0
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -159,7 +142,7 @@ export default function Comunicados() {
             <Button
               variant="contained"
               color="secondary"
-              onClick={publicarComunicado}
+              onClick={handleRedirect}
             >
               Ir a publicar
             </Button>
@@ -169,11 +152,11 @@ export default function Comunicados() {
           <Card key={item.id || Math.random()} className="mb-4">
             <CardContent className="flex items-start gap-4">
               <Avatar className="bg-purple-300">
-                {item.usuario?.nombre?.charAt(0) || "?"}
+                {item.Usuario?.nombre?.charAt(0) || "?"}
               </Avatar>
               <div>
                 <Typography variant="subtitle2">
-                  {item.usuario?.nombre || "Desconocido"}
+                  {item.Usuario?.nombre || "Desconocido"}
                 </Typography>
                 <Typography variant="subtitle1">{item.titulo}</Typography>
                 <div className="mt-2 p-2 bg-gray-100 rounded">

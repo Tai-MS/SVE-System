@@ -15,7 +15,7 @@ export class ComunicadoService {
         model: Usuario,
         attributes: ["nombre", "apellido"],
       },
-      order: [["actualizado", "ASC"]],
+      order: [["actualizado", "DESC"]],
     })
     if (!respuesta) {
       return { status: 404, respuesta: "No hay ningún comunicado" }
