@@ -1,100 +1,87 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
+// import { googleLogin } from "../hooks/useAuth";
+
 interface LoginProps {
-    setUser: (username: string) => void;
+  login: (username: string, password: string) => Promise<boolean>;
 }
 
+function Login({ login }: LoginProps) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-const users = [
-    { username: 'admin', password: 'admin' },
-    { username: 'user', password: 'user' }
-]
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const success = await login(username, password);
 
-function Login({ setUser }: LoginProps) {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
-
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (username === "" || password === "") {
-            setError(true);
-            setErrorMessage("Todos los campos son obligatorios.");
-            return;
-        }
-    
-
-    const user = users.find(
-      (u) => u.username === username && u.password === password
-    );
-     if (user) {
-        setError(false);
-        setUser(username)
+    if (success) {
+      navigate("/"); // Redirigir al home
     } else {
-        setError(true);
-        setErrorMessage("Nombre de usuario o contraseña incorrectos.");
+      setError("Credenciales inválidas");
     }
-
-    setUsername("");
-    setPassword("");
-    };
+  };
 
   return (
     <>
     <Header />
-        <div className="mb-4 h-screen flex items-center justify-center">
-            <div className="bg-white p-8 rounded-2xl shadow-lg max-w-sm">
-                <form 
-                    className="flex flex-col text-black mx-2" 
-                    action="" onSubmit={handleSubmit} 
-                >
-                    <label className="flex mb-2">E-mail o Usuario</label>
-                    <input
-                        className="mb-4"
-                        type="text"
-                        placeholder="Nombre de Usuario"
-                        value={username}
-                        onChange={(x) => setUsername(x.target.value)}
-                        name="username"
-                    />
-                    <label className="flex mb-2">Contraseña</label>
-                    <input
-                        className="mb-2"
-                        type="password"
-                        placeholder="Contraseña"
-                        value={password}
-                        onChange={(x) => setPassword(x.target.value)}
-                        name="password"
-                    />
-                    <div className="flex text-rose-700 min-h-6">
-                        {error && <p > {errorMessage} </p>}
-                    </div>
+      <div className="h-screen flex items-center justify-center">
+        <div className="bg-white p-8 rounded-2xl shadow-lg max-w-sm">
+          <form
+            className="flex flex-col text-black mx-2"
+            onSubmit={handleSubmit}
+          >
+            <label className="flex mb-2">E-mail o Usuario</label>
+            <input
+              className="mb-4"
+              type="text"
+              placeholder="Nombre de Usuario"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              name="username"
+            />
 
-                    <button
-                        className="mt-6 mb-4 bg-indigo-600 border-2 text-white py-2 px-4 rounded-2xl 
-                        hover:border-indigo-800 transition-colors duration-300" 
-                        type="submit"
-                    >
-                        Iniciar Sesión
-                    </button>
+            <label className="flex mb-2">Contraseña</label>
+            <input
+              className="mb-2"
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+            />
 
-                    <button 
-                        className="mx-6 mt-4 bg-zinc-400 border-2 text-white py-2 px-4 rounded-2xl 
-                        hover:border-indigo-800 transition-colors duration-300"
-                        type="button"
-                    >
-                        Iniciar Sesión con Google
-                    </button>
-                </form>
+            <div className="flex text-rose-700 min-h-6">
+              {error && <p>{error}</p>}
             </div>
+
+            <button
+              className="mt-6 mb-4 bg-indigo-600 border-2 text-white py-2 px-4 rounded-2xl 
+                        hover:border-indigo-800 transition-colors duration-300"
+              type="submit"
+            >
+              Iniciar Sesión
+            </button>
+
+            <button
+              className="mx-6 mt-4 bg-zinc-400 border-2 text-white py-2 px-4 rounded-2xl 
+                        hover:border-indigo-800 transition-colors duration-300"
+              type="button"
+              onClick={async () => {
+                window.location.href = import.meta.env.VITE_BACKURL + "/user/auth/google/callback";
+              }}
+            >
+              Iniciar Sesión con Google
+            </button>
+          </form>
         </div>
+      </div>
     <Footer />
     </>
-  )
-
+  );
 }
 
 export default Login;
