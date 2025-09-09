@@ -22,6 +22,7 @@
     "bcrypt": "^6.0.0",
     "bcrypt-ts": "^7.1.0",
     "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.7.0",
     "connect-session-sequelize": "^8.0.2",
     "cookie-parser": "~1.4.4",
     "cookieparser": "^0.1.0",

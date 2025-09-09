@@ -15,12 +15,34 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
+interface Usuario {
+  id?: string;
+  nombre: string;
+  apellido: string;
+  dni: string;
+  telefono?: string;
+  email: string;
+  anioIngreso: number;
+  rol: string;
+  contraseña: string;
+  activo?: boolean;
+  creado?: Date;
+  ultima_conexion?: Date;
+  token?: string;
+}
+
 interface Comunicado {
-  id: number;
-  autor: string;
+  id?: string;
+  id_usuario: string;
   titulo: string;
-  fecha: string;
-  contenido: string;
+  descripcion: string;
+  eliminado: boolean;
+  archivos?: string;
+  general?: boolean;
+  division?: number;
+  id_comision?: string;
+  usuario?: Usuario;
+  creado?: string | Date;
 }
 
 export default function Comunicados() {
@@ -30,36 +52,34 @@ export default function Comunicados() {
 
   // Obtener comunicados de la API
   useEffect(() => {
-    fetch("http://localhost:3030/comunicados/")
+    fetch("http://localhost:8080/comunicados/")
       .then((res) => res.json())
-      .then((data) => setComunicados(data))
       .catch((err) => console.error("Error cargando comunicados:", err));
   }, []);
 
   // Publicar un nuevo comunicado
   const publicarComunicado = () => {
-    if (nuevoComunicado.trim() !== "") {
-      const nuevo = {
-        autor: "Admin",
-        titulo: "Nuevo Comunicado",
-        fecha: new Date().toLocaleString(),
-        contenido: nuevoComunicado,
-      };
+    if (!nuevoComunicado.trim()) return;
 
-      fetch("http://localhost:3030/comunicados/crearComunicado", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(nuevo),
+    const nuevo: Comunicado = {
+      id_usuario: "0311b037-c1fa-46b1-8dde-5b7f7b669445", // reemplazar con ID real
+      titulo: "Nuevo Comunicado",
+      descripcion: nuevoComunicado,
+      eliminado: false,
+      creado: new Date().toISOString(),
+    };
+
+    fetch("http://localhost:8080/comunicados/crearComunicado", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(nuevo),
+    })
+      .then((res) => res.json())
+      .then((data: Comunicado) => {
+        setComunicados((prev) => [data, ...prev]);
+        setNuevoComunicado("");
       })
-        .then((res) => res.json())
-        .then((data) => {
-          setComunicados([data, ...comunicados]);
-          setNuevoComunicado("");
-        })
-        .catch((err) => console.error("Error publicando comunicado:", err));
-    }
+      .catch((err) => console.error("Error publicando comunicado:", err));
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -158,14 +178,18 @@ export default function Comunicados() {
         </div>
 
         {comunicados.map((item) => (
-          <Card key={item.id} className="mb-4">
+          <Card key={item.id || Math.random()} className="mb-4">
             <CardContent className="flex items-start gap-4">
-              <Avatar className="bg-purple-300">{item.autor.charAt(0)}</Avatar>
+              <Avatar className="bg-purple-300">
+                {item.usuario?.nombre?.charAt(0) || "?"}
+              </Avatar>
               <div>
+                <Typography variant="subtitle2">
+                  {item.usuario?.nombre || "Desconocido"}
+                </Typography>
                 <Typography variant="subtitle1">{item.titulo}</Typography>
-                <Typography variant="caption">{item.fecha}</Typography>
                 <div className="mt-2 p-2 bg-gray-100 rounded">
-                  <Typography>{item.contenido}</Typography>
+                  <Typography>{item.descripcion}</Typography>
                 </div>
               </div>
             </CardContent>

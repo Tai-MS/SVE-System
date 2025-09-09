@@ -2,8 +2,7 @@ import getErrorMessage from "#Utils/errorHandling"
 import { NextFunction, Request, Response } from "express"
 import UserService from "./UserService"
 import passport from "passport"
-import User, { UserCreation } from "./UserModel"
-import { CrearUsuarioDTO, DatosBasicos, IniciarSesionDTO } from "./UserDTO"
+import User from "./UserModel"
 import { generarContraseña } from "#Utils/generarContraseña"
 import { generarToken } from "#middlewares/auth"
 import { excelSchema, Usuarios } from "#components/User/userSchemas"
@@ -13,9 +12,9 @@ import { usuarioI } from "./UserDTO"
 import { datosDelToken } from "#middlewares/auth"
 
 dotenv.config()
-async function traerTodos(req: Request, res: Response, next: NextFunction): Promise<Response>{
-    try {
-        const call = await UserService.traerTodos()
+async function traerTodos(req: Request, res: Response, next: NextFunction): Promise<Response> {
+  try {
+    const call = await UserService.traerTodos()
 
     return res.status(200).send(call)
   } catch (error) {
@@ -84,7 +83,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
     console.log("++++++++++++++++++++++++")
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],
-      token: token
+      token: token,
     }
     await UserService.actualizarUsuario(usuarioParaActualizar)
 
@@ -197,9 +196,11 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
 }
 
 async function ImportarAlumnos(req: Request, res: Response) {
-  // Genera un JSON a partir del archivo .xlsx
-  const archivoCasting = (req as unknown as { file: Express.Multer.File }).file
-  const archivo = XLSX.readFile(archivoCasting.path)
+  const archivoCasting = (req as unknown as { file?: Express.Multer.File }).file
+  if (!archivoCasting || !archivoCasting.buffer) {
+    return res.status(400).json({ error: "No se recibió ningún archivo." })
+  }
+  const archivo = XLSX.read(archivoCasting.buffer, { type: "buffer" })
   const hoja = archivo.Sheets[archivo.SheetNames[0]]
   const datos = XLSX.utils.sheet_to_json(hoja)
   // Verifica con ZOD que los campos del JSON sean correctos

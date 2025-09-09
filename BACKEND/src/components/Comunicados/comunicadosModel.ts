@@ -1,5 +1,5 @@
 import sequelize from "#db/connection"
-import { DataTypes, Model, Optional, UUIDV4 } from "sequelize"
+import { DataTypes, Model, Optional } from "sequelize"
 import { comunicadosAttributes } from "./comunicadosDTO"
 import Usuario from "#components/User/UserModel"
 
@@ -14,6 +14,8 @@ class Comunicado extends Model<comunicadosAttributes, comunicadosCreation> {
   declare general: boolean
   declare division: number
   declare id_comision: string
+  declare creado: Date
+  declare actualizado: Date
 }
 
 Comunicado.init(

@@ -6,14 +6,7 @@ const comunicadosController = new ComunicadoController()
 const comunicadosRouter = Router()
 
 comunicadosRouter.get("/", async (req, res) => await comunicadosController.obtenerTodos(req, res))
-comunicadosRouter.post(
-  "/crear",
-  upload.fields([
-    { name: "img", maxCount: 3 },
-    { name: "file", maxCount: 3 },
-  ]),
-  async (req, res) => await comunicadosController.crear(req, res)
-)
+comunicadosRouter.post("/crear", upload.array("img"), async (req, res) => await comunicadosController.crear(req, res))
 comunicadosRouter.get("/obtenerUno/:id", async (req, res) => await comunicadosController.filtrar(req, res))
 comunicadosRouter.patch("/actualizar/:id", async (req, res) => await comunicadosController.actualizar(req, res))
 comunicadosRouter.patch("/eliminar/:id", async (req, res) => await comunicadosController.eliminar(req, res))

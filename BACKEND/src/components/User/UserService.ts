@@ -5,7 +5,7 @@ import { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO, DatosBasicos }
 import Usuario, { Rol } from "./UserModel"
 import userClass from "./UserPersistence"
 import { Usuarios } from "#components/User/userSchemas"
-import transport from "#Utils/mailer";
+import transport from "#Utils/mailer"
 import { usuarioI } from "./UserDTO"
 import sequelize from "#db/connection"
 
@@ -22,19 +22,17 @@ async function traerUsuario(dni: string): Promise<Usuario | string> {
   return usuario
 }
 
+async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string> {
+  const usuario = await Usuario.encontrarPorEmail(data.email)
 
-async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string>{
-    const usuario = await Usuario.encontrarPorEmail(data.email)
-    
-    if(!usuario){
-        return "Email no encontrado"
-    }
-    const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
+  if (!usuario) {
+    return "Email no encontrado"
+  }
+  const comprar_contraseña = await bcrypt.compare(data.contraseña, usuario.contraseña)
 
-
-    if(!comprar_contraseña){
-        return "Contraseña equivocada"
-    }
+  if (!comprar_contraseña) {
+    return "Contraseña equivocada"
+  }
 
   return usuario
 }
@@ -62,15 +60,15 @@ async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
     rol: Rol.ESTUDIANTE,
   }
   await transport.sendMail({
-          from: process.env.USER_MAILER,
-          to: dni + "@terciariourquiza.edu.ar",
-          subject: 'Cuenta creada',
-          html: `
+    from: process.env.USER_MAILER,
+    to: dni + "@terciariourquiza.edu.ar",
+    subject: "Cuenta creada",
+    html: `
               <div>
                   <p>Tu contraseña es: ${contraseña_generada}</p>
               </div>
-          `
-      })
+          `,
+  })
   const crear = await userClass.crearUsuario(datosFinal)
 
   return crear
@@ -86,43 +84,45 @@ async function deshabilitarUsuario(email: String) {
 }
 
 async function guardarAlumnosImportados(datos: Usuarios) {
+  const t = await Usuario.sequelize!.transaction()
   try {
     // Guardar cada registro en la DB, en caso de tirar algún error hacer rollback
-    await sequelize.transaction(async (t) => {
-      for (let alumno of datos) {
-        const [apellido, nombre] = alumno["Apellido y nombre"].split(",").map((s) => s.trim())
-        const dniLimpio = alumno.Documento.replace(/^DNI\s*-\s*/, "")
-        const contraseña_generada = generarContraseña()
-        const hashear_contraseña = await hashContraseña(contraseña_generada)
-        await Usuario.create(
-          {
-            nombre,
-            apellido,
-            dni: dniLimpio,
-            telefono: alumno.Teléfono,
-            email: dniLimpio + "@terciariourquiza.edu.ar",
-            anioIngreso: alumno["Año de ingreso"],
-            rol: Rol.ESTUDIANTE,
-            contraseña: hashear_contraseña,
-          },
-          { transaction: t }
-        )
-      }
-    })
+    for (let alumno of datos) {
+      const [apellido, nombre] = alumno["Apellido y nombre"].split(",").map((s) => s.trim())
+      const dniLimpio = alumno.Documento.replace(/^DNI\s*-\s*/, "")
+      const contraseña_generada = generarContraseña()
+      const hashear_contraseña = await hashContraseña(contraseña_generada)
+      await Usuario.create(
+        {
+          nombre,
+          apellido,
+          dni: dniLimpio,
+          telefono: alumno.Teléfono,
+          email: dniLimpio + "@terciariourquiza.edu.ar",
+          anioIngreso: alumno["Año de ingreso"],
+          rol: Rol.ESTUDIANTE,
+          contraseña: hashear_contraseña,
+        },
+        { transaction: t }
+      )
       await transport.sendMail({
-      from: process.env.USER_MAILER,
-      to: dniLimpio + "@terciariourquiza.edu.ar",
-      subject: 'Cuenta creada',
-      html: `
+        from: process.env.USER_MAILER,
+        // ANTES DE DESPLEGAR A PRODUCION COLOCAR BIEN ESTA LINEA CON EL MAIL CORRESPONDIENTE (ESTE ES SOLO DE PRUEBA)
+        to: dniLimpio + "@terciario.edu.ar",
+        subject: "Cuenta creada",
+        html: `
           <div>
               <p>Tu contraseña es: ${contraseña_generada}</p>
           </div>
-      `
-    })
+      `,
+      })
+    }
+    t.commit()
     return { status: 200, mensaje: "Los alumnos se importaron correctamente en la base de datos" }
   } catch (err) {
     console.log("Ocurrio un error a la hora de cargar los alumnos a la base de datos")
     console.log(err)
+    t.rollback()
     return { status: 500, respuesta: "Ocurrio un error interno a la hora de guardar los alumnos en la base de datos" }
   }
 }

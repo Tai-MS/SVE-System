@@ -2,7 +2,6 @@ import { ComunicadoService } from "./comunicadosService"
 import { Request, Response } from "express"
 import { comunicadoSchema } from "./comunicadoSchemas"
 import { comunicadosAttributes } from "./comunicadosDTO"
-import { arch } from "os"
 
 const comunicadoService = new ComunicadoService()
 
@@ -12,7 +11,7 @@ export class ComunicadoController {
     res.status(respuesta.status).json(respuesta.respuesta)
   }
   crear = async (req: Request, res: Response) => {
-    const archivos = req.file?.buffer
+    const archivos = req.files
     if (archivos) {
       req.body.archivos = archivos
     }

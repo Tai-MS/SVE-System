@@ -67,6 +67,11 @@ Usuario.init(
         fields: ["dni"],
         name: "unique_dni_index",
       },
+      {
+        unique: true,
+        fields: ["email"],
+        name: "unique_email_index",
+      },
     ],
   }
 )
