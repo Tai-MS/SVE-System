@@ -9,7 +9,7 @@ interface Comunicado {
 
 const CrearComunicado: React.FC = () => {
   const [comunicado, setComunicado] = useState<Comunicado>({
-    id_usuario: "5cbc96ee-e74b-4476-a15b-145d27c801c0",
+    id_usuario: localStorage.getItem("userId") || "",
     titulo: "",
     descripcion: "",
     img: [],
