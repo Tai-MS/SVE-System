@@ -7,7 +7,6 @@ import Header from "./components/Header";
 import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
 
-
 function App() {
   const { user, logout, login } = useAuth();
 

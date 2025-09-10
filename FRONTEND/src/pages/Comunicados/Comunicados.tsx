@@ -38,7 +38,7 @@ interface Comunicado {
   titulo: string;
   descripcion: string;
   eliminado: boolean;
-  archivos?: string;
+  img?: string[];
   general?: boolean;
   division?: number;
   id_comision?: string;
@@ -149,19 +149,31 @@ export default function Comunicados() {
 
         {comunicados.map((item) => (
           <Card key={item.id || Math.random()} className="mb-4">
-            <CardContent className="flex items-start gap-4">
-              <Avatar className="bg-purple-300">
-                {item.Usuario?.nombre?.charAt(0) || "?"}
-              </Avatar>
-              <div>
-                <Typography variant="subtitle2">
-                  {item.Usuario?.nombre || "Desconocido"}
-                </Typography>
-                <Typography variant="subtitle1">{item.titulo}</Typography>
-                <div className="mt-2 p-2 bg-gray-100 rounded">
-                  <Typography>{item.descripcion}</Typography>
+            <CardContent className="flex flex-col gap-4">
+              <div className="flex items-start gap-4">
+                <Avatar className="bg-purple-300">
+                  {item.Usuario?.nombre?.charAt(0) || "?"}
+                </Avatar>
+                <div>
+                  <Typography variant="subtitle2">
+                    {item.Usuario?.nombre || "Desconocido"}
+                  </Typography>
+                  <Typography variant="subtitle1" className="font-bold">
+                    {item.titulo}
+                  </Typography>
+                  <Typography className="mt-2">{item.descripcion}</Typography>
                 </div>
               </div>
+              {item.img && item.img.length > 0 && (
+                <div className="mt-2 flex gap-2 flex-wrap">
+                  {item.img.map((ruta) => (
+                    <img
+                      src={ruta}
+                      className="w-32 h-32 object-cover rounded-lg border"
+                    />
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}

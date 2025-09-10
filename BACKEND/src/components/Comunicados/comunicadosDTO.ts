@@ -5,6 +5,8 @@ export type comunicadosAttributes = {
   id_usuario: string
   titulo: string
   descripcion: string
+  img?: Array<string>
+  pdf?: Array<string>
   eliminado: boolean
   archivos?: archivos
   general?: boolean

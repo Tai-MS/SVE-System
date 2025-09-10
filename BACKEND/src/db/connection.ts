@@ -19,6 +19,42 @@ export const sequelize = new Sequelize(
   }
 )
 
+export const updateDB = async () => {
+  try {
+    import("#components/User/UserModel")
+    import("#components/Period/PeriodModel")
+    import("#components/Career/CareerModel")
+    import("#components/CUType/CurricularUnitType")
+    import("#components/CurricularUnit/CurricularUnitModel")
+    import("#components/Archivos/archivosModel")
+    import("#components/Comunicados/comunicadosModel")
+    await sequelize.sync({ alter: true })
+    process.env.PORT === "8080"
+      ? console.log("DB local actualizada correctamente!")
+      : console.log("DB remota actualizada correctamente!")
+  } catch (err) {
+    console.log("Error a la hora de actualiza la DB: ", err)
+  }
+}
+
+export const connectDB = async () => {
+  try {
+    import("#components/User/UserModel")
+    import("#components/Period/PeriodModel")
+    import("#components/Career/CareerModel")
+    import("#components/CUType/CurricularUnitType")
+    import("#components/CurricularUnit/CurricularUnitModel")
+    import("#components/Archivos/archivosModel")
+    import("#components/Comunicados/comunicadosModel")
+    await sequelize.sync()
+    process.env.PORT === "8080"
+      ? console.log("Conectado correctamente a la DB local!")
+      : console.log("Conectado correctamente a la DB remota!")
+  } catch (err) {
+    console.log("Error a la hora de conectar con la DB: ", err)
+  }
+}
+
 
 export async function initializeDB(): Promise<void | ErrorResponse> {
     try {
@@ -40,25 +76,7 @@ export async function initializeDB(): Promise<void | ErrorResponse> {
         }
     }
 }
-
-export const connectDB = async () => {
-  try {
-    import("#components/User/UserModel")
-    import("#components/Period/PeriodModel")
-    import("#components/Career/CareerModel")
-    import("#components/CUType/CurricularUnitType")
-    import("#components/CurricularUnit/CurricularUnitModel")
-    import("#components/Archivos/archivosModel")
-    import("#components/Comunicados/comunicadosModel")
-    await sequelize.sync()
-    process.env.PORT === "8080"
-      ? console.log("Conectado correctamente a la DB local!")
-      : console.log("Conectado correctamente a la DB remota!")
-  } catch (err) {
-    console.log("Error a la hora de conectar con la DB: ", err)
-  }
-}
-
+      
 export const clearDB = async () => {
   try {
     import("#components/User/UserModel")

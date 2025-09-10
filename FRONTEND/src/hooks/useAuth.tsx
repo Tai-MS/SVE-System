@@ -55,10 +55,11 @@ export function useAuth(): AuthReturn {
       const data = await res.json();
 
       if (data.success && data.token) {
-        console.log(data);
+
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", username);
         localStorage.setItem("userId", data.id);
+        
         setToken(data.token);
         setUser(username);
         return true;
@@ -76,6 +77,7 @@ export function useAuth(): AuthReturn {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("userId");
+
     setToken(null);
     setUser(null);
   };
