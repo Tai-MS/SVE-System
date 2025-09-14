@@ -37,8 +37,16 @@ router.post("/crearUsuario", async (req: Request, res: Response, next: NextFunct
   await userController.crearUsuario(req, res, next)
 })
 
-router.put("/actualizar/{usuario}", async (req: Request, res: Response, next: NextFunction) => {
+router.put("/actualizar", async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.body);
+  
   await userController.actualizarUsuario(req, res, next)
+})
+
+router.put("/incluirEnUC", async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.body);
+  
+  await userController.incluirEnUC(req, res, next)
 })
 
 router.post("/public/iniciarSesion", async (req: Request, res: Response, next: NextFunction) => {

@@ -87,7 +87,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
       dni: data.email.split("@")[0],
       token: token
     }
-    await UserService.actualizarUsuario(usuarioParaActualizar)
+    await UserService.actualizarUsuario(usuarioParaActualizar, true)
 
     return res
       .cookie("auth-token", token, {
@@ -95,6 +95,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
       })
       .status(200)
       .json({
+        id: dato.id,
         status: 200,
         success: true,
         message: "logeado",
@@ -128,8 +129,31 @@ async function crearUsuario(req: Request, res: Response, next: NextFunction): Pr
   }
 }
 
+async function incluirEnUC(req: Request, res: Response, next: NextFunction): Promise<Response>{
+  try {
+    const token = req.headers["auth-token"] as string | undefined
+    const datos = {
+      dni: req.body.dni,
+      token: token,
+      unidad_curricular_id_fk: req.body.unidad_curricular_id_fk || null,
+    }
+    
+    const call = await UserService.incluirEnUC(datos)
+
+    return res.status(200).send(call)
+  } catch (error) {
+    return res.status(500).json({
+      error: "Internal server error",
+      message: getErrorMessage(error),
+    })
+  }
+}
+
 async function actualizarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
+    console.log(req.body);
+    console.log(req.headers['auth-token']);
+    const token = req.headers["auth-token"] as string | undefined
     const datos: Partial<InferCreationAttributes<Usuario>> = {
       id: req.body.id,
       dni: req.body.dni,
@@ -141,10 +165,11 @@ async function actualizarUsuario(req: Request, res: Response, next: NextFunction
       contraseña: req.body.contraseña || null,
       activo: req.body.activo || null,
       ultima_conexion: req.body.ultima_conexion || null,
-      token: req.body.token || null,
-      carrera_id_fk: req.body.carrera_id_fk || null
+      token: token,
+      carrera_id_fk: req.body.carrera_id_fk || null,
     }
-
+    console.log(datos);
+    
     const call = await UserService.actualizarUsuario(datos)
 
     return res.status(200).send(call)
@@ -185,6 +210,7 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
     }
 
     const token = await generarToken(user)
+    const dato = await datosDelToken(token)
 
     req.logIn(user, function (error) {
       if (error) {
@@ -192,11 +218,12 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
       }
       const email = user.email
       const datos = {
+        dato: dato.id,
         dni: user.dni,
         email: email,
         token: token,
       }
-      UserService.actualizarUsuario(datos)
+      UserService.actualizarUsuario(datos, true)
       return res
         .cookie("auth-token", token, {
           maxAge: 360 * 100 * 24,
@@ -244,4 +271,5 @@ export default {
   deshabilitarUsuario,
   loginGoogle,
   ImportarAlumnos,
+  incluirEnUC
 }

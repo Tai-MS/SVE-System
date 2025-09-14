@@ -52,10 +52,10 @@ export const create_server = () => {
     .use("/public", rutasPublicasRouter) //MODIFICAR ENDPOINTS PARA PRODUCCIÓN
     .use("/carreras", CarreraRouter)
     .use("/unidadcurricular", UnidadCurricularRouter)
+    .use("/user", userRouter)
     .use(passport.initialize())
     .use(passport.session())
     // .use(verificarToken)
-    .use("/user", userRouter)
 
   // Sincronizar el store de sesiones
   sessionStore.sync()

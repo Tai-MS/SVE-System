@@ -4,6 +4,7 @@ import { AllowNull, DataType } from "sequelize-typescript"
 import { usuarioI } from "./UserDTO"
 import { UnidadCurricular } from "#components/CurricularUnit/CurricularUnitModel"
 import { Career } from "#components/Career/CareerModel"
+import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
 
 export enum Rol {
   ESTUDIANTE = "ESTUDIANTE",
@@ -28,7 +29,6 @@ class Usuario extends Model<InferAttributes<Usuario>, UserCreation> implements u
   declare creado: Date
   declare ultima_conexion: Date
   declare token: string
-  declare unidad_curricular_id_fk: string
   declare carrera_id_fk: string
 
   static async encontrarPorDNI(dni: string) {
@@ -59,7 +59,6 @@ Usuario.init(
     creado: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     ultima_conexion: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     token: { type: DataTypes.STRING, allowNull: true },
-    unidad_curricular_id_fk: {type: DataType.STRING, allowNull: true},//PONER FALSE
     carrera_id_fk: {type: DataType.STRING, allowNull: true}//PONER FALSE
   },
   {
@@ -79,15 +78,16 @@ Usuario.init(
 )
 
 Usuario.belongsToMany(UnidadCurricular, {
-  through: "usuario_unidad_curricular", 
-  otherKey: "unidad_curricular_id"
-})
+  through: UsuarioUnidadCurricular,
+  foreignKey: "usuario_id",
+  otherKey: "unidad_curricular_id",
+});
 
 UnidadCurricular.belongsToMany(Usuario, {
-  through: "usuario_unidad_curricular",
+  through: UsuarioUnidadCurricular,
   foreignKey: "unidad_curricular_id",
-  otherKey: "usuario_id"
-})
+  otherKey: "usuario_id",
+});
 
 Career.hasMany(Usuario, {
   foreignKey: "carrera_id_fk"

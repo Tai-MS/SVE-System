@@ -8,6 +8,9 @@ import transport from "#Utils/mailer";
 import { Usuarios } from "#schemas/userSchemas"
 import { usuarioI } from "./UserDTO"
 import { InferCreationAttributes } from "sequelize"
+import { datosDelToken } from "#middlewares/auth"
+import { UnidadCurricular } from "#components/CurricularUnit/CurricularUnitModel"
+import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
 
 async function traerTodos() {
   return userClass.traerTodos()
@@ -74,19 +77,82 @@ async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
   return crear
 }
 
-async function actualizarUsuario(datos: Partial<InferCreationAttributes<Usuario>>): Promise<Usuario | string> {
+async function incluirEnUC(datos: any): Promise<Usuario | string>{
+  
+  if(typeof datos.token !== "string"|| typeof datos.dni !== "string"){
+    return "Campos incompatibles"
+  }
+  const verificarUsuario = await datosDelToken(datos.token)
+  if(verificarUsuario.rol === "ESTUDIANTE"){
+    return "Acceso denegadp"
+  }
+
+  const usuario = await Usuario.findByPk(verificarUsuario.id)
+
+  if(!usuario){
+    return "Alumno no encontrado"
+  }
+
+  const lista_UC = datos.unidad_curricular_id_fk
+  const uc_no_encontrada = []
+  for(let i = 0; i < lista_UC.length; i++){
+    console.log(lista_UC[i]);
+
+    const uc = await UnidadCurricular.findByPk(lista_UC[i])
+    console.log(uc);
+    
+    if(uc){
+      await UsuarioUnidadCurricular.create({usuario_id: verificarUsuario.id, unidad_curricular_id: lista_UC[i]})
+    }else{
+      uc_no_encontrada.push(lista_UC[i])
+    }
+  }
+  if(uc_no_encontrada.length > 0){
+    return `Alumno añadido a las UC. Excepto a: ${uc_no_encontrada}`
+  }
+  return "Alumno asociado a las UC"
+}
+
+async function actualizarUsuario(datos: Partial<InferCreationAttributes<Usuario>>, guardarToken: boolean = false): Promise<Usuario | string> {
 
   const dni = datos.dni
-  
+  console.log("+++++++++++")
+  console.log(datos)
+  console.log("+++++++++++")
   const actualizarCampos: Partial<InferCreationAttributes<Usuario>> = {};
   
-  if (dni !== null && dni !== undefined) {
+  if(guardarToken){
+    actualizarCampos.token = datos.token
+    await Usuario.update(actualizarCampos, {
+      where: { dni: datos.dni }
+    })
+    return "token guardado"
+  }
+  if (dni !== null && dni !== undefined && typeof datos.token === "string") {
     actualizarCampos.dni = datos.dni;
   }else{
     return "DNI requerido"
   }
-
+  console.log("/////////////////")
+  
+  const confirmarUsuario = await datosDelToken(datos.token)
+  console.log("/////////////////")
+  
+  console.log(confirmarUsuario);
+  console.log(confirmarUsuario.dni);
+  console.log(typeof datos.dni);
+  console.log(typeof confirmarUsuario.dni);
+  console.log("/////////////////")
+  
+  console.log(confirmarUsuario.dni !== datos.dni);
+  console.log(confirmarUsuario.rol === "ESTUDIANTE");
+  
+  if(confirmarUsuario.dni !== datos.dni && confirmarUsuario.rol === "ESTUDIANTE"){
+    return "Error"
+  }
   const usuario = await Usuario.encontrarPorDNI(dni)
+
+
   
   if (datos.email !== null && datos.email !== undefined) {
     actualizarCampos.email = datos.email;
@@ -127,7 +193,7 @@ async function actualizarUsuario(datos: Partial<InferCreationAttributes<Usuario>
   if (datos.carrera_id_fk !== null && datos.carrera_id_fk !== undefined) {
     actualizarCampos.carrera_id_fk = datos.carrera_id_fk;
   }
-
+  
   await Usuario.update(actualizarCampos, {
     where: { dni: datos.dni }
   })
@@ -179,4 +245,5 @@ export default {
   actualizarUsuario,
   deshabilitarUsuario,
   guardarAlumnosImportados,
+  incluirEnUC
 }

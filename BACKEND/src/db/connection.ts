@@ -29,6 +29,7 @@ export async function initializeDB(): Promise<void | ErrorResponse> {
         import('#components/Period/PeriodModel')
         import('#components/Career/CareerModel')
         import('#components/CurricularUnit/CurricularUnitModel')
+        import('#components/UsuarioUC/UsuarioUC')
         /**
          * DESCOMENTAR PARA CREAR O SINCRONIZAR LAS TABLAS
          */
@@ -38,7 +39,8 @@ export async function initializeDB(): Promise<void | ErrorResponse> {
         console.log("as");
         // await sequelize.sync({ force: true });
         console.log("as");
-        // cargar()
+        
+        // cargar() //DESCOMENTAR PARA CREAR CARRERAS
         console.log("DB sincronizada");
     } catch (error: unknown) {
       console.error("Error en initializeDB:", error);

@@ -5,9 +5,10 @@ import jwt from 'jsonwebtoken'
 
 const clave = process.env.SECRET_KEY || "secreto"
 export async function generarToken(data: Usuario){
-    const {dni, nombre, apellido, rol} = data
+    const {dni, nombre, apellido, rol, id} = data
 
     const token = jwt.sign({
+            id: id,
             dni: dni,
             nombre: nombre, 
             apellido: apellido, 
@@ -23,9 +24,10 @@ export async function datosDelToken(token: string){
     const dni = decodificado.dni
     const rol = decodificado.rol
     const id = decodificado.id
-    console.log(dni)
-    console.log(rol)
-    return {dni: dni, rol: rol, id: id}
+    const nombre = decodificado.nombre
+    const apellido = decodificado.apellido
+    
+    return {nombre: nombre, apellido: apellido,dni: dni, rol: rol, id: id}
 }
 
 export async function verificarToken(req: Request, res: Response, next: NextFunction){
