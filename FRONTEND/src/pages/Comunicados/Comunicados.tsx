@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import {
   Avatar,
   Button,
-  TextField,
   Card,
   CardContent,
   Typography,
@@ -13,8 +12,11 @@ import {
   ListItemText,
   ListItemButton,
   Collapse,
+  Dialog,
+  DialogContent,
+  IconButton,
 } from "@mui/material";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { ExpandLess, ExpandMore, Close as CloseIcon } from "@mui/icons-material";
 
 interface Usuario {
   id?: string;
@@ -50,6 +52,8 @@ export default function Comunicados() {
   const [open, setOpen] = useState(false);
   const [comunicados, setComunicados] = useState<Comunicado[]>([]);
   const [nuevoComunicado, setNuevoComunicado] = useState<string>("");
+  const [selectedImg, setSelectedImg] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
   // Obtener comunicados de la API
@@ -59,7 +63,7 @@ export default function Comunicados() {
       .then((data: Comunicado[]) => setComunicados(data))
       .catch((err) => console.error("Error cargando comunicados:", err));
   }, []);
-  
+
   // Publicar un nuevo comunicado
   const handleRedirect = () => {
     navigate("/comunicados/crear/" + localStorage.getItem("userId"));
@@ -137,15 +141,15 @@ export default function Comunicados() {
             </Button>
           </div>
         </div>
-          <div className="flex center mt-2">
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleRedirect}
-            >
-              Ir a publicar
-            </Button>
-          </div>
+        <div className="flex center mt-2">
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleRedirect}
+          >
+            Ir a publicar
+          </Button>
+        </div>
 
         {comunicados.map((item) => (
           <Card key={item.id || Math.random()} className="mb-4">
@@ -166,10 +170,12 @@ export default function Comunicados() {
               </div>
               {item.img && item.img.length > 0 && (
                 <div className="mt-2 flex gap-2 flex-wrap">
-                  {item.img.map((ruta) => (
+                  {item.img.map((ruta, idx) => (
                     <img
+                      key={idx}
                       src={ruta}
-                      className="w-32 h-32 object-cover rounded-lg border"
+                      className="w-32 h-32 object-cover rounded-lg border cursor-pointer"
+                      onClick={() => setSelectedImg(ruta)}
                     />
                   ))}
                 </div>
@@ -177,6 +183,51 @@ export default function Comunicados() {
             </CardContent>
           </Card>
         ))}
+
+        <Dialog
+          open={!!selectedImg}
+          onClose={(_, reason) => {
+            if (reason === "backdropClick" || reason === "escapeKeyDown") {
+              setSelectedImg(null);
+            }
+          }}
+          fullWidth
+          maxWidth="md"
+        >
+          <DialogContent
+            sx={{
+              position: "relative",
+              p: 0,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <IconButton
+              aria-label="close"
+              onClick={() => setSelectedImg(null)}
+              sx={{
+                position: "absolute",
+                right: 8,
+                top: 8,
+                backgroundColor: "rgba(0,0,0,0.5)",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "rgba(0,0,0,0.7)",
+                },
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+            {selectedImg && (
+              <img
+                src={selectedImg}
+                alt="Imagen ampliada"
+                className="max-h-[90vh] w-auto rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );
