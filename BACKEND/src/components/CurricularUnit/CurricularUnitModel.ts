@@ -1,6 +1,7 @@
 import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize"
-import { sequelize } from "../db/connection"
+import { sequelize } from "../../db/connection"
 
+export type Tipo = "materia" | "proyecto" | "laboratorio" | "taller"
 export class UnidadCurricular extends Model<
   InferAttributes<UnidadCurricular>,
   InferCreationAttributes<UnidadCurricular>
@@ -9,7 +10,7 @@ export class UnidadCurricular extends Model<
   declare carrera_id: number
   declare nombre: string
   declare carga_horaria: number
-  declare tipo_id: number
+  declare tipo: Tipo
   declare activo: boolean
 }
 UnidadCurricular.init(
@@ -18,7 +19,7 @@ UnidadCurricular.init(
     carrera_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: false },
     nombre: { type: DataTypes.STRING(200), allowNull: false },
     carga_horaria: { type: DataTypes.SMALLINT.UNSIGNED, allowNull: false },
-    tipo_id: { type: DataTypes.TINYINT.UNSIGNED, allowNull: false },
+    tipo: { type: DataTypes.ENUM("materia", "proyecto", "laboratorio", "taller"), allowNull: false },
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
   },
   {
