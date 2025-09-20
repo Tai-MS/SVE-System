@@ -8,9 +8,10 @@ import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
 
 export enum Rol {
   ESTUDIANTE = "ESTUDIANTE",
-  DIRECTIVO = "DIRECTIVO",
-  ADMINISTRADOR = "ADMINISTRADOR",
+  PROFESOR = "PROFESOR",
   BEDELIA = "BEDELIA",
+  DIRECTIVO = "DIRECTIVO",
+  ADMINISTRADOR = "ADMINISTRADOR"
 }
 
 export type UserCreation = Optional<usuarioI, "id">
