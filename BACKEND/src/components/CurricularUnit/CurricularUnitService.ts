@@ -14,12 +14,19 @@ async function traerUnaUC(unidad: BusquedaUnidadDTO): Promise<UnidadCurricular |
     const nombre = unidad.nombre
 
     if(id){
-        return await UnidadCurricular.findByPk(id)
+        const uc = await UnidadCurricular.findByPk(id)
+        if(uc){
+            return uc
+        }
+        return 'UC no encontrada'
     }
 
     if(nombre){
-        return await UnidadCurricular.encontrarPorNombre(nombre)
-    }
+        const uc = await UnidadCurricular.findByPk(nombre)
+        if(uc){
+            return uc
+        }
+        return 'UC no encontrada'    }
 
     return "Se requieren parametros de busqueda"
 

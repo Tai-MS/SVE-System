@@ -12,7 +12,8 @@ import { verificarToken } from "#middlewares/auth"
 import rutasPublicasRouter from '#components/PublicRoutes/rutasPublicas'
 import UnidadCurricularRouter from "#components/CurricularUnit/CurricularUnitRoutes"
 import CarreraRouter from "#components/Career/CarreraRoutes"
-
+import ComisionRouter from '#components/Comission/ComissionRoute'
+import { sessionStore } from "#db/initModels"
 /**
  * Se encarga de levantar el servidor
  * y crear las funciones necesarias
@@ -20,14 +21,6 @@ import CarreraRouter from "#components/Career/CarreraRoutes"
  */
 export const create_server = () => {
   const app = express()
-
-  const SequelizeStore = connectSessionSequelize(session.Store)
-  const sessionStore = new SequelizeStore({
-    db: sequelize,
-    tableName: "sessions",
-    checkExpirationInterval: 15 * 60 * 1000,
-    expiration: 24 * 60 * 60 * 1000,
-  })
   
   app
     .disable("x-powered-by")
@@ -53,6 +46,7 @@ export const create_server = () => {
     .use("/carreras", CarreraRouter)
     .use("/unidadcurricular", UnidadCurricularRouter)
     .use("/user", userRouter)
+    .use("/comision", ComisionRouter)
     .use(passport.initialize())
     .use(passport.session())
     // .use(verificarToken)
