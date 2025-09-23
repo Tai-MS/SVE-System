@@ -1,24 +1,38 @@
-import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize"
+import { DataTypes, InferAttributes, InferCreationAttributes, Model, Optional } from "sequelize"
 import { sequelize } from "../../db/connection"
+import { ComisionAttributes } from "./ComisionDTO"
+import { Career } from "../Career/CareerModel"
 
-export class Comision extends Model<InferAttributes<Comision>, InferCreationAttributes<Comision>> {
+type comisionCreation = Optional<ComisionAttributes, "activo">
+
+export class Comision extends Model<ComisionAttributes, comisionCreation> {
   declare id: number
-  declare unidad_curricular_id: number
   declare numero_comision: string
-  declare cupo_maximo: number | null
+  declare cant_alumnos: number
+  declare carrera_id: string
   declare activo: boolean
 }
 Comision.init(
   {
     id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
-    unidad_curricular_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: false },
     numero_comision: { type: DataTypes.STRING(20), allowNull: false },
-    cupo_maximo: { type: DataTypes.SMALLINT.UNSIGNED, allowNull: true },
+    carrera_id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "career",
+        key: "id",
+      },
+    },
+    cant_alumnos: { type: DataTypes.SMALLINT.UNSIGNED },
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
   },
   {
     sequelize,
     tableName: "comisiones",
-    indexes: [{ unique: true, fields: ["unidad_curricular_id", "numero_comision", "periodo_id"] }],
+    indexes: [{ unique: true, fields: ["numero_comision"] }],
   }
 )
+
+Comision.belongsTo(Career, { foreignKey: "carrera_id" })
+Career.hasMany(Comision, { foreignKey: "carrera_id" })
