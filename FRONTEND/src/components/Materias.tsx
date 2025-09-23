@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
-export default function Dashboard() {
+export default function Materias() {
   const [open, setOpen] = useState(false);
 
   return (
