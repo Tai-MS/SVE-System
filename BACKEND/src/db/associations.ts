@@ -11,6 +11,7 @@ import { Material } from "#components/Material/MaterialModel";
 import Usuario from "#components/User/UserModel";
 import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC";
 import { Profesor } from "#components/Profesor/ProfesorModel";
+import Comunicado from "#components/Comunicados/comunicadosModel";
 
 let associationsApplied = false;
 
@@ -44,6 +45,9 @@ export function applyAssociations() {
     otherKey: "comision_id",
     as: "comisiones",
   });
+
+  Usuario.hasMany(Comunicado, { foreignKey: "id_usuario" })
+  Comunicado.belongsTo(Usuario, { foreignKey: "id_usuario" })
 
   Comision.hasMany(ComisionUC, { foreignKey: "comision_id", as: "comisionesUC" });
   ComisionUC.belongsTo(Comision, { foreignKey: "comision_id", as: "comision" });

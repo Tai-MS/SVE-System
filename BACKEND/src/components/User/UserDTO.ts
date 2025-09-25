@@ -45,7 +45,7 @@ export type IniciarSesionDTO = {
 }
 
 export type usuarioI = {
-  id?: number
+  id?: string
   dni: string
   nombre: string
   apellido: string

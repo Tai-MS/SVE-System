@@ -3,10 +3,9 @@ import cors from "cors"
 import morgan from "morgan"
 import "../db/connection"
 import userRouter from "#components/User/UserRoutes"
+import comunicadosRouter from "#components/Comunicados/comunicadosRouter"
 import passport from "passport"
 import session from "express-session"
-import connectSessionSequelize from "connect-session-sequelize"
-import sequelize from "#db/connection"
 import cookieParser from "cookie-parser"
 import { verificarToken } from "#middlewares/auth"
 import rutasPublicasRouter from '#components/PublicRoutes/rutasPublicas'
@@ -45,13 +44,12 @@ export const create_server = () => {
     .use("/public", rutasPublicasRouter) //MODIFICAR ENDPOINTS PARA PRODUCCIÓN
     .use("/carreras", CarreraRouter)
     .use("/unidadcurricular", UnidadCurricularRouter)
-    .use("/user", userRouter)
     .use("/comision", ComisionRouter)
     .use(passport.initialize())
     .use(passport.session())
-    // .use(verificarToken)
+    .use("/usuarios", userRouter)
+    .use("/comunicados", comunicadosRouter)
 
-  // Sincronizar el store de sesiones
   sessionStore.sync()
 
   return app

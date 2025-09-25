@@ -11,7 +11,7 @@ export enum Rol {
 export type UserCreation = Optional<usuarioI, "id">
 
 class Usuario extends Model<InferAttributes<Usuario>, UserCreation> implements usuarioI {
-  declare id: number
+  declare id: string
   declare nombre: string
   declare apellido: string
   declare dni: string

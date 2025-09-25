@@ -18,25 +18,61 @@ export const sequelize = new Sequelize(
   }
 )
 
-export async function initializeDB(): Promise<void | ErrorResponse> {
-    try {
-        await sequelize.authenticate();
-        console.log("DB conectada");
+// export async function initializeDB(): Promise<void | ErrorResponse> {
+//     try {
+//         await sequelize.authenticate();
+//         console.log("DB conectada");
         
-        import('#db/initModels')
-        /**
-          await sequelize.sync({ alter: true });
-          */
-        await sequelize.drop(); // elimina todas las tablas
-        await sequelize.sync({ force: true }); 
-        cargar() //DESCOMENTAR PARA CREAR CARRERAS
-        console.log("DB sincronizada");
-    } catch (error: unknown) {
-      console.error("Error en initializeDB:", error);
-        return {
-            error: getErrorMessage(error)
-        }
-    }
+//         import('#db/initModels')
+//         /**
+//           await sequelize.sync({ alter: true });
+//           */
+//         await sequelize.drop(); // elimina todas las tablas
+//         await sequelize.sync({ force: true }); 
+//         cargar() //DESCOMENTAR PARA CREAR CARRERAS
+//         console.log("DB sincronizada");
+//     } catch (error: unknown) {
+//       console.error("Error en initializeDB:", error);
+//         return {
+//             error: getErrorMessage(error)
+//         }
+//     }
+// }
+export const updateDB = async () => {
+  try {
+    import('#db/initModels')
+    await sequelize.sync({ alter: true })
+    process.env.PORT === "8080"
+      ? console.log("DB local actualizada correctamente!")
+      : console.log("DB remota actualizada correctamente!")
+  } catch (err) {
+    console.log("Error a la hora de actualiza la DB: ", err)
+  }
 }
 
-export default sequelize;
+export const connectDB = async () => {
+  try {
+    import('#db/initModels')
+    await sequelize.sync()
+    process.env.PORT === "8080"
+      ? console.log("Conectado correctamente a la DB local!")
+      : console.log("Conectado correctamente a la DB remota!")
+  } catch (err) {
+    console.log("Error a la hora de conectar con la DB: ", err)
+  }
+}
+
+export const clearDB = async () => {
+  try {
+    import('#db/initModels')
+    await sequelize.drop()
+    await sequelize.sync({ force: true })
+    cargar()
+    process.env.PORT === "8080"
+      ? console.log("DB local reiniciada correctamente!")
+      : console.log("DB remota reiniciada correctamente!")
+  } catch (err) {
+    console.log("Error a la hora de limpiar la DB: ", err)
+  }
+}
+export default sequelize

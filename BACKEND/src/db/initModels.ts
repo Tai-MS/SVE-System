@@ -18,6 +18,7 @@ import { Profesor } from "#components/Profesor/ProfesorModel";
 
 import connectSessionSequelize from "connect-session-sequelize"
 import session from "express-session"
+import Comunicado from "#components/Comunicados/comunicadosModel";
 
 const SequelizeStore = connectSessionSequelize(session.Store)
 export const sessionStore = new SequelizeStore({
@@ -34,7 +35,10 @@ Career.init(
     duracion_meses: { type: DataTypes.INTEGER, allowNull: false },
     activo: { type: DataTypes.BOOLEAN, defaultValue: true }
   },
-  { sequelize }
+  { sequelize,
+    modelName: "Career",  
+    tableName: "carreras",
+   }
 );
 
 // Profesor.init(
@@ -55,6 +59,33 @@ Career.init(
 //     sequelize, tableName: "profesores"
 //   }
 // )
+
+Comunicado.init(
+  {
+    id: { type: DataTypes.UUID, primaryKey: true, defaultValue: DataTypes.UUIDV4 },
+    id_usuario: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: { model: "usuarios", key: "id" },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    },
+    titulo: { type: DataTypes.STRING, allowNull: false },
+    descripcion: { type: DataTypes.TEXT, allowNull: false },
+    eliminado: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    // UNA VEZ CREADO LOS CAMPOS DE DIVISIONES Y COMISIONES HACER LAS RELACIONES CON DICHAS TABLAS
+    general: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
+    division: { type: DataTypes.INTEGER, allowNull: true, defaultValue: null },
+    id_comision: { type: DataTypes.UUID, allowNull: true, defaultValue: null },
+  },
+  {
+    sequelize,
+    tableName: "comunicados",
+    timestamps: true,
+    createdAt: "creado",
+    updatedAt: "actualizado",
+  }
+)
 
 Asistencia.init(
   {
