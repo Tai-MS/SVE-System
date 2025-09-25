@@ -1,5 +1,5 @@
 import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize"
-import { sequelize } from "../db/connection"
+import { sequelize } from "#db/connection"
 
 export class Period extends Model<InferAttributes<Period>, InferCreationAttributes<Period>> {
   declare id: number

@@ -1,5 +1,5 @@
 import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize"
-import { sequelize } from "../../db/connection"
+import { sequelize } from "#db/connection"
 
 export type Tipo = "materia" | "proyecto" | "laboratorio" | "taller"
 export class UnidadCurricular extends Model<
