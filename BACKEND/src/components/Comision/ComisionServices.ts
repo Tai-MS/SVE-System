@@ -1,6 +1,6 @@
 import { Op, WhereOptions } from "sequelize"
 import { ComisionAttributes } from "./ComisionDTO"
-import { Comision } from "./ComissionModel"
+import { Comision } from "./ComisionModel"
 interface ComisionFiltros {
   id?: number
   numero_comision?: string

@@ -1,4 +1,4 @@
-import { DataTypes, InferAttributes, InferCreationAttributes, Model, Optional } from "sequelize"
+import { DataTypes, Model, Optional } from "sequelize"
 import { sequelize } from "../../db/connection"
 import { ComisionAttributes } from "./ComisionDTO"
 import { Career } from "../Career/CareerModel"
