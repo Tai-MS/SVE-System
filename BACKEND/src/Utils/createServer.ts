@@ -18,7 +18,7 @@ import { sessionStore } from "#db/initModels"
  * y crear las funciones necesarias
  * para la serialización de passport. Así como habilitar cors.
  */
-export const create_server = () => {
+export const create_server = async () => {
   const app = express()
   
   app
@@ -50,7 +50,7 @@ export const create_server = () => {
     .use("/usuarios", userRouter)
     .use("/comunicados", comunicadosRouter)
 
-  sessionStore.sync()
+  await sessionStore.sync()
 
   return app
 }

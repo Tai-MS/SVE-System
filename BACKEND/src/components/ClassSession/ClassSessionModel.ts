@@ -4,8 +4,7 @@ export type Modalidad = "presencial" | "virtual" | "hibrida"
 
 export class Clase extends Model<InferAttributes<Clase>, InferCreationAttributes<Clase>> {
   declare id: number
-  declare unidad_curricular_id: number
-  declare comision_id: number
+  declare comision_uc_id: string
   declare profesor_id: number
   declare aula_id: number | null
   declare modalidad: Modalidad

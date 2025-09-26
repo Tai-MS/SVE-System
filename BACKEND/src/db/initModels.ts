@@ -14,11 +14,13 @@ import { Period } from "#components/Period/PeriodModel";
 import Usuario, { Rol } from "#components/User/UserModel";
 import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC";
 import { DataType } from "sequelize-typescript";
-import { Profesor } from "#components/Profesor/ProfesorModel";
 
 import connectSessionSequelize from "connect-session-sequelize"
 import session from "express-session"
 import Comunicado from "#components/Comunicados/comunicadosModel";
+import Archivo from "#components/Archivos/archivosModel";
+import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel";
+import { fa } from "zod/v4/locales";
 
 const SequelizeStore = connectSessionSequelize(session.Store)
 export const sessionStore = new SequelizeStore({
@@ -26,8 +28,56 @@ export const sessionStore = new SequelizeStore({
     tableName: "sessions",
     checkExpirationInterval: 15 * 60 * 1000,
     expiration: 24 * 60 * 60 * 1000,
-  })
+})
 
+
+UnidadCurricular.init(
+  {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    nombre: { type: DataTypes.STRING(200), allowNull: false },
+    carga_horaria: { type: DataTypes.SMALLINT.UNSIGNED, allowNull: false },
+    activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    tipo_uc: { type: DataTypes.ENUM(...Object.values(TipoUC)), allowNull: false },
+    carrera_id_fk: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "carreras",
+        key: "id"
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE"
+    }
+  },
+  {
+    sequelize,
+    tableName: "unidades_curriculares",
+    indexes: [{ unique: true, fields: ["id", "nombre"] }],
+  }
+)
+
+
+UsuarioComision.init({
+  id: { type: DataType.UUID, primaryKey: true},
+  anio: { type: DataType.DATE, allowNull: false},
+  usuario_fk: { type: DataType.UUID, allowNull: false, references: {
+    model: "usuarios",
+    key: "id"
+  },
+  onUpdate: "CASCADE",
+  onDelete: "CASCADE"},
+  comision_fk: { type: DataType.BIGINT.UNSIGNED, allowNull: false, references: {
+    model: "comisiones",
+    key: "id"
+  },
+  onUpdate: "CASCADE",
+  onDelete: "CASCADE"}
+},
+{
+  sequelize,
+  tableName: "usuario_comision"
+})
+  
 Career.init(
   {
     id: { type: DataTypes.STRING, primaryKey: true },
@@ -41,24 +91,18 @@ Career.init(
    }
 );
 
-// Profesor.init(
-//   {
-//     id: {type: DataType.UUID, primaryKey: true},
-//     nombre: { type: DataTypes.STRING(100), allowNull: false },
-//     apellido: { type: DataTypes.STRING(100), allowNull: false },
-//     dni: { type: DataTypes.STRING(20), allowNull: false, unique: true },
-//     tel: { type: DataType.STRING, allowNull: true },
-//     email: { type: DataTypes.STRING(255), allowNull: false, unique: true },
-//     contraseña: { type: DataTypes.STRING(255), allowNull: false },
-//     estado: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
-//     creado: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
-//     ultima_conexion: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
-//     token: { type: DataTypes.STRING, allowNull: true },
-//   },
-//   {
-//     sequelize, tableName: "profesores"
-//   }
-// )
+Archivo.init(
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    ruta: { type: DataTypes.STRING, allowNull: false },
+    modulo: {
+      type: DataTypes.ENUM("Comunicado", "trabajoNoCalificado", "trabajoCalificado", "materialTrabajo"),
+      allowNull: false,
+    },
+    moduloId: { type: DataTypes.INTEGER, allowNull: false },
+  },
+  { sequelize, tableName: "archivos", timestamps: true, createdAt: "subido", updatedAt: "actulizado" }
+)
 
 Comunicado.init(
   {
@@ -133,36 +177,15 @@ Comision.init(
   }
 )
 
-
-UnidadCurricular.init(
-  {
-    id: { type: DataTypes.STRING, primaryKey: true },
-    nombre: { type: DataTypes.STRING(200), allowNull: false },
-    carga_horaria: { type: DataTypes.SMALLINT.UNSIGNED, allowNull: false },
-    activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
-    tipo_uc: { type: DataTypes.ENUM(...Object.values(TipoUC)), allowNull: false },
-    carrera_id_fk: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      references: {
-        model: "carreras",
-        key: "id"
-      },
-      onUpdate: "CASCADE",
-      onDelete: "CASCADE"
-    }
-  },
-  {
-    sequelize,
-    tableName: "unidades_curriculares",
-    indexes: [{ unique: true, fields: ["id", "nombre"] }],
-  }
-)
-
 Material.init(
   {
     id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
-    clase_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: false },
+    comision_uc_id: { type: DataTypes.STRING, allowNull: false, references: {
+    model: "comision_unidad_curricular",
+    key: "id"
+  },
+  onUpdate: "CASCADE",
+  onDelete: "CASCADE"},
     titulo: { type: DataTypes.STRING(200), allowNull: false },
     url: { type: DataTypes.STRING(500), allowNull: true },
     descripcion: { type: DataTypes.TEXT, allowNull: true },
@@ -196,7 +219,7 @@ Usuario.init(
     creado: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     ultima_conexion: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     token: { type: DataTypes.STRING, allowNull: true },
-    carrera_id_fk: {type: DataType.STRING, allowNull: true}//PONER FALSE
+    carrera_id_fk: {type: DataType.STRING, allowNull: true}
   },
   {
     sequelize,
@@ -237,7 +260,12 @@ UsuarioUnidadCurricular.init(
 Calificacion.init(
     {
         id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
-        comision_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: false },
+        comision_uc_id: { type: DataTypes.STRING, allowNull: false, references: {
+    model: "comision_unidad_curricular",
+    key: "id"
+  },
+  onUpdate: "CASCADE",
+  onDelete: "CASCADE"},
         alumno_id: { type: DataTypes.UUID, allowNull: false },
         instancia: { type: DataTypes.STRING(100), allowNull: false }, //osea, TP, parcial, trabajo en clase, etc.
         nota: { type: DataTypes.DECIMAL(5, 2), allowNull: false },
@@ -247,14 +275,18 @@ Calificacion.init(
     {
         sequelize,
         tableName: "calificaciones",
-        indexes: [{ unique: true, fields: ["comision_id", "alumno_id", "instancia"] }],
+        indexes: [{ unique: true, fields: ["alumno_id", "instancia"] }],
     }
 )
 Clase.init(
   {
     id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
-    unidad_curricular_id: { type: DataTypes.STRING, allowNull: false },
-    comision_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: false },
+    comision_uc_id: { type: DataTypes.STRING, allowNull: false, references: {
+    model: "comision_unidad_curricular",
+    key: "id"
+  },
+  onUpdate: "CASCADE",
+  onDelete: "CASCADE"},
     profesor_id: { type: DataTypes.UUID, allowNull: false },
     aula_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: true },
     modalidad: { type: DataTypes.ENUM("presencial", "virtual"), allowNull: false },

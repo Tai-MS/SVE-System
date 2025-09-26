@@ -3,7 +3,7 @@ import { sequelize } from "#db/connection"
 
 export class Calificacion extends Model<InferAttributes<Calificacion>, InferCreationAttributes<Calificacion>> {
   declare id: number
-  declare comision_id: number
+  declare comision_uc_id: string
   declare alumno_id: number
   declare instancia: string
   declare nota: string

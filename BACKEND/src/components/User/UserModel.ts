@@ -2,7 +2,7 @@ import { InferAttributes, Model, Optional } from "sequelize"
 import { usuarioI } from "./UserDTO"
 export enum Rol {
   ESTUDIANTE = "ESTUDIANTE",
-  // PROFESOR = "PROFESOR",
+  PROFESOR = "PROFESOR",
   BEDELIA = "BEDELIA",
   DIRECTIVO = "DIRECTIVO",
   ADMINISTRADOR = "ADMINISTRADOR"

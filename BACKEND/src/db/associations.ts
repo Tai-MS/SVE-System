@@ -10,12 +10,13 @@ import { Calificacion } from "#components/Calification/CalificationModel";
 import { Material } from "#components/Material/MaterialModel";
 import Usuario from "#components/User/UserModel";
 import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC";
-import { Profesor } from "#components/Profesor/ProfesorModel";
 import Comunicado from "#components/Comunicados/comunicadosModel";
+import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel";
 
 let associationsApplied = false;
 
 export function applyAssociations() {
+  
   if (associationsApplied) return;
   associationsApplied = true;
 
@@ -46,6 +47,17 @@ export function applyAssociations() {
     as: "comisiones",
   });
 
+  Usuario.belongsToMany(Comision, {
+  through: "usuario_comision",
+  foreignKey: "usuario_id",
+  otherKey: "comision_id",
+});
+Comision.belongsToMany(Usuario, {
+  through: "usuario_comision",
+  foreignKey: "comision_id",
+  otherKey: "usuario_id",
+});
+
   Usuario.hasMany(Comunicado, { foreignKey: "id_usuario" })
   Comunicado.belongsTo(Usuario, { foreignKey: "id_usuario" })
 
@@ -56,19 +68,13 @@ export function applyAssociations() {
   ComisionUC.belongsTo(UnidadCurricular, { foreignKey: "uc_id", as: "unidadCurricular" });
 
   Usuario.hasMany(ComisionUC, { foreignKey: "profesor_id", as: "dictados" });
-ComisionUC.belongsTo(Usuario, { foreignKey: "profesor_id", as: "profesor" });
+  ComisionUC.belongsTo(Usuario, { foreignKey: "profesor_id", as: "profesor" });
 
   Aula.hasMany(Clase, { foreignKey: "aula_id", as: "clases" });
   Clase.belongsTo(Aula, { foreignKey: "aula_id", as: "aula" });
 
-  Comision.hasMany(Usuario, { foreignKey: "comision_id", as: "alumnos" });
-  Usuario.belongsTo(Comision, { foreignKey: "comision_id", as: "comision" });
-
-  UnidadCurricular.hasMany(Clase, { foreignKey: "unidad_curricular_id", as: "clases" });
-  Clase.belongsTo(UnidadCurricular, { foreignKey: "unidad_curricular_id", as: "unidadCurricular" });
-
-  Comision.hasMany(Clase, { foreignKey: "comision_id", as: "clases" });
-  Clase.belongsTo(Comision, { foreignKey: "comision_id", as: "comision" });
+  ComisionUC.hasMany(Clase, { foreignKey: "comision_uc_id", as: "clase" })
+  Clase.belongsTo(ComisionUC, { foreignKey: "comision_uc_id", as: "comision_unidad_curricular" })
 
   User.hasMany(Clase, { foreignKey: "profesor_id", as: "clasesDictadas" });
   Clase.belongsTo(User, { foreignKey: "profesor_id", as: "profesor" });
@@ -76,12 +82,12 @@ ComisionUC.belongsTo(Usuario, { foreignKey: "profesor_id", as: "profesor" });
   Clase.belongsToMany(User, { through: Asistencia, foreignKey: "clase_id", otherKey: "alumno_id", as: "asistentes" });
   User.belongsToMany(Clase, { through: Asistencia, foreignKey: "alumno_id", otherKey: "clase_id", as: "asistencias" });
 
-  Comision.hasMany(Calificacion, { foreignKey: "comision_id", as: "calificaciones" });
-  Calificacion.belongsTo(Comision, { foreignKey: "comision_id", as: "comision" });
+  ComisionUC.hasMany(Calificacion, { foreignKey: "comision_uc_id", as: "calificaciones" });
+  Calificacion.belongsTo(ComisionUC, { foreignKey: "comision_uc_id", as: "comision_unidad_curricular" });
 
   User.hasMany(Calificacion, { foreignKey: "alumno_id", as: "calificaciones" });
   Calificacion.belongsTo(User, { foreignKey: "alumno_id", as: "alumno" });
 
-  Clase.hasMany(Material, { foreignKey: "clase_id", as: "materiales" });
-  Material.belongsTo(Clase, { foreignKey: "clase_id", as: "clase" });
+  ComisionUC.hasMany(Material, { foreignKey: "comision_uc_id", as: "materiales" });
+  Material.belongsTo(ComisionUC, { foreignKey: "comision_uc_id", as: "comision_unidad_curricular" });
 }

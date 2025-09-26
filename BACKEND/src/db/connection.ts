@@ -1,5 +1,4 @@
 import { cargar } from "#Utils/cargarCarreras";
-import getErrorMessage, { ErrorResponse } from "#Utils/errorHandling";
 import { Sequelize } from "sequelize"
 
 export const sequelize = new Sequelize(
@@ -18,26 +17,6 @@ export const sequelize = new Sequelize(
   }
 )
 
-// export async function initializeDB(): Promise<void | ErrorResponse> {
-//     try {
-//         await sequelize.authenticate();
-//         console.log("DB conectada");
-        
-//         import('#db/initModels')
-//         /**
-//           await sequelize.sync({ alter: true });
-//           */
-//         await sequelize.drop(); // elimina todas las tablas
-//         await sequelize.sync({ force: true }); 
-//         cargar() //DESCOMENTAR PARA CREAR CARRERAS
-//         console.log("DB sincronizada");
-//     } catch (error: unknown) {
-//       console.error("Error en initializeDB:", error);
-//         return {
-//             error: getErrorMessage(error)
-//         }
-//     }
-// }
 export const updateDB = async () => {
   try {
     import('#db/initModels')
@@ -67,6 +46,7 @@ export const clearDB = async () => {
     import('#db/initModels')
     await sequelize.drop()
     await sequelize.sync({ force: true })
+    
     cargar()
     process.env.PORT === "8080"
       ? console.log("DB local reiniciada correctamente!")
