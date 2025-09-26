@@ -11,7 +11,6 @@ Career.init(
   {
     id: {
       type: DataTypes.STRING,
-      autoIncrement: true,
       primaryKey: true,
     },
     nombre: { type: DataTypes.STRING(150), allowNull: false, unique: true },

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "main": "app.ts",
-  "type": "module",
+  "type": "commonjs",
   "imports": {
     "#Utils/*": ".src/Utils/*",
     "#components/*": ".src/components/*",
