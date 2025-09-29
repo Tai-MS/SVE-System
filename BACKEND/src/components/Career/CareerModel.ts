@@ -7,15 +7,3 @@ export class Career extends Model<InferAttributes<Career>, InferCreationAttribut
   declare duracion_meses: number
   declare activo: boolean
 }
-Career.init(
-  {
-    id: {
-      type: DataTypes.STRING,
-      primaryKey: true,
-    },
-    nombre: { type: DataTypes.STRING(150), allowNull: false, unique: true },
-    duracion_meses: { type: DataTypes.SMALLINT.UNSIGNED, allowNull: false },
-    activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
-  },
-  { sequelize, tableName: "carreras" }
-)

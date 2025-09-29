@@ -1,103 +1,101 @@
 import { QueryInterface, DataTypes, Op } from "sequelize"
-
-type TipoUC = "Materia" | "Taller" | "Proyecto" | "Laboratorio"
+import { v4 as uuidv4 } from 'uuid'
+type TipoUC = "MATERIA" | "TALLER" | "PRACTICA PROFESIONALIZANTE" | "LABORATORIO"
 type UCSeed = {
-  carrera_id: string
+  carrera_id_fk: string
   nombre: string
   carga_horaria: number
-  tipo: TipoUC
+  tipo_uc: TipoUC
   activo?: boolean
-  created_at?: Date
-  updated_at?: Date
 }
-const materiasDS = [
-  { nombre: "Comunicación", carga_horaria: 48, tipo: "Taller" },
-  { nombre: "UDI 1", carga_horaria: 48, tipo: "Taller" },
-  { nombre: "Matemática", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Inglés Técnico 1", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Administración", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Tecnología de la Información", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Lógica y Estructura de Datos", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Ingeniería de Software", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Sistemas Operativos", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Problemáticas Socio Contemporáneas", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "UDI 2", carga_horaria: 48, tipo: "Taller" },
-  { nombre: "Inglés Técnico 2", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Innovación y Desarrollo Emprendedor", carga_horaria: 48, tipo: "Materia" },
-  { nombre: "Estadística", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Programación 1", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Ingeniería de Software 2", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Bases de Datos 1", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Práctica Profesionalizante 1", carga_horaria: 192, tipo: "Proyecto" },
-  { nombre: "Ética y Responsabilidad Social", carga_horaria: 48, tipo: "Materia" },
-  { nombre: "Derecho y Legislación Laboral", carga_horaria: 48, tipo: "Materia" },
-  { nombre: "Redes y Comunicación", carga_horaria: 128, tipo: "Laboratorio" },
-  { nombre: "Programación 2", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Gestión de Proyectos de Software", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Bases de Datos 2", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Práctica Profesionalizante 2", carga_horaria: 192, tipo: "Proyecto" },
+const MATERIAsDS = [
+  { id: uuidv4(),nombre: "Comunicación", carga_horaria: 48, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "UDI 1", carga_horaria: 48, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Matemática", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Inglés Técnico 1", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Administración", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Tecnología de la Información", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Lógica y Estructura de Datos", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Ingeniería de Software", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Sistemas Operativos", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Problemáticas Socio Contemporáneas", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "UDI 2", carga_horaria: 48, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Inglés Técnico 2", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Innovación y Desarrollo Emprendedor", carga_horaria: 48, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Estadística", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Programación 1", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Ingeniería de Software 2", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Bases de Datos 1", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Práctica Profesionalizante 1", carga_horaria: 192, tipo_uc: "PRACTICA PROFESIONALIZANTE" },
+  { id: uuidv4(),nombre: "Ética y Responsabilidad", carga_horaria: 48, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Derecho y Legislación Laboral", carga_horaria: 48, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Redes y Comunicación", carga_horaria: 128, tipo_uc: "LABORATORIO" },
+  { id: uuidv4(),nombre: "Programación 2", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Gestión de PRACTICA PROFESIONALIZANTEs de Software", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Bases de Datos 2", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Práctica Profesionalizante 2", carga_horaria: 192, tipo_uc: "PRACTICA PROFESIONALIZANTE" },
 ] as const
-const materiasITI = [
-  { nombre: "Comunicación", carga_horaria: 48, tipo: "Materia" },
-  { nombre: "UDI 1", carga_horaria: 48, tipo: "Taller" },
-  { nombre: "Matemática", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Física Aplicada a las Tecnologías de la Información", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Administración", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Inglés Técnico", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Arquitectura de las Computadoras", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Lógica y Programación", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Infraestructura de Redes 1", carga_horaria: 64, tipo: "Materia" },
-  { nombre: "Problemáticas Socio Contemporáneas", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "UDI 2", carga_horaria: 48, tipo: "Taller" },
-  { nombre: "Estadística", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Innovación y Desarrollo Emprendedor", carga_horaria: 48, tipo: "Materia" },
-  { nombre: "Sistemas Operativos", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Algoritmos y Estructura de Datos", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Bases de Datos 1", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Infraestructura de Redes 2", carga_horaria: 128, tipo: "Laboratorio" },
-  { nombre: "Práctica Profesionalizante 1", carga_horaria: 192, tipo: "Proyecto" },
-  { nombre: "Ética y Responsabilidad Social", carga_horaria: 48, tipo: "Materia" },
-  { nombre: "Derecho y Legislación Laboral", carga_horaria: 48, tipo: "Materia" },
-  { nombre: "Administración de Bases de Datos", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Seguridad de los Sistemas", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Integridad y Migración de Datos", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Administración de Sistemas Operativos y Redes", carga_horaria: 128, tipo: "Materia" },
-  { nombre: "Práctica Profesionalizante 2", carga_horaria: 256, tipo: "Proyecto" },
+const MATERIAsITI = [
+  { id: uuidv4(),nombre: "Comunicación", carga_horaria: 48, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "UDI 1", carga_horaria: 48, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Matemática", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Física Aplicada a las Tecnologías de la Información", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Administración", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Inglés Técnico", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Arquitectura de las Computadoras", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Lógica y Programación", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Infraestructura de Redes 1", carga_horaria: 64, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Problemáticas Socio Contemporáneas", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "UDI 2", carga_horaria: 48, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Estadística", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Innovación y Desarrollo Emprendedor", carga_horaria: 48, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Sistemas Operativos", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Algoritmos y Estructura de Datos", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Bases de Datos 1", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Infraestructura de Redes 2", carga_horaria: 128, tipo_uc: "LABORATORIO" },
+  { id: uuidv4(),nombre: "Práctica Profesionalizante 1", carga_horaria: 192, tipo_uc: "PRACTICA PROFESIONALIZANTE" },
+  { id: uuidv4(),nombre: "Ética y Responsabilid", carga_horaria: 48, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Derecho y Legislación Laboral", carga_horaria: 48, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Administración de Bases de Datos", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Seguridad Sistemas", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Integridadción de Datos", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Administración de Sistemas Operativos y Redes", carga_horaria: 128, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Práctica Profesionalizante 2", carga_horaria: 256, tipo_uc: "PRACTICA PROFESIONALIZANTE" },
 ] as const
-const materiasAF = [
-  { nombre: "Comunicación", carga_horaria: 48, tipo: "Taller" },
-  { nombre: "UDI 1", carga_horaria: 48, tipo: "Materia" },
-  { nombre: "Matemática", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Inglés Técnico 1", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Psicosociología de las Organizaciones", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Modelos de Negocios", carga_horaria: 96, tipo: "Taller" },
-  { nombre: "Arquitectura de las Computadoras", carga_horaria: 128, tipo: "Taller" },
-  { nombre: "Gestión de Software", carga_horaria: 128, tipo: "Taller" },
-  { nombre: "Análisis de Sistemas Organizacionales", carga_horaria: 160, tipo: "Taller" },
-  { nombre: "Problemáticas Socio Contemporáneas", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "UDI 2", carga_horaria: 48, tipo: "Materia" },
-  { nombre: "Inglés Técnico 2", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Estadística", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Innovación y Desarrollo Emprendedor", carga_horaria: 96, tipo: "Taller" },
-  { nombre: "Gestión de Software 2", carga_horaria: 128, tipo: "Taller" },
-  { nombre: "Estrategias de Negocios", carga_horaria: 128, tipo: "Proyecto" },
-  { nombre: "Desarrollo de Sistemas", carga_horaria: 160, tipo: "Taller" },
-  { nombre: "Práctica Profesionalizante 1", carga_horaria: 192, tipo: "Proyecto" },
-  { nombre: "Ética y Responsabilidad Social", carga_horaria: 48, tipo: "Materia" },
-  { nombre: "Derecho y Legislación Laboral", carga_horaria: 48, tipo: "Materia" },
-  { nombre: "Redes y Comunicaciones", carga_horaria: 128, tipo: "Laboratorio" },
-  { nombre: "Seguridad de los Sistemas", carga_horaria: 96, tipo: "Materia" },
-  { nombre: "Bases de Datos", carga_horaria: 128, tipo: "Taller" },
-  { nombre: "Sistema de Información Organizacional", carga_horaria: 128, tipo: "Taller" },
-  { nombre: "Desarrollo de Sistemas Web", carga_horaria: 160, tipo: "Taller" },
-  { nombre: "Práctica Profesionalizante 2", carga_horaria: 192, tipo: "Proyecto" },
+const MATERIAsAF = [
+  { id: uuidv4(),nombre: "Comunicación", carga_horaria: 48, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "UDI 1", carga_horaria: 48, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Matemática", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Inglés Técnico 1", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Psicosociología de las Organizaciones", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Modelos de Negocios", carga_horaria: 96, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Arquitectura de las Computadoras", carga_horaria: 128, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Gestión de Software", carga_horaria: 128, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Análisis de Sistemas Organizacionales", carga_horaria: 160, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Problemáticas Socio Contemporáneas", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "UDI 2", carga_horaria: 48, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Inglés Técnico 2", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Estadística", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Innovación y Desarrollo Emprendedor", carga_horaria: 96, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Gestión de Software 2", carga_horaria: 128, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Estrategias de Negocios", carga_horaria: 128, tipo_uc: "PRACTICA PROFESIONALIZANTE" },
+  { id: uuidv4(),nombre: "Desarrollo de Sistemas", carga_horaria: 160, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Práctica Profesionalizante 1", carga_horaria: 192, tipo_uc: "PRACTICA PROFESIONALIZANTE" },
+  { id: uuidv4(),nombre: "Ética y Responsabilidad", carga_horaria: 48, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Derecho y Legislación Laboral", carga_horaria: 48, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Redes y Comunicaciones", carga_horaria: 128, tipo_uc: "LABORATORIO" },
+  { id: uuidv4(),nombre: "Seguridad Sistemas", carga_horaria: 96, tipo_uc: "MATERIA" },
+  { id: uuidv4(),nombre: "Bases de Datos", carga_horaria: 128, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Sistema de Información Organizacional", carga_horaria: 128, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Desarrollo de Sistemas Web", carga_horaria: 160, tipo_uc: "TALLER" },
+  { id: uuidv4(),nombre: "Práctica Profesionalizante 2", carga_horaria: 192, tipo_uc: "PRACTICA PROFESIONALIZANTE" },
 ] as const
 export default {
   up: async (queryInterface: QueryInterface) => {
     await queryInterface.createTable("unidades_curriculares", {
-      id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
-      carrera_id: {
-        type: DataTypes.BIGINT.UNSIGNED,
+      id: { type: DataTypes.STRING, primaryKey: true },
+      carrera_id_fk: {
+        type: DataTypes.STRING,
         allowNull: false,
         references: { model: "carreras", key: "id" },
         onUpdate: "CASCADE",
@@ -105,58 +103,58 @@ export default {
       },
       nombre: { type: DataTypes.STRING(200), allowNull: false },
       carga_horaria: { type: DataTypes.SMALLINT.UNSIGNED, allowNull: false },
-      tipo: { type: DataTypes.ENUM("Materia", "Taller", "Proyecto", "Laboratorio"), allowNull: false },
+      tipo_uc: { type: DataTypes.ENUM("MATERIA", "TALLER", "PRACTICA PROFESIONALIZANTE", "LABORATORIO"), allowNull: false },
       activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
-      created_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
-      updated_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+      // created_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+      // updated_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     })
 
     const now = new Date()
 
-    const baseMateriasITI: UCSeed[] = materiasITI.map<UCSeed>((m) => ({
+    const baseMATERIAsITI: UCSeed[] = MATERIAsITI.map<UCSeed>((m) => ({
       ...m,
-      carrera_id: "ITI",
+      carrera_id_fk: "ITI",
       activo: true,
-      created_at: now,
-      updated_at: now,
+      // created_at: now,
+      // updated_at: now,
     }))
-    const baseMateriasAF: UCSeed[] = materiasAF.map<UCSeed>((m) => ({
+    const baseMATERIAsAF: UCSeed[] = MATERIAsAF.map<UCSeed>((m) => ({
       ...m,
-      carrera_id: "AF",
+      carrera_id_fk: "AF",
       activo: true,
-      created_at: now,
-      updated_at: now,
+      // created_at: now,
+      // updated_at: now,
     }))
 
-    const baseMateriasDS: UCSeed[] = materiasDS.map<UCSeed>((m) => ({
+    const baseMATERIAsDS: UCSeed[] = MATERIAsDS.map<UCSeed>((m) => ({
       ...m,
-      carrera_id: "DS",
+      carrera_id_fk: "DS",
       activo: true,
-      created_at: now,
-      updated_at: now,
+      // created_at: now,
+      // updated_at: now,
     }))
-    await queryInterface.bulkInsert("unidades_curriculares", baseMateriasDS)
-    await queryInterface.bulkInsert("unidades_curriculares", baseMateriasAF)
-    await queryInterface.bulkInsert("unidades_curriculares", baseMateriasITI)
+    await queryInterface.bulkInsert("unidades_curriculares", baseMATERIAsDS)
+    await queryInterface.bulkInsert("unidades_curriculares", baseMATERIAsAF)
+    await queryInterface.bulkInsert("unidades_curriculares", baseMATERIAsITI)
   },
 
   down: async (queryInterface: QueryInterface) => {
-    const nombresDS = materiasDS.map((m) => m.nombre)
-    const nombresAF = materiasAF.map((m) => m.nombre)
-    const nombresITI = materiasITI.map((m) => m.nombre)
+    const nombresDS = MATERIAsDS.map((m) => m.nombre)
+    const nombresAF = MATERIAsAF.map((m) => m.nombre)
+    const nombresITI = MATERIAsITI.map((m) => m.nombre)
 
     await queryInterface.bulkDelete("unidades_curriculares", {
-      carrera_id: "DS",
+      carrera_id_fk: "DS",
       nombre: { [Op.in]: nombresDS },
     })
 
     await queryInterface.bulkDelete("unidades_curriculares", {
-      carrera_id: "AF",
+      carrera_id_fk: "AF",
       nombre: { [Op.in]: nombresAF },
     })
 
     await queryInterface.bulkDelete("unidades_curriculares", {
-      carrera_id: "ITI",
+      carrera_id_fk: "ITI",
       nombre: { [Op.in]: nombresITI },
     })
 

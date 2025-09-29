@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from "express"
 import userController from "./UserController"
 import passport from "#config/passport"
 import upload from "#Utils/multer"
-import { verificarToken } from "#middlewares/auth"
+import { datosDelToken, verificarToken } from "#middlewares/auth"
 
 const router = express.Router()
 
@@ -24,26 +24,34 @@ router.get("/auth/google/callback", async (req: Request, res: Response, next: Ne
   await userController.loginGoogle(req, res, next)
 })
 
-router.get("/obtenerTodos", verificarToken,async (req: Request, res: Response, next: NextFunction) => {
+router.get("/obtenerTodos", async (req: Request, res: Response, next: NextFunction) => {
   await userController.traerTodos(req, res, next)
 })
 
-router.get("/obtenerUsuario", verificarToken, async (req: Request, res: Response, next: NextFunction) => {
+router.get("/obtenerUsuario", async (req: Request, res: Response, next: NextFunction) => {
   await userController.traerUsuario(req, res, next)
 })
 
-router.post("/crearUsuario", verificarToken, async (req: Request, res: Response, next: NextFunction) => {
+router.post("/crearUsuario", async (req: Request, res: Response, next: NextFunction) => {
   await userController.crearUsuario(req, res, next)
 })
 
-router.put("/actualizar/{usuario}", verificarToken, async (req: Request, res: Response, next: NextFunction) => {
+router.put("/actualizar", async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.body);
+  
   await userController.actualizarUsuario(req, res, next)
 })
 
-router.post("/iniciarSesion", async (req: Request, res: Response, next: NextFunction) => {
+router.put("/incluirEnUC", async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.body);
+  
+  await userController.incluirEnUC(req, res, next)
+})
+
+router.post("/public/iniciarSesion", async (req: Request, res: Response, next: NextFunction) => {
   await userController.inciarSesion(req, res, next)
 })
 
-router.post("/importarAlumnos", upload.single("file"), userController.ImportarAlumnos)
+router.post("/public/importarAlumnos", upload.single("file"), userController.ImportarAlumnos)
 
 export default router
