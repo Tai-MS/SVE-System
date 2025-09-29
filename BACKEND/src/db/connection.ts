@@ -1,5 +1,4 @@
-import getErrorMessage, { ErrorResponse } from "#Utils/errorHandling"
-
+import { cargar } from "#Utils/cargarCarreras";
 import { Sequelize } from "sequelize"
 
 export const sequelize = new Sequelize(
@@ -20,13 +19,7 @@ export const sequelize = new Sequelize(
 
 export const updateDB = async () => {
   try {
-    import("#components/User/UserModel")
-    import("#components/Period/PeriodModel")
-    import("#components/Career/CareerModel")
-    import("#components/CUType/CurricularUnitType")
-    import("#components/CurricularUnit/CurricularUnitModel")
-    import("#components/Archivos/archivosModel")
-    import("#components/Comunicados/comunicadosModel")
+    import('#db/initModels')
     await sequelize.sync({ alter: true })
     process.env.PORT === "8080"
       ? console.log("DB local actualizada correctamente!")
@@ -38,13 +31,7 @@ export const updateDB = async () => {
 
 export const connectDB = async () => {
   try {
-    import("#components/User/UserModel")
-    import("#components/Period/PeriodModel")
-    import("#components/Career/CareerModel")
-    import("#components/CUType/CurricularUnitType")
-    import("#components/CurricularUnit/CurricularUnitModel")
-    import("#components/Archivos/archivosModel")
-    import("#components/Comunicados/comunicadosModel")
+    import('#db/initModels')
     await sequelize.sync()
     process.env.PORT === "8080"
       ? console.log("Conectado correctamente a la DB local!")
@@ -76,15 +63,11 @@ export async function initializeDB(): Promise<void | ErrorResponse> {
       
 export const clearDB = async () => {
   try {
-    import("#components/User/UserModel")
-    import("#components/Period/PeriodModel")
-    import("#components/Career/CareerModel")
-    import("#components/CUType/CurricularUnitType")
-    import("#components/CurricularUnit/CurricularUnitModel")
-    import("#components/Archivos/archivosModel")
-    import("#components/Comunicados/comunicadosModel")
+    import('#db/initModels')
     await sequelize.drop()
     await sequelize.sync({ force: true })
+    
+    cargar()
     process.env.PORT === "8080"
       ? console.log("DB local reiniciada correctamente!")
       : console.log("DB remota reiniciada correctamente!")
@@ -92,5 +75,4 @@ export const clearDB = async () => {
     console.log("Error a la hora de limpiar la DB: ", err)
   }
 }
-
 export default sequelize
