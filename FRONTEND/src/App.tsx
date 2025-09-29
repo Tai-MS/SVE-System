@@ -5,7 +5,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./components/Home";
 import Header from "./components/Header";
 
-
 function App() {
   const { user, logout, login } = useAuth();
 
@@ -23,11 +22,9 @@ function App() {
             </ProtectedRoute>
           }
         />
-
       </Routes>
     </Router>
   );
 }
 
 export default App;
-

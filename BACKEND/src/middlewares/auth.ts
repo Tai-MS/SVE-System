@@ -3,11 +3,22 @@ import UserService from "#components/User/UserService"
 import { Request, Response, NextFunction } from "express"
 import jwt from 'jsonwebtoken'
 
+export async function datosDelToken(token: string){
+    const decodificado = jwt.verify(token, clave) as jwt.JwtPayload
+    const dni = decodificado.dni
+    const rol = decodificado.rol
+    const id = decodificado.id
+    console.log(dni)
+    console.log(rol)
+    return {dni: dni, rol: rol, id: id}
+}
+
 const clave = process.env.SECRET_KEY || "secreto"
 export async function generarToken(data: Usuario){
-    const {dni, nombre, apellido, rol} = data
+    const {id, dni, nombre, apellido, rol} = data
 
     const token = jwt.sign({
+            id: id,
             dni: dni,
             nombre: nombre, 
             apellido: apellido, 

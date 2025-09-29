@@ -54,6 +54,26 @@ export const connectDB = async () => {
   }
 }
 
+
+export async function initializeDB(): Promise<void | ErrorResponse> {
+    try {
+        await sequelize.authenticate();
+        console.log("DB conectada");
+        import('#components/User/UserModel');
+        import('#components/Period/PeriodModel')
+        import('#components/Career/CareerModel')
+        import('#components/CUType/CurricularUnitType')
+        import('#components/CurricularUnit/CurricularUnitModel')
+        /**
+         * DESCOMENTAR PARA CREAR O SINCRONIZAR LAS TABLAS
+         */
+        // await sequelize.sync({ force: true });
+        console.log("DB sincronizada");
+    } catch (error: unknown) {
+        return {
+            error: getErrorMessage(error)
+        }
+      
 export const clearDB = async () => {
   try {
     import("#components/User/UserModel")

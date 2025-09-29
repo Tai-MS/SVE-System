@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
-// import { googleLogin } from "../hooks/useAuth";
 
 interface LoginProps {
   login: (username: string, password: string) => Promise<boolean>;
@@ -71,7 +70,7 @@ function Login({ login }: LoginProps) {
                         hover:border-indigo-800 transition-colors duration-300"
               type="button"
               onClick={async () => {
-                window.location.href = import.meta.env.VITE_BACKURL + "/user/auth/google/callback";
+                window.location.href = import.meta.env.VITE_BACKURL + "/user/google";
               }}
             >
               Iniciar Sesión con Google
