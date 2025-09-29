@@ -9,10 +9,10 @@ import passport from "passport"
 import session from "express-session"
 import cookieParser from "cookie-parser"
 import { verificarToken } from "#middlewares/auth"
-import rutasPublicasRouter from '#components/PublicRoutes/rutasPublicas'
+import rutasPublicasRouter from "#components/PublicRoutes/rutasPublicas"
 import UnidadCurricularRouter from "#components/CurricularUnit/CurricularUnitRoutes"
 import CarreraRouter from "#components/Career/CarreraRoutes"
-import ComisionRouter from '#components/Comission/ComissionRoute'
+import { ComisionRouter } from "#components/Comision/ComisionRoutes"
 import { sessionStore } from "#db/initModels"
 /**
  * Se encarga de levantar el servidor
@@ -21,7 +21,7 @@ import { sessionStore } from "#db/initModels"
  */
 export const create_server = async () => {
   const app = express()
-  
+
   app
     .disable("x-powered-by")
     .use(morgan("dev"))

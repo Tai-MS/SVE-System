@@ -1,7 +1,7 @@
 import { cargar } from "#Utils/cargarCarreras"
 import getErrorMessage, { ErrorResponse } from "#Utils/errorHandling"
 import { Sequelize } from "sequelize"
-
+import "dotenv/config"
 export const sequelize = new Sequelize(
   process.env.DB_NAME || "svs",
   process.env.DB_USER || "root",

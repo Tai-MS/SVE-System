@@ -1,6 +1,7 @@
-import { Op, WhereOptions } from "sequelize"
+import { Op, Options, WhereOptions } from "sequelize"
 import { ComisionAttributes } from "./ComisionDTO"
 import { Comision } from "./ComisionModel"
+import { ComisionSchema } from "./ComisionSchemas"
 interface ComisionFiltros {
   id?: number
   numero_comision?: string
@@ -50,5 +51,71 @@ export class ComisionServices {
       where,
     })
     return { status: 200, respuesta: comisiones }
+  }
+  buscarComisionPorId = async (id: number) => {
+    const comision = await Comision.findByPk(id)
+    if (!comision) return { status: 404, respuesta: "La comision no existe" }
+    return { status: 200, respuesta: comision }
+  }
+  modificarComision = async (id: number, newData: ComisionAttributes) => {
+    const t = await Comision.sequelize!.transaction()
+
+    try {
+      const comisionDB = await Comision.findByPk(id)
+      if (!comisionDB) {
+        return { status: 404, respuesta: "La comision no existe" }
+      }
+      const camposPermitidos = ["numero_comision", "cant_alumnos", "carrera_id", "activo"] as const
+      let esDiferente = false
+      for (const key of camposPermitidos) {
+        if (newData[key as keyof ComisionAttributes] !== undefined) {
+          if (comisionDB[key as keyof ComisionAttributes] !== newData[key as keyof ComisionAttributes]) {
+            esDiferente = true
+            comisionDB.setDataValue(key, newData[key as keyof ComisionAttributes]!)
+          }
+        }
+      }
+      if (!esDiferente) {
+        return { status: 409, respuesta: "Los datos de la comision no han cambiado" }
+      }
+      await comisionDB.save({ transaction: t })
+      await t.commit()
+      return { status: 200, respuesta: "Comision modificada con exito" }
+    } catch (error) {
+      await t.rollback()
+      return { status: 500, respuesta: "Ocurrio un error en el servidor al intentar modificar la comision" }
+    }
+  }
+  eliminarComision = async (id: number) => {
+    const t = await Comision.sequelize!.transaction()
+    try {
+      const comisionDB = await Comision.findByPk(id)
+      if (!comisionDB) {
+        return { status: 404, respuesta: "La comision no existe" }
+      }
+      await comisionDB.destroy({ transaction: t })
+      await t.commit()
+      return { status: 200, respuesta: "Comision eliminada" }
+    } catch (error) {
+      await t.rollback()
+      return { status: 500, respuesta: "Ocurrio un error en el servidor al intentar eliminar la comision" }
+    }
+  }
+
+  archivarComision = async (id: number) => {
+    const t = await Comision.sequelize!.transaction()
+    try {
+      const comisionDB = await Comision.findByPk(id)
+      if (!comisionDB) {
+        return { status: 404, respuesta: "La comision no existe" }
+      }
+      comisionDB.activo = false
+      await comisionDB.save({ transaction: t })
+      await t.commit()
+      return { status: 200, respuesta: "Comision archivada con exito" }
+    } catch (error) {
+      await t.rollback()
+      return { status: 500, respuesta: "Ocurrio un error al intentar archivar la comision" }
+    }
   }
 }

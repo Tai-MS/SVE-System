@@ -33,6 +33,3 @@ Comision.init(
     indexes: [{ unique: true, fields: ["numero_comision"] }],
   }
 )
-
-Comision.belongsTo(Career, { foreignKey: "carrera_id" })
-Career.hasMany(Comision, { foreignKey: "carrera_id" })

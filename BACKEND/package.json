@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "main": "app.ts",
-  "type": "module",
   "imports": {
     "#Utils/*": ".src/Utils/*",
     "#components/*": ".src/components/*",

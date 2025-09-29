@@ -10,7 +10,7 @@ async function bootstrap() {
 
   app.listen(PORT, async () => {
     console.log(`Servidor corriendo en: http://localhost:${PORT}`)
-    clearDB()
+    // clearDB()
     // updateDB()
     // connectDB()
   })

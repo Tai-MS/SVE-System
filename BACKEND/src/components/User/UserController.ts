@@ -61,26 +61,26 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
       email: req.body.email,
       contraseña: req.body.contraseña,
     }
-    
+
     if (!data.email || !data.contraseña) {
       return res.status(400).json({
         error: "Bad request",
         message: "Campos incompletos.",
       })
     }
-    
+
     const iniciar_sesion = await UserService.iniciarSesion(data)
-    console.log(iniciar_sesion);
+    console.log(iniciar_sesion)
     if (typeof iniciar_sesion === "string") {
       return res.status(400).json({
         error: "Bad request",
         message: iniciar_sesion,
       })
     }
-    
+
     const token = await generarToken(iniciar_sesion)
     const dato = await datosDelToken(token)
-    console.log(dato.id);
+    console.log(dato.id)
     console.log("++++++++++++++++++++++++")
     console.log(token)
     console.log("++++++++++++++++++++++++")
@@ -101,7 +101,6 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
         success: true,
         message: "logeado",
         token: token,
-
       })
   } catch (error: unknown) {
     return res.status(500).json({
@@ -130,7 +129,7 @@ async function crearUsuario(req: Request, res: Response, next: NextFunction): Pr
   }
 }
 
-async function incluirEnUC(req: Request, res: Response, next: NextFunction): Promise<Response>{
+async function incluirEnUC(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
     const token = req.headers["auth-token"] as string | undefined
     const datos = {
@@ -138,7 +137,7 @@ async function incluirEnUC(req: Request, res: Response, next: NextFunction): Pro
       token: token,
       unidad_curricular_id_fk: req.body.unidad_curricular_id_fk || null,
     }
-    
+
     const call = await UserService.incluirEnUC(datos)
 
     return res.status(200).send(call)
@@ -152,8 +151,8 @@ async function incluirEnUC(req: Request, res: Response, next: NextFunction): Pro
 
 async function actualizarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    console.log(req.body);
-    console.log(req.headers['auth-token']);
+    console.log(req.body)
+    console.log(req.headers["auth-token"])
     const token = req.headers["auth-token"] as string | undefined
     const datos: Partial<InferCreationAttributes<Usuario>> = {
       id: req.body.id,
@@ -169,8 +168,8 @@ async function actualizarUsuario(req: Request, res: Response, next: NextFunction
       token: token,
       carrera_id_fk: req.body.carrera_id_fk || null,
     }
-    console.log(datos);
-    
+    console.log(datos)
+
     const call = await UserService.actualizarUsuario(datos)
 
     return res.status(200).send(call)
@@ -198,10 +197,8 @@ async function deshabilitarUsuario(req: Request, res: Response, next: NextFuncti
 }
 
 async function loginGoogle(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-  console.log(req);
+  console.log(req)
   passport.authenticate("google", async (error: unknown, user: User, info: any) => {
-    
-    
     if (error) {
       return next(error)
     }
@@ -211,7 +208,6 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
     }
 
     const token = await generarToken(user)
-    const dato = await datosDelToken(token)
     const dato = await datosDelToken(token)
 
     req.logIn(user, function (error) {
@@ -271,5 +267,5 @@ export default {
   deshabilitarUsuario,
   loginGoogle,
   ImportarAlumnos,
-  incluirEnUC
+  incluirEnUC,
 }

@@ -14,4 +14,25 @@ export class ComisionControllers {
       res.status(respuesta.status).json(respuesta.respuesta)
     }
   }
+  verDetallesComision = async (req: Request, res: Response) => {
+    const id: number = Number(req.params.id)
+    const respuesta = await Comision.buscarComisionPorId(id)
+    res.status(respuesta.status).json(respuesta.respuesta)
+  }
+  modificarComision = async (req: Request, res: Response) => {
+    const id: number = Number(req.params.id)
+    const newData: ComisionAttributes = req.body
+    const respuesta = await Comision.modificarComision(id, newData)
+    res.status(respuesta.status).json(respuesta.respuesta)
+  }
+  eliminarComision = async (req: Request, res: Response) => {
+    const id: number = Number(req.params.id)
+    const respuesta = await Comision.eliminarComision(id)
+    res.status(respuesta.status).json(respuesta.respuesta)
+  }
+  archivarComision = async (req: Request, res: Response) => {
+    const id: number = Number(req.params.id)
+    const respuesta = await Comision.archivarComision(id)
+    res.status(respuesta.status).json(respuesta.respuesta)
+  }
 }
