@@ -255,7 +255,8 @@ async function ImportarAlumnos(req: Request, res: Response) {
   }
   // Envia los registros al Services para subirlos a la DB
   const resultado = await UserService.guardarAlumnosImportados(verificacion_datos.data as Usuarios)
-  res.status(resultado.status).json(resultado.respuesta)
+  
+  res.status(resultado.status).json(resultado.mensaje)
 }
 
 export default {

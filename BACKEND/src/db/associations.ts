@@ -57,9 +57,6 @@ export function applyAssociations() {
     otherKey: "usuario_id",
   })
 
-  Comision.belongsTo(Career, { foreignKey: "carrera_id" })
-  Career.hasMany(Comision, { foreignKey: "carrera_id" })
-
   Usuario.hasMany(Comunicado, { foreignKey: "id_usuario" })
   Comunicado.belongsTo(Usuario, { foreignKey: "id_usuario" })
 

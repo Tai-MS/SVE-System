@@ -13,13 +13,13 @@ import { Material } from "#components/Material/MaterialModel"
 import { Period } from "#components/Period/PeriodModel"
 import Usuario, { Rol } from "#components/User/UserModel"
 import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
-import { DataType } from "sequelize-typescript"
+// import { DataTypes } from "sequelize-typescript";
+
 import connectSessionSequelize from "connect-session-sequelize"
 import session from "express-session"
 import Comunicado from "#components/Comunicados/comunicadosModel"
 import Archivo from "#components/Archivos/archivosModel"
 import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
-import { fa } from "zod/v4/locales"
 
 const SequelizeStore = connectSessionSequelize(session.Store)
 export const sessionStore = new SequelizeStore({
@@ -56,7 +56,7 @@ UnidadCurricular.init(
 
 UsuarioComision.init(
   {
-    anio_ingreso: { type: DataTypes.DATE, allowNull: false },
+    anio_comision: { type: DataTypes.DATE, allowNull: false },
     usuario_id: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -83,6 +83,36 @@ UsuarioComision.init(
   {
     sequelize,
     tableName: "usuario_comision",
+  }
+)
+
+UsuarioComision.init(
+  {
+    usuario_id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      allowNull: false,
+      references: { model: "usuarios", key: "id" },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+    },
+    comision_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
+      primaryKey: true,
+      allowNull: false,
+      references: { model: "comisiones", key: "id" },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+    },
+    anio_comision: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    tableName: "usuario_comision",
+    timestamps: false,
   }
 )
 
@@ -178,6 +208,7 @@ Comision.init(
         key: "id",
       },
     },
+    cupo_maximo: { type: DataTypes.SMALLINT.UNSIGNED },
     cant_alumnos: { type: DataTypes.SMALLINT.UNSIGNED },
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
   },
@@ -220,20 +251,20 @@ Period.init(
 
 Usuario.init(
   {
-    id: { primaryKey: true, type: DataType.UUID, defaultValue: DataType.UUIDV4 },
+    id: { primaryKey: true, type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4 },
     nombre: { type: DataTypes.STRING(100), allowNull: false },
     apellido: { type: DataTypes.STRING(100), allowNull: false },
     dni: { type: DataTypes.STRING(20), allowNull: false, unique: true },
-    telefono: { type: DataType.STRING, allowNull: true },
+    telefono: { type: DataTypes.STRING, allowNull: true },
     email: { type: DataTypes.STRING(255), allowNull: false, unique: true },
-    anioIngreso: { type: DataType.INTEGER, allowNull: false },
+    anioIngreso: { type: DataTypes.INTEGER, allowNull: false },
     rol: { type: DataTypes.ENUM(...Object.values(Rol)), allowNull: false },
     contraseña: { type: DataTypes.STRING(255), allowNull: false },
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     creado: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     ultima_conexion: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     token: { type: DataTypes.STRING, allowNull: true },
-    carrera_id_fk: { type: DataType.STRING, allowNull: true },
+    carrera_id_fk: { type: DataTypes.STRING, allowNull: true },
   },
   {
     sequelize,

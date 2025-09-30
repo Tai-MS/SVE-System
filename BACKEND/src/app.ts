@@ -6,13 +6,13 @@ const app = create_server()
 const PORT = process.env.PORT || 3030
 
 async function bootstrap() {
-  const app = await create_server() // 👈 esperar la promesa
+  const app = await create_server()
 
   app.listen(PORT, async () => {
     console.log(`Servidor corriendo en: http://localhost:${PORT}`)
-    // clearDB()
-    // updateDB()
-    // connectDB()
+    // await clearDB()
+    await updateDB()
+    // await connectDB()
   })
 }
 

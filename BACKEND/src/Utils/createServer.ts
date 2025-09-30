@@ -46,11 +46,10 @@ export const create_server = async () => {
     .use("/carreras", CarreraRouter)
     .use("/unidadcurricular", UnidadCurricularRouter)
     .use("/comision", ComisionRouter)
-    .use(passport.initialize())
-    .use(passport.session())
     .use("/usuarios", userRouter)
     .use("/comunicados", comunicadosRouter)
-    .use("/archivos", archivoRouter)
+    .use(passport.initialize())
+    .use(passport.session())
 
   await sessionStore.sync()
 

@@ -10,5 +10,6 @@ export const excelSchema = z.array(
     Teléfono: z.string(),
     Email: z.email(),
     "Año de ingreso": z.int(),
+    numero_comision: z.number().int().nullable().optional()
   })
 )

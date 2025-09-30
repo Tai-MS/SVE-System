@@ -10,7 +10,7 @@ export const sequelize = new Sequelize(
     host: process.env.DB_HOST || "127.0.0.1",
     port: Number(process.env.DB_PORT),
     dialect: "mysql",
-    logging: false,
+    logging: true,
     define: {
       timestamps: false,
       freezeTableName: true,
@@ -69,7 +69,7 @@ export const clearDB = async () => {
     await sequelize.sync({ force: true })
 
     cargar()
-    process.env.PORT === "8080"
+    process.env.PORT === "3030"
       ? console.log("DB local reiniciada correctamente!")
       : console.log("DB remota reiniciada correctamente!")
   } catch (err) {

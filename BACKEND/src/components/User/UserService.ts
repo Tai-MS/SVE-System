@@ -7,11 +7,13 @@ import userClass from "./UserPersistence"
 import { Usuarios } from "#components/User/userSchemas"
 import transport from "#Utils/mailer"
 import { usuarioI } from "./UserDTO"
-import { InferCreationAttributes } from "sequelize"
+import { InferCreationAttributes, UUID } from "sequelize"
 import { datosDelToken } from "#middlewares/auth"
 import { UnidadCurricular } from "#components/CurricularUnit/CurricularUnitModel"
 import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
 import sequelize from "#db/connection"
+import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
+import { Comision } from "#components/Comission/ComissionModel"
 
 async function traerTodos() {
   return userClass.traerTodos()
@@ -42,7 +44,7 @@ async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string> 
 }
 
 async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
-  const { dni, nombre, apellido } = datos
+  const { dni, nombre, apellido, rol } = datos
 
   if (!dni || !nombre || !apellido) {
     return "Faltan campos."
@@ -61,7 +63,7 @@ async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
     email: dni + "@terciariourquiza.edu.ar",
     activo: true,
     creado: new Date(),
-    rol: Rol.ESTUDIANTE,
+    rol: rol || Rol.ESTUDIANTE,
   }
   await transport.sendMail({
     from: process.env.USER_MAILER,
@@ -118,16 +120,23 @@ async function actualizarUsuario(
   guardarToken: boolean = false
 ): Promise<Usuario | string> {
   const dni = datos.dni
-  console.log("+++++++++++")
-  console.log(datos)
-  console.log("+++++++++++")
   const actualizarCampos: Partial<InferCreationAttributes<Usuario>> = {}
 
   if (guardarToken) {
-    actualizarCampos.token = datos.token
-    await Usuario.update(actualizarCampos, {
-      where: { dni: datos.dni },
-    })
+    if (process.env.DEV === "dev") {
+      actualizarCampos.token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRjODZhOTI3LWZkMjQtNDczOC04NjUwLTc0NmQ4M2ExNmUyNiIsImRuaSI6IjQ0MDYyODI4Iiwibm9tYnJlIjoiVEFJRUwiLCJhcGVsbGlkbyI6IlNBR1JFVFRJIiwicm9sIjoiRVNUVURJQU5URSIsImlhdCI6MTc1OTA4NzQ5MSwiZXhwIjoxNzU5MTczODkxfQ.Xm1-upJnFNfyoZGsb17YDzkCgLNu-ZsPofIYz_bfJ_g"
+
+      await Usuario.update(actualizarCampos, {
+        where: { dni: datos.dni },
+      })
+    } else {
+      actualizarCampos.token = datos.token
+
+      await Usuario.update(actualizarCampos, {
+        where: { dni: datos.dni },
+      })
+    }
     return "token guardado"
   }
   if (dni !== null && dni !== undefined && typeof datos.token === "string") {
@@ -135,24 +144,12 @@ async function actualizarUsuario(
   } else {
     return "DNI requerido"
   }
-  console.log("/////////////////")
 
-  const confirmarUsuario = await datosDelToken(datos.token)
-  console.log("/////////////////")
+  // const confirmarUsuario = await datosDelToken(datos.token)
 
-  console.log(confirmarUsuario)
-  console.log(confirmarUsuario.dni)
-  console.log(typeof datos.dni)
-  console.log(typeof confirmarUsuario.dni)
-  console.log("/////////////////")
-
-  console.log(confirmarUsuario.dni !== datos.dni)
-  console.log(confirmarUsuario.rol === "ESTUDIANTE")
-
-  if (confirmarUsuario.dni !== datos.dni && confirmarUsuario.rol === "ESTUDIANTE") {
-    return "Error"
-  }
-  const usuario = await Usuario.encontrarPorDNI(dni)
+  // if(confirmarUsuario.rol !== Rol.ADMINISTRADOR || confirmarUsuario.rol !== Rol.BEDELIA || confirmarUsuario.rol !== Rol.DIRECTIVO){
+  //   return "Error"
+  // }
 
   if (datos.email !== null && datos.email !== undefined) {
     actualizarCampos.email = datos.email
@@ -205,6 +202,9 @@ async function deshabilitarUsuario(email: String) {
   return email
 }
 
+//
+// meterEnComision  DEBE SER FALSE, ESTA EN TRUE PARA FACILITAR LAS PRUEBAS
+//
 async function guardarAlumnosImportados(datos: Usuarios) {
   const t = await Usuario.sequelize!.transaction()
   try {
@@ -215,7 +215,7 @@ async function guardarAlumnosImportados(datos: Usuarios) {
         const dniLimpio = alumno.Documento.replace(/^DNI\s*-\s*/, "")
         const contraseña_generada = generarContraseña()
         const hashear_contraseña = await hashContraseña(contraseña_generada)
-        await Usuario.create(
+        const usuario = await Usuario.create(
           {
             nombre,
             apellido,
@@ -228,16 +228,33 @@ async function guardarAlumnosImportados(datos: Usuarios) {
           },
           { transaction: t }
         )
-        await transport.sendMail({
-          from: process.env.USER_MAILER,
-          to: dniLimpio + "@terciariourquiza.edu.ar",
-          subject: "Cuenta creada",
-          html: `
-            <div>
-                <p>Tu contraseña es: ${contraseña_generada}</p>
-            </div>
-        `,
-        })
+        //Añade al alumno automaticamente a una comision si existe anio_ingreso
+        if (alumno.numero_comision) {
+          const comision = await Comision.encontrarPorNro(alumno.numero_comision)
+
+          if (comision) {
+            await UsuarioComision.create(
+              {
+                usuario_id: usuario.id,
+                comision_id: comision.id,
+                anio_comision: new Date(),
+              },
+              { transaction: t }
+            )
+          }
+        }
+        if (process.env.DEV !== "dev") {
+          await transport.sendMail({
+            from: process.env.USER_MAILER,
+            to: dniLimpio + "@terciariourquiza.edu.ar",
+            subject: "Cuenta creada",
+            html: `
+              <div>
+                  <p>Tu contraseña es: ${contraseña_generada}</p>
+              </div>
+          `,
+          })
+        }
       }
     })
     return { status: 200, mensaje: "Los alumnos se importaron correctamente en la base de datos" }
