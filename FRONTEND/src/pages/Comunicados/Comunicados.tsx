@@ -76,7 +76,7 @@ export default function Comunicados() {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <aside className="w-56 h-screen border-r bg-purple-100 p-2">
+      <aside className="w-56 h-screen border-r bg-purple-300 p-2 mt-9">
         <img
           src="/logoterciario.png"
           alt="Logo"
@@ -90,8 +90,8 @@ export default function Comunicados() {
           </ListItem>
 
           <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemText primary="Unidades Curriculares" />
+            <ListItemButton onClick={() => navigate("/carreras")}>
+              <ListItemText primary="Carreras" />
             </ListItemButton>
           </ListItem>
 

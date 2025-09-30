@@ -30,10 +30,10 @@ function App() {
         />
         <Route path="/comunicados" element={<Comunicados />} />
         <Route path="/comunicados/crear/:id" element={<CrearComunicado />} />
-        <Route path="/carreras" element={<Carreras/>} />
-        <Route path="/comisiones" element={<Comisiones/>} />
-        <Route path="/materias" element={<Materias/>} />
-        <Route path="/unidadcurricular" element={<UnidadCurricular/>} />
+        <Route path="/carreras" element={<Carreras />} />
+        <Route path="/comisiones/:carreraId" element={<Comisiones />} />
+        <Route path="/materias/:comisionId" element={<Materias />} />
+        <Route path="/unidadcurricular/:materiaId/:materiaNombre/:materiaProfe" element={<UnidadCurricular />} />
 
       </Routes>
     </Router>

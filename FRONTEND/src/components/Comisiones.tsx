@@ -1,12 +1,27 @@
 import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button, Accordion, AccordionSummary, AccordionDetails, Typography, Card } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 function Comisiones() {
   const [selected, setSelected] = useState("Comisiones");
+  const { carreraId } = useParams();
+  const navigate = useNavigate();
+
+  const comisiones = [
+    { id: "11", nombre: "1ero 1ra" },
+    { id: "12", nombre: "1ero 2da" },
+    { id: "13", nombre: "1ero 3ra" },
+    { id: "14", nombre: "1ero 4ta" },
+    { id: "21", nombre: "2do 1ra" },
+    { id: "22", nombre: "2do 2da" },
+    { id: "23", nombre: "2do 3ra" },
+    { id: "31", nombre: "3ero 1ra" },
+    { id: "32", nombre: "3ero 2da" }
+  ];
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen mt-8">
       {/* Sidebar */}
       <div className="w-60 bg-purple-50 p-4 flex flex-col gap-2">
         <img
@@ -45,36 +60,22 @@ function Comisiones() {
 
         {/* Comisiones section */}
         <div className="flex-1 p-6">
-          <h1 className="text-xl font-semibold mb-4">Desarrollo de Software</h1>
-
-          <div className="grid gap-3 w-full max-w-xl">
-            {/* 1er Año */}
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>1er Año</Typography>
-              </AccordionSummary>
-            </Accordion>
-
-            {/* 2do Año */}
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>2do Año</Typography>
-              </AccordionSummary>
-            </Accordion>
-
-            {/* 3er Año */}
-            <Accordion defaultExpanded>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>3er Año</Typography>
-              </AccordionSummary>
-              <AccordionDetails className="bg-purple-50">
-                <div className="flex flex-col gap-2">
-                  <Card className="p-2 shadow-sm">3ero 1era</Card>
-                  <Card className="p-2 shadow-sm">3ero 2da</Card>
-                </div>
-              </AccordionDetails>
-            </Accordion>
-          </div>
+          <h1 className="text-xl font-semibold mb-4">Comisiones - {carreraId}</h1>
+          {comisiones.map((com) => (
+          <Accordion key={com.id}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>{com.nombre}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography
+                className="cursor-pointer text-purple-600"
+                onClick={() => navigate(`/materias/${com.id}`)}
+              >
+                Ir a {com.nombre}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+        ))}
         </div>
       </div>
     </div>
