@@ -56,11 +56,11 @@ UnidadCurricular.init(
 
 UsuarioComision.init(
   {
-    id: { type: DataType.UUID, primaryKey: true },
-    anio: { type: DataType.DATE, allowNull: false },
-    usuario_fk: {
-      type: DataType.UUID,
+    anio_ingreso: { type: DataTypes.DATE, allowNull: false },
+    usuario_id: {
+      type: DataTypes.UUID,
       allowNull: false,
+      primaryKey: true,
       references: {
         model: "usuarios",
         key: "id",
@@ -68,9 +68,10 @@ UsuarioComision.init(
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    comision_fk: {
-      type: DataType.BIGINT.UNSIGNED,
+    comision_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
+      primaryKey: true,
       references: {
         model: "comisiones",
         key: "id",

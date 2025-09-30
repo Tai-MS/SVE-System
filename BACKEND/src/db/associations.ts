@@ -47,12 +47,12 @@ export function applyAssociations() {
   })
 
   Usuario.belongsToMany(Comision, {
-    through: "usuario_comision",
+    through: UsuarioComision,
     foreignKey: "usuario_id",
     otherKey: "comision_id",
   })
   Comision.belongsToMany(Usuario, {
-    through: "usuario_comision",
+    through: UsuarioComision,
     foreignKey: "comision_id",
     otherKey: "usuario_id",
   })
