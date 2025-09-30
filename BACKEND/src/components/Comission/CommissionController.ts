@@ -71,9 +71,30 @@ async function modificarComision(req: Request, res: Response, next: NextFunction
   }
 }
 
+async function añadirAlumnos(req:Request, res: Response, next: NextFunction){
+  try {
+      const usuarios = []
+      for(let i = 0; i < req.body.usuarios.length; i++){
+        usuarios.push(req.body.usuario[i])
+      }
+      const datos  = {
+        
+      }
+
+      const actualizar = await ComissionService.modificarComision(datos)
+    return res.status(200).send(actualizar)
+  } catch (error) {
+    return res.status(500).json({
+      error: "Internal server error",
+      message: getErrorMessage(error),
+    })
+  }
+}
+
 export default {
     verComisiones,
     verComision,
     crearComision,
-    modificarComision
+    modificarComision,
+    añadirAlumnos
 }

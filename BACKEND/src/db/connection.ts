@@ -1,4 +1,5 @@
 import { cargar } from "#Utils/cargarCarreras";
+import { log } from "node:console";
 import { Sequelize } from "sequelize"
 
 export const sequelize = new Sequelize(
@@ -9,7 +10,7 @@ export const sequelize = new Sequelize(
     host: process.env.DB_HOST || "127.0.0.1",
     port: Number(process.env.DB_PORT || 3306),
     dialect: "mysql",
-    logging: false,
+    logging: true,
     define: {
       timestamps: false,
       freezeTableName: true,
@@ -44,11 +45,12 @@ export const connectDB = async () => {
 export const clearDB = async () => {
   try {
     import('#db/initModels')
+
     await sequelize.drop()
     await sequelize.sync({ force: true })
     
     cargar()
-    process.env.PORT === "8080"
+    process.env.PORT === "3030"
       ? console.log("DB local reiniciada correctamente!")
       : console.log("DB remota reiniciada correctamente!")
   } catch (err) {

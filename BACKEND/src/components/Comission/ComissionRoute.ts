@@ -15,4 +15,8 @@ router.post('/crearcomision', CommissionController.crearComision)
 
 router.put('/modificarcomision', CommissionController.modificarComision)
 
+//EP para añadir multiples alumnos a la vez
+//Deben ser pasados como un array
+router.put("/añadirAlumnos", CommissionController.añadirAlumnos)
+
 export default router
