@@ -4,4 +4,5 @@ export type ComisionAttributes = {
   cant_alumnos: number
   carrera_id: string
   activo?: boolean
+  cupo_maximo?: number
 }

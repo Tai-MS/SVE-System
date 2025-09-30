@@ -18,7 +18,7 @@ export class ComisionServices {
         carrera_id: data.carrera_id,
       })
       if (comisionDB.respuesta.length > 0) return { status: 409, respuesta: "La comision que intenta crear ya existe" }
-      await Comision.create(data, { transaction: t })
+      await Comision.create({ ...data, activo: data.activo ?? true }, { transaction: t })
       await t.commit()
       return { status: 201, respuesta: "Comision creada correctamente" }
     } catch (error: any) {
