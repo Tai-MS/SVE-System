@@ -28,12 +28,12 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/comunicados" element={<Comunicados />} />
-        <Route path="/comunicados/crear/:id" element={<CrearComunicado />} />
-        <Route path="/carreras" element={<Carreras />} />
-        <Route path="/comisiones/:carreraId" element={<Comisiones />} />
-        <Route path="/materias/:comisionId" element={<Materias />} />
-        <Route path="/unidadcurricular/:materiaId/:materiaNombre/:materiaProfe" element={<UnidadCurricular />} />
+        <Route path="/comunicados" element={<ProtectedRoute><Comunicados /></ProtectedRoute>} />
+        <Route path="/comunicados/crear/:id" element={<ProtectedRoute><CrearComunicado /></ProtectedRoute>} />
+        <Route path="/carreras" element={<ProtectedRoute><Carreras /></ProtectedRoute>} />
+        <Route path="/comisiones/:carreraId" element={<ProtectedRoute><Comisiones /></ProtectedRoute>} />
+        <Route path="/materias/:comisionId" element={<ProtectedRoute><Materias /></ProtectedRoute>} />
+        <Route path="/unidadcurricular/:materiaId/:materiaNombre/:materiaProfe" element={<ProtectedRoute><UnidadCurricular /></ProtectedRoute>} />
 
       </Routes>
     </Router>
