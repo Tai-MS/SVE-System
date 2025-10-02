@@ -74,36 +74,36 @@ export default function Comunicados() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen mt-1">
       {/* Sidebar */}
-      <aside className="w-56 h-screen border-r bg-purple-300 p-2 mt-9">
+      <aside className="w-60 bg-purple-50 p-4 flex flex-col gap-2">
         <img
           src="/logoterciario.png"
           alt="Logo"
-          className="h-12 w-12 rounded-full object-cover"
+          className="w-12 h-12 mb-4 mx-auto"
         />
-        <List>
+        <List className="text-left cursor-pointer px-3 py-2 rounded-md font-medium">
           <ListItem disablePadding>
             <ListItemButton selected>
-              <ListItemText primary="Anuncios" />
+              <ListItemText primary="Anuncios" className={"bg-white text-purple-600 shadow-md"} />
             </ListItemButton>
           </ListItem>
 
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/carreras")}>
-              <ListItemText primary="Carreras" />
+              <ListItemText primary="Carreras" className={"text-gray-700 hover:bg-purple-100"} />
             </ListItemButton>
           </ListItem>
 
           <ListItem disablePadding>
             <ListItemButton>
-              <ListItemText primary="Alumnos" />
+              <ListItemText primary="Alumnos" className={"text-gray-700 hover:bg-purple-100"} />
             </ListItemButton>
           </ListItem>
 
           <ListItem disablePadding>
             <ListItemButton onClick={() => setOpen(!open)}>
-              <ListItemText primary="Mensajes" />
+              <ListItemText primary="Mensajes" className={"text-gray-700 hover:bg-purple-100"} />
               {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
           </ListItem>
@@ -112,12 +112,12 @@ export default function Comunicados() {
             <List component="div" disablePadding>
               <ListItem disablePadding>
                 <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemText primary="Recibidos" />
+                  <ListItemText primary="Recibidos" className={"text-gray-700 hover:bg-purple-100"} />
                 </ListItemButton>
               </ListItem>
               <ListItem disablePadding>
                 <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemText primary="Enviados" />
+                  <ListItemText primary="Enviados" className={"text-gray-700 hover:bg-purple-100"} />
                 </ListItemButton>
               </ListItem>
             </List>

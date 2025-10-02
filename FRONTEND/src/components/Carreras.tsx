@@ -7,7 +7,7 @@ function Carreras() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex h-screen mt-8">
+    <div className="flex h-screen mt-4">
       {/* Sidebar */}
       <div className="w-60 bg-purple-50 p-4 flex flex-col gap-2">
         <img
@@ -19,7 +19,7 @@ function Carreras() {
           <button
             key={item}
             onClick={() => setSelected(item)}
-            className={`text-left px-3 py-2 rounded-md font-medium ${
+            className={`text-left cursor-pointer px-3 py-2 rounded-md font-medium ${
               selected === item
                 ? "bg-white text-purple-600 shadow-md"
                 : "text-gray-700 hover:bg-purple-100"

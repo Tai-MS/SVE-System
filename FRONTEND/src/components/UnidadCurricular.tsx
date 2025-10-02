@@ -19,7 +19,7 @@ function UnidadCurricular() {
   const { materiaProfe } = useParams();
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen mt-4">
       {/* Sidebar */}
       <div className="w-60 bg-purple-50 p-4 flex flex-col gap-2">
         <img
@@ -31,7 +31,7 @@ function UnidadCurricular() {
           <button
             key={item}
             onClick={() => setSelected(item)}
-            className={`text-left px-3 py-2 rounded-md font-medium ${
+            className={`text-left cursor-pointer px-3 py-2 rounded-md font-medium ${
               selected === item
                 ? "bg-white text-purple-600 shadow-md"
                 : "text-gray-700 hover:bg-purple-100"
@@ -57,7 +57,7 @@ function UnidadCurricular() {
         </div>
 
         {/* Tabs */}
-        <div className="border-b px-6 mt-10">
+        <div className="border-b px-6 mt-5">
           <Tabs value={tab} onChange={(_, val) => setTab(val)}>
             <Tab label="Inicio" />
             <Tab label="Trabajos" />
