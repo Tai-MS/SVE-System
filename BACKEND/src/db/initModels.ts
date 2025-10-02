@@ -13,8 +13,6 @@ import { Material } from "#components/Material/MaterialModel"
 import { Period } from "#components/Period/PeriodModel"
 import Usuario, { Rol } from "#components/User/UserModel"
 import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
-// import { DataTypes } from "sequelize-typescript";
-
 import connectSessionSequelize from "connect-session-sequelize"
 import session from "express-session"
 import Comunicado from "#components/Comunicados/comunicadosModel"
@@ -186,7 +184,7 @@ Aula.init(
 
 ComisionUC.init(
   {
-    id: { type: DataTypes.STRING, primaryKey: true },
+    id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true, autoIncrement: true },
     uc_id: { type: DataTypes.STRING, allowNull: false },
     comision_id: { type: DataTypes.BIGINT, allowNull: false },
   },
@@ -208,8 +206,8 @@ Comision.init(
         key: "id",
       },
     },
-    cupo_maximo: { type: DataTypes.SMALLINT.UNSIGNED },
-    cant_alumnos: { type: DataTypes.SMALLINT.UNSIGNED },
+    cupo_maximo: { type: DataTypes.SMALLINT.UNSIGNED, defaultValue: 60 },
+    cant_alumnos: { type: DataTypes.SMALLINT.UNSIGNED, defaultValue: 0 },
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
   },
   {
@@ -223,7 +221,7 @@ Material.init(
   {
     id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
     comision_uc_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       references: {
         model: "comision_unidad_curricular",
@@ -285,15 +283,20 @@ Usuario.init(
 UsuarioUnidadCurricular.init(
   {
     usuario_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       primaryKey: true,
       references: { model: "usuarios", key: "id" },
     },
     unidad_curricular_id: {
       type: DataTypes.STRING,
       primaryKey: true,
-      references: { model: "unidad_curricular", key: "id" },
+      references: { model: "unidades_curriculares", key: "id" },
     },
+    comision_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
+      primaryKey: true,
+      references: {model: "comisiones", key: "id"}
+    }
   },
   {
     sequelize,
@@ -306,7 +309,7 @@ Calificacion.init(
   {
     id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
     comision_uc_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       references: {
         model: "comision_unidad_curricular",
@@ -331,7 +334,7 @@ Clase.init(
   {
     id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
     comision_uc_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       references: {
         model: "comision_unidad_curricular",

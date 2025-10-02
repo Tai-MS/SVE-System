@@ -67,4 +67,5 @@ export type UsuarioExcel = {
   Email: string
   "Año de ingreso": number
   numero_comision: number | null
+  carrera_id_fk: string | null
 }

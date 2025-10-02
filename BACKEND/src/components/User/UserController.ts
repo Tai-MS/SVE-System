@@ -70,7 +70,6 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
     }
 
     const iniciar_sesion = await UserService.iniciarSesion(data)
-    console.log(iniciar_sesion)
     if (typeof iniciar_sesion === "string") {
       return res.status(400).json({
         error: "Bad request",
@@ -80,10 +79,6 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
 
     const token = await generarToken(iniciar_sesion)
     const dato = await datosDelToken(token)
-    console.log(dato.id)
-    console.log("++++++++++++++++++++++++")
-    console.log(token)
-    console.log("++++++++++++++++++++++++")
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],
       token: token,
@@ -136,8 +131,9 @@ async function incluirEnUC(req: Request, res: Response, next: NextFunction): Pro
       dni: req.body.dni,
       token: token,
       unidad_curricular_id_fk: req.body.unidad_curricular_id_fk || null,
+      comision_id: req.body.comision_id || null
     }
-
+    
     const call = await UserService.incluirEnUC(datos)
 
     return res.status(200).send(call)
@@ -151,8 +147,6 @@ async function incluirEnUC(req: Request, res: Response, next: NextFunction): Pro
 
 async function actualizarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    console.log(req.body)
-    console.log(req.headers["auth-token"])
     const token = req.headers["auth-token"] as string | undefined
     const datos: Partial<InferCreationAttributes<Usuario>> = {
       id: req.body.id,
@@ -168,7 +162,6 @@ async function actualizarUsuario(req: Request, res: Response, next: NextFunction
       token: token,
       carrera_id_fk: req.body.carrera_id_fk || null,
     }
-    console.log(datos)
 
     const call = await UserService.actualizarUsuario(datos)
 
@@ -197,7 +190,6 @@ async function deshabilitarUsuario(req: Request, res: Response, next: NextFuncti
 }
 
 async function loginGoogle(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-  console.log(req)
   passport.authenticate("google", async (error: unknown, user: User, info: any) => {
     if (error) {
       return next(error)
@@ -239,9 +231,17 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
 
 async function ImportarAlumnos(req: Request, res: Response) {
   const archivoCasting = (req as unknown as { file?: Express.Multer.File }).file
+  
   if (!archivoCasting || !archivoCasting.buffer) {
     return res.status(400).json({ error: "No se recibió ningún archivo." })
   }
+
+  // Verifica si los usuarios deben ser relacionados con 1 carrera
+  //buscando desde el nombre del archivo
+  const nombreArchivo = archivoCasting.originalname.toUpperCase()
+  const siglas = ["DS", "ITI", "AF"]
+  const siglaEncontrada = siglas.find(sigla => nombreArchivo.includes(`-${sigla}`))
+
   const archivo = XLSX.read(archivoCasting.buffer, { type: "buffer" })
   const hoja = archivo.Sheets[archivo.SheetNames[0]]
   const datos = XLSX.utils.sheet_to_json(hoja)
@@ -254,7 +254,7 @@ async function ImportarAlumnos(req: Request, res: Response) {
     })
   }
   // Envia los registros al Services para subirlos a la DB
-  const resultado = await UserService.guardarAlumnosImportados(verificacion_datos.data as Usuarios)
+  const resultado = await UserService.guardarAlumnosImportados(verificacion_datos.data as Usuarios, siglaEncontrada)
   
   res.status(resultado.status).json(resultado.mensaje)
 }

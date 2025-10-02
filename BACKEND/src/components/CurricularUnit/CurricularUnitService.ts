@@ -4,6 +4,10 @@ import { BusquedaUnidadDTO, CrearUnidadCurricularDTO } from './CurricularUnitDTO
 import { InferCreationAttributes } from 'sequelize'
 import { Not } from 'sequelize-typescript'
 import { skip } from 'node:test'
+import { ComisionUC } from '#components/ComisionUC/ComisionUCModel'
+import { Comision } from '#components/Comision/ComisionModel'
+import Usuario from '#components/User/UserModel'
+import UsuarioUnidadCurricular from '#components/UsuarioUC/UsuarioUC'
 
 async function traerTodas(): Promise<UnidadCurricular[] | null>{
     return await UnidadCurricular.findAll()
@@ -32,14 +36,36 @@ async function traerUnaUC(unidad: BusquedaUnidadDTO): Promise<UnidadCurricular |
 
 }
 
-async function crearUc(datos: InferCreationAttributes<UnidadCurricular>): Promise<UnidadCurricular | string>{
+async function crearUc(datos: InferCreationAttributes<UnidadCurricular>, datos_com_uc:any): Promise<{ uc_creacion: UnidadCurricular; com_uc_creacion: ComisionUC } | string>{
     const {nombre, carga_horaria, activo, carrera_id_fk, tipo_uc, id} = datos
+    const { uc_id, dni_profesor, nro_comision} = datos_com_uc
 
-    if(!nombre || !carga_horaria || !carrera_id_fk || !tipo_uc || !id){
+    if(!nombre || !carga_horaria || !carrera_id_fk || !tipo_uc || !id || !uc_id || !dni_profesor || !nro_comision){
         return "Faltan campos"
     }
 
-    return UnidadCurricular.create(datos)
+    const comision = await Comision.encontrarPorNro(nro_comision.toString())
+    if(!comision){
+        return "Comision no encontrada"
+    }
+
+    const profesor = await Usuario.encontrarPorDNI(dni_profesor)
+    if(!profesor){
+        return "Profesor no encontrado"
+    } 
+
+    if(profesor!.rol !== 'PROFESOR'){
+        return "Usuario no válido como profesor"
+    }
+
+    const datos_crear_uc_com = {
+        uc_id: uc_id,
+        profesor_id: profesor!.id,
+        comision_id: comision!.id
+    }
+    const uc_creacion = await UnidadCurricular.create(datos)
+    const com_uc_creacion = await ComisionUC.create(datos_crear_uc_com)
+    return { uc_creacion, com_uc_creacion }
 }
 
 async function modificarUc(datos: InferCreationAttributes<UnidadCurricular>): Promise<UnidadCurricular | string | null>{

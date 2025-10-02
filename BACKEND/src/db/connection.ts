@@ -10,7 +10,7 @@ export const sequelize = new Sequelize(
     host: process.env.DB_HOST || "127.0.0.1",
     port: Number(process.env.DB_PORT),
     dialect: "mysql",
-    logging: true,
+    logging: false,
     define: {
       timestamps: false,
       freezeTableName: true,
@@ -39,26 +39,6 @@ export const connectDB = async () => {
       : console.log("Conectado correctamente a la DB remota!")
   } catch (err) {
     console.log("Error a la hora de conectar con la DB: ", err)
-  }
-}
-
-export async function initializeDB(): Promise<void | ErrorResponse> {
-  try {
-    await sequelize.authenticate()
-    console.log("DB conectada")
-    import("#components/User/UserModel")
-    import("#components/Period/PeriodModel")
-    import("#components/Career/CareerModel")
-    import("#components/CurricularUnit/CurricularUnitModel")
-    /**
-     * DESCOMENTAR PARA CREAR O SINCRONIZAR LAS TABLAS
-     */
-    // await sequelize.sync({ force: true });
-    console.log("DB sincronizada")
-  } catch (error: unknown) {
-    return {
-      error: getErrorMessage(error),
-    }
   }
 }
 

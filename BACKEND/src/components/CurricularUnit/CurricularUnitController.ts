@@ -33,7 +33,6 @@ async function traerUnaUC(req: Request, res: Response, next: NextFunction): Prom
 
 async function crearUc(req: Request, res: Response, next: NextFunction): Promise<Response>{
     try {
-        console.log(req.body);
         
         const datos: InferCreationAttributes<UnidadCurricular> = {
             nombre: req.body.nombre,
@@ -43,10 +42,15 @@ async function crearUc(req: Request, res: Response, next: NextFunction): Promise
             tipo_uc: req.body.tipo_uc,
             id: req.body.id + req.body.carrera_id_fk
         }   
-        console.log(datos);
+        
+        const datos_com_uc = {
+            uc_id: datos.id,
+            dni_profesor: req.body.dni_profesor,
+            nro_comision: req.body.nro_comision
+        }
         
 
-        const crear = await CurricularUnitService.crearUc(datos)
+        const crear = await CurricularUnitService.crearUc(datos, datos_com_uc)
 
         return res.status(200).send(crear)
     } catch (error: unknown) {
