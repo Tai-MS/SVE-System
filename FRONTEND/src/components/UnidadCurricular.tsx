@@ -60,7 +60,6 @@ function UnidadCurricular() {
         <div className="border-b px-6 mt-5">
           <Tabs value={tab} onChange={(_, val) => setTab(val)}>
             <Tab label="Inicio" />
-            <Tab label="Trabajos" />
             <Tab label="Personas" />
           </Tabs>
         </div>
@@ -73,10 +72,10 @@ function UnidadCurricular() {
             <Card className="bg-teal-600 text-white rounded-lg shadow">
               <CardContent>
                 <Typography variant="h6" className="font-semibold">
-                  Materia - {materiaNombre}
+                  {materiaNombre}
                 </Typography>
-                <Typography variant="body2">Profesor - {materiaProfe}</Typography>
-                <Typography variant="body2">Comisión - {materiaId}</Typography>
+                <Typography variant="body2">{materiaProfe}</Typography>
+                <Typography variant="body2">{materiaId}</Typography>
               </CardContent>
             </Card>
 
@@ -90,7 +89,7 @@ function UnidadCurricular() {
                     </Avatar>
                     <div>
                       <Typography variant="body2" className="font-medium">
-                        Profesor - {materiaProfe}
+                        {materiaProfe}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         Subhead
@@ -111,7 +110,21 @@ function UnidadCurricular() {
                   Pendientes
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Sin trabajos pendientes
+                  Trabajos pendientes
+                </Typography>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right column (Entregados) */}
+          <div className="w-64">
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="subtitle1" className="font-medium mb-2">
+                  Entregados
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Trabajos entregados
                 </Typography>
               </CardContent>
             </Card>

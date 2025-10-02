@@ -18,12 +18,12 @@ export default function Materias() {
   const [open, setOpen] = useState(false);
   const { comisionId } = useParams();
   const materias = [
-    { id: "prog2", nombre: "Programación-II", profesor: "Prof-Juan-Pérez" },
-    { id: "bd2", nombre: "Bases-de-Datos-II", profesor: "Prof-Ana-García" },
-    { id: "pp2", nombre: "Práctica-Profesionalizante-II", profesor: "Prof-Carlos-Díaz" },
-    { id: "redes", nombre: "Redes-y-Comunicación", profesor: "Prof.-Miguel-Pan" },
-    { id: "derecho", nombre: "Derecho-y-Legislación-Laboral", profesor: "Prof-Ramón-Suárez" },
-    { id: "gestion", nombre: "Gestión-de-Proyectos-de-Software", profesor: "Prof-José-Ruiz" }
+    { id: "prog2", nombre: "Programación-II", profesor: "Juan-Pérez" },
+    { id: "bd2", nombre: "Bases-de-Datos-II", profesor: "Ana-García" },
+    { id: "pp2", nombre: "Práctica-Profesionalizante-II", profesor: "Carlos-Díaz" },
+    { id: "redes", nombre: "Redes-y-Comunicación", profesor: "Miguel-Pan" },
+    { id: "derecho", nombre: "Derecho-y-Legislación-Laboral", profesor: "Ramón-Suárez" },
+    { id: "gestion", nombre: "Gestión-de-Proyectos-de-Software", profesor: "José-Ruiz" }
   ];
 
   return (
