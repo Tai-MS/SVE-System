@@ -46,11 +46,7 @@ export const connectDB = async () => {
 export async function initializeDB(): Promise<void | ErrorResponse> {
   try {
     await sequelize.authenticate()
-    console.log("DB conectada")
-    import("#components/User/UserModel")
-    import("#components/Period/PeriodModel")
-    import("#components/Career/CareerModel")
-    import("#components/CurricularUnit/CurricularUnitModel")
+    import("#db/initModels")
     /**
      * DESCOMENTAR PARA CREAR O SINCRONIZAR LAS TABLAS
      */

@@ -16,6 +16,7 @@ function Login({ login }: LoginProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const success = await login(username, password);
+    console.log(success);
 
     if (success) {
       navigate("/comunicados"); // Redirigir al home
@@ -26,7 +27,7 @@ function Login({ login }: LoginProps) {
 
   return (
     <>
-    <Header />
+      <Header />
       <div className="h-screen flex items-center justify-center">
         <div className="bg-white p-8 rounded-2xl shadow-lg max-w-sm">
           <form
@@ -70,7 +71,8 @@ function Login({ login }: LoginProps) {
                         hover:border-indigo-800 transition-colors duration-300"
               type="button"
               onClick={async () => {
-                window.location.href = import.meta.env.VITE_BACKURL + "/user/google";
+                window.location.href =
+                  import.meta.env.VITE_BACKURL + "/usuarios/google";
               }}
             >
               Iniciar Sesión con Google
@@ -78,7 +80,7 @@ function Login({ login }: LoginProps) {
           </form>
         </div>
       </div>
-    <Footer />
+      <Footer />
     </>
   );
 }
