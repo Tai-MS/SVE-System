@@ -4,7 +4,7 @@ export enum TipoUC {
   MATERIA = "MATERIA",
   TALLER = "TALLER",
   PRACTICAS_PROF = "PRACTICA PROFESIONALIZANTE",
-  LABORATORIO = "LABORATORIO"
+  LABORATORIO = "LABORATORIO",
 }
 
 export class UnidadCurricular extends Model<
@@ -18,9 +18,9 @@ export class UnidadCurricular extends Model<
   declare carrera_id_fk: string
   declare tipo_uc: TipoUC
 
-  static async encontrarPorNombre(nombre: string){
+  static async encontrarPorNombre(nombre: string) {
     return await UnidadCurricular.findOne({
-      where: {nombre}
+      where: { nombre },
     })
   }
 }
