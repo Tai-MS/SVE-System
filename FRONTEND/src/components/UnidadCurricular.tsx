@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   Button,
   Tabs,
@@ -13,9 +14,12 @@ import {
 function UnidadCurricular() {
   const [selected, setSelected] = useState("Unidad Curricular");
   const [tab, setTab] = useState(0);
+  const { materiaId } = useParams();
+  const { materiaNombre } = useParams();
+  const { materiaProfe } = useParams();
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen mt-4">
       {/* Sidebar */}
       <div className="w-60 bg-purple-50 p-4 flex flex-col gap-2">
         <img
@@ -27,7 +31,7 @@ function UnidadCurricular() {
           <button
             key={item}
             onClick={() => setSelected(item)}
-            className={`text-left px-3 py-2 rounded-md font-medium ${
+            className={`text-left cursor-pointer px-3 py-2 rounded-md font-medium ${
               selected === item
                 ? "bg-white text-purple-600 shadow-md"
                 : "text-gray-700 hover:bg-purple-100"
@@ -53,10 +57,9 @@ function UnidadCurricular() {
         </div>
 
         {/* Tabs */}
-        <div className="border-b px-6 mt-10">
+        <div className="border-b px-6 mt-5">
           <Tabs value={tab} onChange={(_, val) => setTab(val)}>
             <Tab label="Inicio" />
-            <Tab label="Trabajos" />
             <Tab label="Personas" />
           </Tabs>
         </div>
@@ -69,10 +72,10 @@ function UnidadCurricular() {
             <Card className="bg-teal-600 text-white rounded-lg shadow">
               <CardContent>
                 <Typography variant="h6" className="font-semibold">
-                  Práctica Profesionalizante II
+                  {materiaNombre}
                 </Typography>
-                <Typography variant="body2">Dante Roselli</Typography>
-                <Typography variant="body2">3ero 2da</Typography>
+                <Typography variant="body2">{materiaProfe}</Typography>
+                <Typography variant="body2">{materiaId}</Typography>
               </CardContent>
             </Card>
 
@@ -86,7 +89,7 @@ function UnidadCurricular() {
                     </Avatar>
                     <div>
                       <Typography variant="body2" className="font-medium">
-                        Dante Roselli
+                        {materiaProfe}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         Subhead
@@ -107,7 +110,21 @@ function UnidadCurricular() {
                   Pendientes
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Sin trabajos pendientes
+                  Trabajos pendientes
+                </Typography>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right column (Entregados) */}
+          <div className="w-64">
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="subtitle1" className="font-medium mb-2">
+                  Entregados
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Trabajos entregados
                 </Typography>
               </CardContent>
             </Card>

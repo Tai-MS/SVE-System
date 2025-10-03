@@ -1,11 +1,5 @@
-<<<<<<< HEAD
-import getErrorMessage, { ErrorResponse } from "#Utils/errorHandling"
-import dotenv from "dotenv"
-dotenv.config()
-=======
 import { cargar } from "#Utils/cargarCarreras"
 import getErrorMessage, { ErrorResponse } from "#Utils/errorHandling"
->>>>>>> 93611fdb771f5d19e3c02231733d6050201da6fd
 import { Sequelize } from "sequelize"
 import "dotenv/config"
 export const sequelize = new Sequelize(
@@ -48,37 +42,14 @@ export const connectDB = async () => {
   }
 }
 
-<<<<<<< HEAD
-export async function initializeDB(): Promise<void | ErrorResponse> {
-  try {
-    await sequelize.authenticate()
-    import("#db/initModels")
-    /**
-     * DESCOMENTAR PARA CREAR O SINCRONIZAR LAS TABLAS
-     */
-    // await sequelize.sync({ force: true });
-    console.log("DB sincronizada")
-  } catch (error: unknown) {
-    return {
-      error: getErrorMessage(error),
-    }
-  }
-}
-
-=======
->>>>>>> 93611fdb771f5d19e3c02231733d6050201da6fd
 export const clearDB = async () => {
   try {
     import("#db/initModels")
     await sequelize.drop()
     await sequelize.sync({ force: true })
 
-<<<<<<< HEAD
-    process.env.PORT === "8080"
-=======
     cargar()
     process.env.PORT === "3030"
->>>>>>> 93611fdb771f5d19e3c02231733d6050201da6fd
       ? console.log("DB local reiniciada correctamente!")
       : console.log("DB remota reiniciada correctamente!")
   } catch (err) {
