@@ -4,4 +4,5 @@ export class ComisionUC extends Model<InferAttributes<ComisionUC>, InferCreation
   declare id: CreationOptional<number>  
   declare uc_id: string
   declare comision_id: number
+  declare link_meet: CreationOptional<string>
 }

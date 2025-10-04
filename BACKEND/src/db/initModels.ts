@@ -187,6 +187,7 @@ ComisionUC.init(
     id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true, autoIncrement: true },
     uc_id: { type: DataTypes.STRING, allowNull: false },
     comision_id: { type: DataTypes.BIGINT, allowNull: false },
+    link_meet: { type: DataTypes.STRING, allowNull: true}
   },
   {
     sequelize,
