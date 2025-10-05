@@ -210,6 +210,7 @@ Comision.init(
     cupo_maximo: { type: DataTypes.SMALLINT.UNSIGNED, defaultValue: 60 },
     cant_alumnos: { type: DataTypes.SMALLINT.UNSIGNED, defaultValue: 0 },
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    anio_creacion: {type: DataTypes.INTEGER, defaultValue: new Date().getFullYear()}
   },
   {
     sequelize,

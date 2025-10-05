@@ -27,6 +27,17 @@ export class ComisionServices {
       return { status: 500, respuesta: error.msg || "Ocurrio un error en el servidor al intentar crear una comision" }
     }
   }
+
+  traerTodas = async(carrera: string) => {
+    const comisiones = await Comision.encontrarPorCarrera(carrera)
+    console.log(comisiones);
+    
+    if(comisiones){
+      return {status: 200, respuesta: comisiones}
+    }
+    return { status: 404, respuesta: "Esta carrera aún no tiene comisiones."}
+  }
+
   buscarComisionQuery = async (filtros: ComisionFiltros) => {
     const where: WhereOptions = {}
     if (filtros.id) {

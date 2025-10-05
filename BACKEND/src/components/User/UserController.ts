@@ -61,7 +61,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
       email: req.body.email,
       contraseña: req.body.contraseña,
     }
-
+    console.log(data)
     if (!data.email || !data.contraseña) {
       return res.status(400).json({
         error: "Bad request",

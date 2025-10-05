@@ -1,4 +1,4 @@
-import { clearDB, connectDB } from "#db/connection"
+import { clearDB, connectDB, updateDB } from "#db/connection"
 import { create_server } from "#Utils/createServer"
 import "dotenv/config"
 const app = create_server()
@@ -11,9 +11,10 @@ async function bootstrap() {
   app.listen(PORT, async () => {
     console.log(`Servidor corriendo en: http://localhost:${PORT}`)
     // await clearDB()
-    await updateDB()
-    // await connectDB()
+    // await updateDB()
+    await connectDB()
   })
 }
 
 bootstrap()
+// 
