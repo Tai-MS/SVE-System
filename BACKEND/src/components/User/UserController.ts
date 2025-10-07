@@ -2,14 +2,16 @@ import getErrorMessage from "#Utils/errorHandling"
 import { NextFunction, Request, Response } from "express"
 import UserService from "./UserService"
 import passport from "passport"
-import User from "./UserModel"
+import User, { UserCreation } from "./UserModel"
+import { ActualizarUsuarioDTO, CrearUsuarioDTO, DatosBasicos, IniciarSesionDTO } from "./UserDTO"
 import { generarContraseña } from "#Utils/generarContraseña"
-import { generarToken } from "#middlewares/auth"
+import { datosDelToken, generarToken } from "#middlewares/auth"
 import { excelSchema, Usuarios } from "#components/User/userSchemas"
 import dotenv from "dotenv"
 import XLSX from "xlsx"
 import { usuarioI } from "./UserDTO"
-import { datosDelToken } from "#middlewares/auth"
+import Usuario from "./UserModel"
+import { InferCreationAttributes } from "sequelize"
 
 dotenv.config()
 async function traerTodos(req: Request, res: Response, next: NextFunction): Promise<Response> {
@@ -68,7 +70,6 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
     }
 
     const iniciar_sesion = await UserService.iniciarSesion(data)
-    console.log(iniciar_sesion);
     if (typeof iniciar_sesion === "string") {
       return res.status(400).json({
         error: "Bad request",
@@ -78,14 +79,11 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
 
     const token = await generarToken(iniciar_sesion)
     const dato = await datosDelToken(token)
-    console.log("++++++++++++++++++++++++")
-    console.log(token)
-    console.log("++++++++++++++++++++++++")
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],
       token: token,
     }
-    await UserService.actualizarUsuario(usuarioParaActualizar)
+    await UserService.actualizarUsuario(usuarioParaActualizar, true)
 
     return res
       .cookie("auth-token", token, {
@@ -127,11 +125,46 @@ async function crearUsuario(req: Request, res: Response, next: NextFunction): Pr
   }
 }
 
+async function incluirEnUC(req: Request, res: Response, next: NextFunction): Promise<Response> {
+  try {
+    const token = req.headers["auth-token"] as string | undefined
+    const datos = {
+      dni: req.body.dni,
+      token: token,
+      unidad_curricular_id_fk: req.body.unidad_curricular_id_fk || null,
+      comision_id: req.body.comision_id || null
+    }
+    
+    const call = await UserService.incluirEnUC(datos)
+
+    return res.status(200).send(call)
+  } catch (error) {
+    return res.status(500).json({
+      error: "Internal server error",
+      message: getErrorMessage(error),
+    })
+  }
+}
+
 async function actualizarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const email: string = req.query.email as string
+    const token = req.headers["auth-token"] as string | undefined
+    const datos: Partial<InferCreationAttributes<Usuario>> = {
+      id: req.body.id,
+      dni: req.body.dni,
+      email: req.body.email,
+      nombre: req.body.nombre || null,
+      apellido: req.body.apellido || null,
+      telefono: req.body.telefono || null,
+      anioIngreso: req.body.anioIngreso || null,
+      contraseña: req.body.contraseña || null,
+      activo: req.body.activo || null,
+      ultima_conexion: req.body.ultima_conexion || null,
+      token: token,
+      carrera_id_fk: req.body.carrera_id_fk || null,
+    }
 
-    const call = await UserService.traerUsuario(email)
+    const call = await UserService.actualizarUsuario(datos)
 
     return res.status(200).send(call)
   } catch (error) {
@@ -169,18 +202,19 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
 
     const token = await generarToken(user)
     const dato = await datosDelToken(token)
+
     req.logIn(user, function (error) {
       if (error) {
         return next(error)
       }
       const email = user.email
       const datos = {
-        id: dato.id,
+        dato: dato.id,
         dni: user.dni,
         email: email,
         token: token,
       }
-      UserService.actualizarUsuario(datos)
+      UserService.actualizarUsuario(datos, true)
       return res
         .cookie("auth-token", token, {
           maxAge: 360 * 100 * 24,
@@ -198,9 +232,17 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
 
 async function ImportarAlumnos(req: Request, res: Response) {
   const archivoCasting = (req as unknown as { file?: Express.Multer.File }).file
+  
   if (!archivoCasting || !archivoCasting.buffer) {
     return res.status(400).json({ error: "No se recibió ningún archivo." })
   }
+
+  // Verifica si los usuarios deben ser relacionados con 1 carrera
+  //buscando desde el nombre del archivo
+  const nombreArchivo = archivoCasting.originalname.toUpperCase()
+  const siglas = ["DS", "ITI", "AF"]
+  const siglaEncontrada = siglas.find(sigla => nombreArchivo.includes(`-${sigla}`))
+
   const archivo = XLSX.read(archivoCasting.buffer, { type: "buffer" })
   const hoja = archivo.Sheets[archivo.SheetNames[0]]
   const datos = XLSX.utils.sheet_to_json(hoja)
@@ -213,8 +255,9 @@ async function ImportarAlumnos(req: Request, res: Response) {
     })
   }
   // Envia los registros al Services para subirlos a la DB
-  const resultado = await UserService.guardarAlumnosImportados(verificacion_datos.data as Usuarios)
-  res.status(resultado.status).json(resultado.respuesta)
+  const resultado = await UserService.guardarAlumnosImportados(verificacion_datos.data as Usuarios, siglaEncontrada)
+  
+  res.status(resultado.status).json(resultado.mensaje)
 }
 
 export default {
@@ -226,4 +269,5 @@ export default {
   deshabilitarUsuario,
   loginGoogle,
   ImportarAlumnos,
+  incluirEnUC,
 }

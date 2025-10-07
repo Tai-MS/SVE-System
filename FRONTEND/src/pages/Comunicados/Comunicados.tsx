@@ -96,7 +96,7 @@ export default function Comunicados() {
           </ListItem>
 
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate("/usuarios")}>
               <ListItemText primary="Alumnos" className={"text-gray-700 hover:bg-purple-100"} />
             </ListItemButton>
           </ListItem>

@@ -32,6 +32,11 @@ export type ActualizarUsuarioDTO = {
   creado?: Date
   email?: string
   token?: string
+  telefono?: string
+  anioIngreso?: number
+  activo?: boolean
+  ultima_conexion?: Date
+  carrera_id_fk?: string
 }
 
 export type IniciarSesionDTO = {
@@ -61,4 +66,6 @@ export type UsuarioExcel = {
   Teléfono: string
   Email: string
   "Año de ingreso": number
+  numero_comision: number | null
+  carrera_id_fk: string | null
 }

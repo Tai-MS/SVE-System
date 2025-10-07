@@ -7,25 +7,20 @@ import comunicadosRouter from "#components/Comunicados/comunicadosRouter"
 import archivoRouter from "#components/Archivos/archivoRouter"
 import passport from "passport"
 import session from "express-session"
-import connectSessionSequelize from "connect-session-sequelize"
-import sequelize from "#db/connection"
 import cookieParser from "cookie-parser"
-
+import { verificarToken } from "#middlewares/auth"
+import rutasPublicasRouter from "#components/PublicRoutes/rutasPublicas"
+import UnidadCurricularRouter from "#components/CurricularUnit/CurricularUnitRoutes"
+import CarreraRouter from "#components/Career/CarreraRoutes"
+import { ComisionRouter } from "#components/Comision/ComisionRoutes"
+import { sessionStore } from "#db/initModels"
 /**
  * Se encarga de levantar el servidor
  * y crear las funciones necesarias
  * para la serialización de passport. Así como habilitar cors.
  */
-export const create_server = () => {
+export const create_server = async () => {
   const app = express()
-
-  const SequelizeStore = connectSessionSequelize(session.Store)
-  const sessionStore = new SequelizeStore({
-    db: sequelize,
-    tableName: "sessions",
-    checkExpirationInterval: 15 * 60 * 1000,
-    expiration: 24 * 60 * 60 * 1000,
-  })
 
   app
     .disable("x-powered-by")
@@ -47,16 +42,16 @@ export const create_server = () => {
         saveUninitialized: false,
       })
     )
-    .use(passport.initialize())
-    .use(passport.session())
+    .use("/public", rutasPublicasRouter) //MODIFICAR ENDPOINTS PARA PRODUCCIÓN
+    .use("/carreras", CarreraRouter)
+    .use("/unidadcurricular", UnidadCurricularRouter)
+    .use("/comision", ComisionRouter)
     .use("/usuarios", userRouter)
     .use("/comunicados", comunicadosRouter)
-    .use("/archivos", archivoRouter)
+    .use(passport.initialize())
+    .use(passport.session())
 
-  sessionStore.sync()
-
-  // Sincronizar el store de sesiones
-  sessionStore.sync()
+  await sessionStore.sync()
 
   return app
 }

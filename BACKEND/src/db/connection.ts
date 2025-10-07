@@ -1,8 +1,7 @@
+import { cargar } from "#Utils/cargarCarreras"
 import getErrorMessage, { ErrorResponse } from "#Utils/errorHandling"
-import dotenv from "dotenv"
-dotenv.config()
 import { Sequelize } from "sequelize"
-
+import "dotenv/config"
 export const sequelize = new Sequelize(
   process.env.DB_NAME || "svs",
   process.env.DB_USER || "root",
@@ -21,13 +20,7 @@ export const sequelize = new Sequelize(
 
 export const updateDB = async () => {
   try {
-    import("#components/User/UserModel")
-    import("#components/Period/PeriodModel")
-    import("#components/Career/CareerModel")
-    import("#components/CUType/CurricularUnitType")
-    import("#components/CurricularUnit/CurricularUnitModel")
-    import("#components/Archivos/archivosModel")
-    import("#components/Comunicados/comunicadosModel")
+    import("#db/initModels")
     await sequelize.sync({ alter: true })
     process.env.PORT === "8080"
       ? console.log("DB local actualizada correctamente!")
@@ -39,13 +32,7 @@ export const updateDB = async () => {
 
 export const connectDB = async () => {
   try {
-    import("#components/User/UserModel")
-    import("#components/Period/PeriodModel")
-    import("#components/Career/CareerModel")
-    import("#components/CUType/CurricularUnitType")
-    import("#components/CurricularUnit/CurricularUnitModel")
-    import("#components/Archivos/archivosModel")
-    import("#components/Comunicados/comunicadosModel")
+    import("#db/initModels")
     await sequelize.sync()
     process.env.PORT === "8080"
       ? console.log("Conectado correctamente a la DB local!")
@@ -55,45 +42,18 @@ export const connectDB = async () => {
   }
 }
 
-
-export async function initializeDB(): Promise<void | ErrorResponse> {
-    try {
-        await sequelize.authenticate();
-        console.log("DB conectada");
-        import('#components/User/UserModel');
-        import('#components/Period/PeriodModel')
-        import('#components/Career/CareerModel')
-        import('#components/CUType/CurricularUnitType')
-        import('#components/CurricularUnit/CurricularUnitModel')
-        /**
-         * DESCOMENTAR PARA CREAR O SINCRONIZAR LAS TABLAS
-         */
-        // await sequelize.sync({ force: true });
-        console.log("DB sincronizada");
-    } catch (error: unknown) {
-        return {
-            error: getErrorMessage(error)
-        }
-    }
-}
-      
 export const clearDB = async () => {
   try {
-    import("#components/User/UserModel")
-    import("#components/Period/PeriodModel")
-    import("#components/Career/CareerModel")
-    import("#components/CUType/CurricularUnitType")
-    import("#components/CurricularUnit/CurricularUnitModel")
-    import("#components/Archivos/archivosModel")
-    import("#components/Comunicados/comunicadosModel")
+    import("#db/initModels")
     await sequelize.drop()
     await sequelize.sync({ force: true })
-    process.env.PORT === "8080"
+
+    cargar()
+    process.env.PORT === "3030"
       ? console.log("DB local reiniciada correctamente!")
       : console.log("DB remota reiniciada correctamente!")
   } catch (err) {
     console.log("Error a la hora de limpiar la DB: ", err)
   }
 }
-
 export default sequelize
