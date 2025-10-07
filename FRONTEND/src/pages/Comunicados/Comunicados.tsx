@@ -7,13 +7,9 @@ import {
   Card,
   CardContent,
   Typography,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemButton,
-  Collapse,
 } from "@mui/material";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import Sidebar from "../../components/Sidebar";
+
 
 interface Usuario {
   id?: string;
@@ -46,7 +42,7 @@ interface Comunicado {
 }
 
 export default function Comunicados() {
-  const [open, setOpen] = useState(false);
+  
   const [comunicados, setComunicados] = useState<Comunicado[]>([]);
   const [nuevoComunicado, setNuevoComunicado] = useState<string>("");
 
@@ -69,7 +65,7 @@ export default function Comunicados() {
       creado: new Date().toISOString(),
     };
 
-    fetch("http://localhost:8080/comunicados/crearComunicado", {
+    fetch(import.meta.env.VITE_BACKURL + "/comunicados/crear", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(nuevo),
@@ -88,73 +84,13 @@ export default function Comunicados() {
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
-      <aside className="w-56 h-screen border-r bg-purple-100 p-2">
-        <img
-          src="/logoterciario.png"
-          alt="Logo"
-          className="h-12 w-12 rounded-full object-cover"
-        />
-        <List>
-          <ListItem disablePadding>
-            <ListItemButton selected>
-              <ListItemText primary="Anuncios" />
-            </ListItemButton>
-          </ListItem>
+      
+      <Sidebar />
 
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemText primary="Unidades Curriculares" />
-            </ListItemButton>
-          </ListItem>
 
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemText primary="Alumnos" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => setOpen(!open)}>
-              <ListItemText primary="Mensajes" />
-              {open ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-          </ListItem>
-
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItem disablePadding>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemText primary="Recibidos" />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemText primary="Enviados" />
-                </ListItemButton>
-              </ListItem>
-            </List>
-          </Collapse>
-        </List>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-8">
-        <div className="flex justify-between items-center mb-8">
-          <Typography variant="h6">Comunicados</Typography>
-          <div>
-            <Button variant="text" className="mr-2">
-              Principal
-            </Button>
-            <Button variant="text" className="mr-2 font-bold">
-              REGENCIA
-            </Button>
-            <Button variant="contained" color="inherit">
-              Salir
-            </Button>
-          </div>
-        </div>
-
+      <main className="mt-32 ml-64 flex flex-grow flex-col px-52">
+        <h1 className="pb-4 text-2xl flex items-center justify-center text-black">Comunicados</h1>
+        {localStorage.getItem("rol") !== undefined && localStorage.getItem("rol") !== "ESTUDIANTE" ?(
         <div className="mb-6">
           <TextField
             multiline
@@ -167,7 +103,7 @@ export default function Comunicados() {
             onChange={handleChange}
           />
           <div className="flex justify-end mt-2">
-            {localStorage.getItem("rol") !== undefined && localStorage.getItem("rol") !== "ESTUDIANTE" ?(
+            
             <Button
               variant="contained"
               color="secondary"
@@ -175,9 +111,9 @@ export default function Comunicados() {
             >
               Publicar
             </Button>
-              ) : (<></>)}
           </div>
         </div>
+        ) : (<></>)}
 
         {comunicados.map((item) => (
           <Card key={item.id || Math.random()} className="mb-4">

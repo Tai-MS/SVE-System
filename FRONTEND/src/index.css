@@ -8,11 +8,24 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #BFB6C8;
 } 
 
 body{
   height: 100%;
+  margin: 0;
+  padding: 0;
+  /* overflow: hidden; */
+  /* background: radial-gradient(circle at center, 
+  rgba(70, 76, 199, 0.26) 0%, 
+  rgba(89, 80, 221, 0.70) 33%, 
+  rgba(125, 74, 213, 1) 100%
+  
+) */
+ background: white;
+}
+
+#login-body{
+  height: 100vh;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -21,6 +34,12 @@ body{
   rgba(89, 80, 221, 0.70) 33%, 
   rgba(125, 74, 213, 1) 100%
 )
+}
+
+#login-footer{
+  width: 100%;
+  position: fixed;
+  bottom: 0;
 }
 
 h1 {

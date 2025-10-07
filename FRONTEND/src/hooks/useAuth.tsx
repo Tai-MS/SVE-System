@@ -46,7 +46,7 @@ export function useAuth(): AuthReturn {
   // Login
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      const res = await fetch(import.meta.env.VITE_BACKURL + "/user/iniciarsesion", {
+      const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/public/iniciarSesion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: username, contraseña: password }),
