@@ -167,6 +167,7 @@ export default function Comunicados() {
             onChange={handleChange}
           />
           <div className="flex justify-end mt-2">
+            {localStorage.getItem("rol") !== undefined && localStorage.getItem("rol") !== "ESTUDIANTE" ?(
             <Button
               variant="contained"
               color="secondary"
@@ -174,6 +175,7 @@ export default function Comunicados() {
             >
               Publicar
             </Button>
+              ) : (<></>)}
           </div>
         </div>
 

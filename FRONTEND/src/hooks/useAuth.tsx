@@ -59,6 +59,7 @@ export function useAuth(): AuthReturn {
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", username);
         localStorage.setItem("userId", data.id);
+        localStorage.setItem("rol", data.rol);
         
         setToken(data.token);
         setUser(username);
@@ -77,6 +78,7 @@ export function useAuth(): AuthReturn {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("userId");
+    localStorage.removeItem("rol");
 
     setToken(null);
     setUser(null);
