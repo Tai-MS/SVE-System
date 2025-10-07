@@ -96,6 +96,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
         success: true,
         message: "logeado",
         token: token,
+        rol: dato.rol,
       })
   } catch (error: unknown) {
     return res.status(500).json({

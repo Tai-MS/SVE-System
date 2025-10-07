@@ -16,7 +16,6 @@ function Login({ login }: LoginProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const success = await login(username, password);
-    console.log(success);
 
     if (success) {
       navigate("/comunicados"); // Redirigir al home
