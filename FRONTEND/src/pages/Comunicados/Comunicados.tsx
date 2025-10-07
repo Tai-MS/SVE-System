@@ -142,13 +142,15 @@ export default function Comunicados() {
           </div>
         </div>
         <div className="flex center mt-2">
-          <Button
+          {localStorage.getItem("rol") != undefined && localStorage.getItem("rol") != "ESTUDIANTE" ? (
+            <Button
             variant="contained"
             color="secondary"
             onClick={handleRedirect}
-          >
+            >
             Ir a publicar
-          </Button>
+            </Button>):(<></>)
+          }
         </div>
 
         {comunicados.map((item) => (
