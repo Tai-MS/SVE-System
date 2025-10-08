@@ -101,13 +101,16 @@ async function incluirEnUC(datos: any): Promise<Usuario | string> {
   const lista_UC = datos.unidad_curricular_id_fk
   const uc_no_encontrada = []
   for (let i = 0; i < lista_UC.length; i++) {
-
     const uc = await UnidadCurricular.findByPk(lista_UC[i])
     const com = datos.comision_id
     const comision = await Comision.encontrarPorNro(com.toString())
-    
+
     if (uc && usuario.carrera_id_fk === uc?.carrera_id_fk) {
-      await UsuarioUnidadCurricular.create({ usuario_id: usuario.id, unidad_curricular_id: lista_UC[i], comision_id: comision!.id})
+      await UsuarioUnidadCurricular.create({
+        usuario_id: usuario.id,
+        unidad_curricular_id: lista_UC[i],
+        comision_id: comision!.id,
+      })
     } else {
       uc_no_encontrada.push(lista_UC[i])
     }
@@ -147,10 +150,9 @@ async function actualizarUsuario(
   } else {
     return "DNI requerido"
   }
+const confirmarUsuario = await datosDelToken(datos.token)
 
-  const confirmarUsuario = await datosDelToken(datos.token)
-
-  if(confirmarUsuario.rol !== Rol.ADMINISTRADOR || confirmarUsuario.rol !== Rol.BEDELIA || confirmarUsuario.rol !== Rol.DIRECTIVO){
+  if(confirmarUsuario.rol !== Rol.ADMINISTRADOR && confirmarUsuario.rol !== Rol.BEDELIA && confirmarUsuario.rol !== Rol.DIRECTIVO){
     return "Error"
   }
 
@@ -226,7 +228,7 @@ async function guardarAlumnosImportados(datos: Usuarios, carrera: string | null 
             anioIngreso: alumno["Año de ingreso"],
             rol: Rol.ESTUDIANTE,
             contraseña: hashear_contraseña,
-            carrera_id_fk: carrera || null
+            carrera_id_fk: carrera || null,
           } as UserCreation,
           { transaction: t }
         )
@@ -235,9 +237,8 @@ async function guardarAlumnosImportados(datos: Usuarios, carrera: string | null 
         const nro_comision = com?.toString()
         if (nro_comision) {
           const comision = await Comision.encontrarPorNro(nro_comision)
-          
+
           if (comision) {
-            
             await UsuarioComision.create(
               {
                 usuario_id: usuario.id,
@@ -246,15 +247,16 @@ async function guardarAlumnosImportados(datos: Usuarios, carrera: string | null 
               },
               { transaction: t }
             )
-            
-            await Comision.update({ cant_alumnos: Sequelize.literal("cant_alumnos + 1") },
+
+            await Comision.update(
+              { cant_alumnos: Sequelize.literal("cant_alumnos + 1") },
               {
-                where: { numero_comision: nro_comision }, transaction: t
+                where: { numero_comision: nro_comision },
+                transaction: t,
               }
             )
-          }else{
+          } else {
             usuarios_sin_comision.push(usuario)
-            
           }
         }
         if (process.env.DEV !== "dev") {

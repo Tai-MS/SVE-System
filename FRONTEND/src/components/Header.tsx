@@ -1,4 +1,5 @@
-import {type JSX} from "react";
+import { type JSX } from "react";
+import { NavLink } from "react-router-dom";
 
 interface HeaderProps {
   user?: string | null;
@@ -7,29 +8,47 @@ interface HeaderProps {
 
 export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
   return (
-    <header className="fixed top-0 left-0 w-full bg-white shadow-md px-6 py-4 z-50">
-      <div className="max-w-6xl mx-auto flex justify-between items-center">
+    <header className="fixed top-0 left-0 w-full bg-white shadow-md px-6 py-4 z-50 ">
+      <div className="flex justify-between items-center px-10">
         <img
           src="/logo.svg"
           alt="Logo terciario urquiza"
           className="h-16 object-contain"
         />
-        <nav>
-          <ul className="flex gap-6 text-m text-gray-700">
-            <li className="hover:text-blue-400 cursor-pointer">Inicio</li>
-            <li className="hover:text-blue-400 cursor-pointer">Acerca</li>
-            <li className="hover:text-blue-400 cursor-pointer">Contacto</li>
-              {user && onLogout && (
+        <div className="flex space-x-3 md:mt-2 gap-10 text-m text-gray-700">
+          <NavLink to="/home" className="hover:text-blue-400 cursor-pointer">
+            Inicio
+          </NavLink>
+          <NavLink
+            to="/materiales"
+            className="hover:text-blue-400 cursor-pointer"
+          >
+            Materiales
+          </NavLink>
+          <NavLink to="/tareas" className="hover:text-blue-400 cursor-pointer">
+            Tareas
+          </NavLink>
+          <NavLink
+            to="/comunicados"
+            className="hover:text-blue-400 cursor-pointer"
+          >
+            Comunicados
+          </NavLink>
+          <NavLink
+            to="/usuarios"
+            className="hover:text-blue-400 cursor-pointer"
+          >
+            Alumnos
+          </NavLink>
+          {user && onLogout && (
             <button
               onClick={onLogout}
               className="ml-4 bg-red-500 px-3 py-1 rounded text-white hover:bg-red-700"
             >
-            Logout
-            </button>)}
-          </ul>
-        </nav>
-
-   
+              Logout
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );

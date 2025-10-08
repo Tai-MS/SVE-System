@@ -16,7 +16,8 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
+import CheckBox from "@mui/material/Button";
+import { Add, Edit } from "@mui/icons-material";
 
 interface Usuario {
   id: number;
@@ -27,14 +28,15 @@ interface Usuario {
   email: string;
   anioIngreso: number;
   rol: string;
-  activo?: boolean;
+  activo: boolean;
+  token: string;
 }
 
 export default function Alumnos() {
   const [alumnos, setAlumnos] = useState<Usuario[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Usuario | null>(null);
-  const [form, setForm] = useState({ nombre: "", apellido: "", dni: "", telefono: "", email: "", anioIngreso: "", activo: true });
+  const [form, setForm] = useState({ nombre: "", apellido: "", dni: "", telefono: "", email: "", anioIngreso: "", activo: true, token: localStorage.getItem("token") });
 
   // 🔹 Traer alumnos al iniciar
   useEffect(() => {
@@ -57,10 +59,12 @@ export default function Alumnos() {
     const guardarAlumno = async () => {
     try {
         if (editing) {
+        console.log(localStorage.getItem("token"))
         const res = await fetch("http://localhost:8080/usuarios/actualizar", {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: editing.id, ...form }),
+            headers: { "Content-Type": "application/json", "auth-token": localStorage.getItem("token") || "" },
+            body: JSON.stringify({ id: editing.id, ...form, activo: form.activo}),
+            
         });
         const text = await res.text();
         console.log("PUT /usuarios/actualizar status:", res.status, "body:", text);
@@ -78,7 +82,7 @@ export default function Alumnos() {
 
         setOpen(false);
         setEditing(null);
-        setForm({ nombre: "", apellido: "", dni: "", telefono: "", email: "", anioIngreso: "", activo: true });
+        setForm({ nombre: "", apellido: "", dni: "", telefono: "", email: "", anioIngreso: "", activo: true, token: localStorage.getItem("token") });
         obtenerAlumnos();
     } catch (err) {
         console.error("Error al guardar alumno:", err);
@@ -86,26 +90,6 @@ export default function Alumnos() {
     }
     };
 
-    const eliminarAlumno = async (id: number) => {
-    if (!confirm("¿Seguro que deseas eliminar este alumno?")) return;
-
-    try {
-        const alumno = alumnos.find((a) => a.id === id);
-        if (!alumno) return;
-        const res = await fetch("http://localhost:8080/usuarios/actualizar", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...alumno, activo: false }),
-        });
-        const text = await res.text();
-        console.log("PUT /usuarios/actualizar (eliminar) status:", res.status, "body:", text);
-        if (!res.ok) throw new Error(`Error eliminar: ${res.status} ${text}`);
-        obtenerAlumnos();
-    } catch (err) {
-        console.error("Error al eliminar alumno:", err);
-        alert("Error al eliminar alumno: " + (err as Error).message);
-    }
-    };
 
 
   return (
@@ -120,7 +104,7 @@ export default function Alumnos() {
           color="primary"
           onClick={() => {
             setEditing(null);
-            setForm({ nombre: "", apellido: "", dni: "", telefono: "", email: "", anioIngreso: "", activo: true });
+            setForm({ nombre: "", apellido: "", dni: "", telefono: "", email: "", anioIngreso: "", activo: true, token: localStorage.getItem("token") });
             setOpen(true);
           }}
         >
@@ -164,14 +148,12 @@ export default function Alumnos() {
                         email: alumno.email,
                         anioIngreso: alumno.anioIngreso.toString(),
                         activo: alumno.activo ?? true,
+                        token: localStorage.getItem("token"),
                       });
                       setOpen(true);
                     }}
                   >
                     <Edit />
-                  </IconButton>
-                  <IconButton color="error" onClick={() => eliminarAlumno(alumno.id)}>
-                    <Delete />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -217,13 +199,13 @@ export default function Alumnos() {
           />
           <div className="flex items-center gap-2 mt-2">
             <Typography>Activo</Typography>
-            <Button
+            <CheckBox
               variant={form.activo ? "contained" : "outlined"}
               color={form.activo ? "success" : "error"}
               onClick={() => setForm({ ...form, activo: !form.activo })}
             >
               {form.activo ? "Sí" : "No"}
-            </Button>
+            </CheckBox>
           </div>
         </DialogContent>
         <DialogActions>

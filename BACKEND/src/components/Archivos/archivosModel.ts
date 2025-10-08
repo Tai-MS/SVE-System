@@ -13,5 +13,4 @@ class Archivo extends Model<archivoCreation, archivoAttributes> {
   declare actualizado: Date
 }
 
-
 export default Archivo

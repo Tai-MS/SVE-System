@@ -5,7 +5,7 @@ export enum Rol {
   PROFESOR = "PROFESOR",
   BEDELIA = "BEDELIA",
   DIRECTIVO = "DIRECTIVO",
-  ADMINISTRADOR = "ADMINISTRADOR"
+  ADMINISTRADOR = "ADMINISTRADOR",
 }
 
 export type UserCreation = Optional<usuarioI, "id">
