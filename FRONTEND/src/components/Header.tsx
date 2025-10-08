@@ -8,8 +8,8 @@ interface HeaderProps {
 
 export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
   return (
-    <header className="fixed top-0 left-0 w-full bg-white shadow-md px-6 py-4 z-50 ">
-      <div className="flex justify-between items-center px-10">
+    <header className="fixed top-0 left-0 w-full bg-white shadow-md py-4 z-50 overflow-hidden">
+      <div className="mx-6 flex justify-between items-center">
         <img
           src="/logo.svg"
           alt="Logo terciario urquiza"

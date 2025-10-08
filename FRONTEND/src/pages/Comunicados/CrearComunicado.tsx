@@ -14,7 +14,7 @@ const CrearComunicado: React.FC = () => {
     descripcion: "",
     img: [],
   });
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {

@@ -63,7 +63,7 @@ const Layout = ({ children, User, Logout }) => {
         <Header user={User} onLogout={Logout} />
         <div className="flex flex-grow mt-16">
           <Sidebar links={links} />
-          <main className="flex-grow p-10 ml-64">{children}</main>
+          <main className="flex-grow p-10 ml-60">{children}</main>
         </div>
         <Footer />
       </div>

@@ -2,14 +2,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Home from "./components/Home";
-import Comunicados from "./pages/Comunicados/Comunicados";
-import CrearComunicado from "./pages/Comunicados/CrearComunicado";
 import Carreras from "./components/Carreras";
 import Comisiones from "./components/Comisiones";
 import Materias from "./components/Materias";
 import UnidadCurricular from "./components/UnidadCurricular";
 import Layout from "./components/Layout";
+import Comunicados from "./pages/Comunicados/Comunicados";
+import CrearComunicado from "./pages/Comunicados/CrearComunicado";
+import Home from "./pages/Home/Home";
 
 function App() {
   const { user, logout, login } = useAuth();
@@ -25,7 +25,7 @@ function App() {
             <ProtectedRoute>
               <Layout User={user} Logout={logout}>
                 <Routes>
-                  <Route path="/" element={<Home user={user} />} />
+                  <Route path="/" element={<Home />} />
                   <Route path="/comunicados" element={<Comunicados />} />
                   <Route
                     path="/comunicados/crear"

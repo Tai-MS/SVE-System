@@ -53,7 +53,7 @@ export function useAuth(): AuthReturn {
   ): Promise<boolean> => {
     try {
       const res = await fetch(
-        import.meta.env.VITE_BACKURL + "/usuarios/public/iniciarsesion",
+        import.meta.env.VITE_BACKURL + "/usuarios/public/iniciarSesion",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
