@@ -76,8 +76,8 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
         message: iniciar_sesion,
       })
     }
-
     const token = await generarToken(iniciar_sesion)
+    console.log(token)
     const dato = await datosDelToken(token)
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],
@@ -158,12 +158,11 @@ async function actualizarUsuario(req: Request, res: Response, next: NextFunction
       telefono: req.body.telefono || null,
       anioIngreso: req.body.anioIngreso || null,
       contraseña: req.body.contraseña || null,
-      activo: req.body.activo || null,
+      activo: req.body.activo,
       ultima_conexion: req.body.ultima_conexion || null,
       token: token,
       carrera_id_fk: req.body.carrera_id_fk || null,
     }
-
     const call = await UserService.actualizarUsuario(datos)
 
     return res.status(200).send(call)

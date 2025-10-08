@@ -3,6 +3,7 @@ import { useAuth } from "./hooks/useAuth";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Carreras from "./components/Carreras";
+import Alumnos from "./components/Alumnos";
 import Comisiones from "./components/Comisiones";
 import Materias from "./components/Materias";
 import UnidadCurricular from "./components/UnidadCurricular";
@@ -32,6 +33,7 @@ function App() {
                     element={<CrearComunicado />}
                   />
                   <Route path="/carreras" element={<Carreras />} />
+                  <Route path="/usuarios" element={<Alumnos />} />
                   <Route
                     path="/comisiones/:carreraId"
                     element={<Comisiones />}

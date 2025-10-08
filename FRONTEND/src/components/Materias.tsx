@@ -28,65 +28,6 @@ export default function Materias() {
 
   return (
     <div className="flex h-screen mt-1">
-      {/* Sidebar */}
-      <aside className="w-60 bg-purple-50 p-4 flex flex-col gap-2">
-        <img src="/logoterciario.png" alt="Logo" className="w-12 h-12 mb-4 mx-auto" />
-        <List className="text-left cursor-pointer px-3 py-2 rounded-md font-medium">
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemText primary="Anuncios" className={"text-gray-700 hover:bg-purple-100"} />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton selected>
-              <ListItemText primary="Unidades Curriculares" className={"bg-white text-purple-600 shadow-md"} />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemText primary="Alumnos" className={"text-gray-700 hover:bg-purple-100"} />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => setOpen(!open)}>
-              <ListItemText primary="Mensajes" className={"text-gray-700 hover:bg-purple-100"} />
-              {open ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-          </ListItem>
-
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItem disablePadding>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemText primary="Recibidos" className={"text-gray-700 hover:bg-purple-100"} />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemText primary="Enviados" className={"text-gray-700 hover:bg-purple-100"} />
-                </ListItemButton>
-              </ListItem>
-            </List>
-          </Collapse>
-        </List>
-      </aside>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Topbar */}
-        <header className="flex items-center justify-between p-3 border-b bg-white">
-          <div />
-          <nav className="flex gap-4 text-sm">
-            <Button variant="text" className="mr-2">Principal</Button>
-            <Button variant="text" className="mr-2 font-bold">Mi perfil</Button>
-            <Button variant="contained" color="inherit">
-              Salir
-            </Button>
-          </nav>
-        </header>
 
         {/* Content */}
         <main className="p-6 mt-3">
@@ -100,7 +41,7 @@ export default function Materias() {
           </div>
         </main>
       </div>
-    </div>
+
   );
 }
 

@@ -29,10 +29,15 @@ const Layout = ({ children, User, Logout }) => {
       },
     ],
     "/carreras": [
-      { name: "Ver productos", path: "/products/getproducts/1" },
-      { name: "Agregar producto", path: "/products/addproduct" },
+      { name: "Ver carreras",
+        path: "/carreras",
+        rol: ["ADMINISTRADOR"], },
     ],
-    "/usuarios": [{ name: "Ver usuarios", path: "/usuarios" }],
+    "/usuarios": [
+      { name: "Ver usuarios",
+        path: "/usuarios",
+        rol: ["ADMINISTRADOR"] }
+    ],
   };
 
   const currentBasePath = `/${location.pathname.split("/")[1]}`;

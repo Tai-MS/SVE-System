@@ -18,7 +18,8 @@ export default function Footer() {
             <X size={20} />
           </a>
           <a
-            href="#"
+            href="https://www.instagram.com/terciariourquiza49/"
+            target="_blank"
             className="text-gray-600 hover:text-gray-800 transition-colors"
           >
             <Instagram size={20} />
@@ -30,7 +31,8 @@ export default function Footer() {
             <Youtube size={20} />
           </a>
           <a
-            href="#"
+            href="https://www.linkedin.com/school/terciario-urquiza/"
+            target="_blank"
             className="text-gray-600 hover:text-gray-800 transition-colors"
           >
             <Linkedin size={20} />

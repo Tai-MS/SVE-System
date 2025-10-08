@@ -150,14 +150,9 @@ async function actualizarUsuario(
   } else {
     return "DNI requerido"
   }
+const confirmarUsuario = await datosDelToken(datos.token)
 
-  const confirmarUsuario = await datosDelToken(datos.token)
-
-  if (
-    confirmarUsuario.rol !== Rol.ADMINISTRADOR ||
-    confirmarUsuario.rol !== Rol.BEDELIA ||
-    confirmarUsuario.rol !== Rol.DIRECTIVO
-  ) {
+  if(confirmarUsuario.rol !== Rol.ADMINISTRADOR && confirmarUsuario.rol !== Rol.BEDELIA && confirmarUsuario.rol !== Rol.DIRECTIVO){
     return "Error"
   }
 

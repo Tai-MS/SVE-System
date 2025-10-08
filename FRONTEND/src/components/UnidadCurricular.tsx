@@ -19,42 +19,7 @@ function UnidadCurricular() {
   const { materiaProfe } = useParams();
 
   return (
-    <div className="flex h-screen mt-4">
-      {/* Sidebar */}
-      <div className="w-60 bg-purple-50 p-4 flex flex-col gap-2">
-        <img
-          src="/logoterciario.png"
-          alt="Logo"
-          className="w-12 h-12 mb-4 mx-auto"
-        />
-        {["Anuncios", "Unidad Curricular", "Alumnos", "Mensajes"].map((item) => (
-          <button
-            key={item}
-            onClick={() => setSelected(item)}
-            className={`text-left cursor-pointer px-3 py-2 rounded-md font-medium ${
-              selected === item
-                ? "bg-white text-purple-600 shadow-md"
-                : "text-gray-700 hover:bg-purple-100"
-            }`}
-          >
-            {item}
-          </button>
-        ))}
-      </div>
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        {/* Top bar */}
-        <div className="flex justify-between items-center border-b px-6 py-3">
-          <div></div>
-          <div className="flex gap-4">
-            <Button variant="text">Principal</Button>
-            <Button variant="text">Mi perfil</Button>
-            <Button variant="contained" color="inherit">
-              Salir
-            </Button>
-          </div>
-        </div>
+    <div>
 
         {/* Tabs */}
         <div className="border-b px-6 mt-5">
@@ -131,7 +96,7 @@ function UnidadCurricular() {
           </div>
         </div>
       </div>
-    </div>
+
   );
 }
 

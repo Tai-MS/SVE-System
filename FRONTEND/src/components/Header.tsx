@@ -8,13 +8,15 @@ interface HeaderProps {
 
 export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
   return (
-    <header className="fixed top-0 left-0 w-full bg-white shadow-md py-4 z-50 overflow-hidden">
-      <div className="mx-6 flex justify-between items-center">
-        <img
-          src="/logo.svg"
-          alt="Logo terciario urquiza"
-          className="h-16 object-contain"
-        />
+    <header className="fixed top-0 left-0 w-full bg-white shadow-md px-6 py-4 z-50 ">
+      <div className="flex justify-between items-center px-10">
+        <a href="https://terciariourquiza.edu.ar/" target="_blank">
+          <img
+            src="/logo.svg"
+            alt="Logo terciario urquiza"
+            className="h-16 object-contain"
+          />
+        </a>
         <div className="flex space-x-3 md:mt-2 gap-10 text-m text-gray-700">
           <NavLink to="/home" className="hover:text-blue-400 cursor-pointer">
             Inicio
@@ -33,6 +35,18 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
             className="hover:text-blue-400 cursor-pointer"
           >
             Comunicados
+          </NavLink>
+          <NavLink
+            to="/usuarios"
+            className="hover:text-blue-400 cursor-pointer"
+          >
+            Alumnos
+          </NavLink>
+          <NavLink
+            to="/carreras"
+            className="hover:text-blue-400 cursor-pointer"
+          >
+            Carreras
           </NavLink>
           {user && onLogout && (
             <button
