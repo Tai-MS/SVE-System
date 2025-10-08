@@ -14,13 +14,13 @@ export default function Footer() {
           <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors">
             <X size={20} />
           </a>
-          <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors">
+          <a href="https://www.instagram.com/terciariourquiza49/" target='_blank' className="text-gray-600 hover:text-gray-800 transition-colors">
             <Instagram size={20} />
           </a>
           <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors">
             <Youtube size={20} />
           </a>
-          <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors">
+          <a href="https://www.linkedin.com/school/terciario-urquiza/" target='_blank' className="text-gray-600 hover:text-gray-800 transition-colors">
             <Linkedin size={20} />
           </a>
         </div>

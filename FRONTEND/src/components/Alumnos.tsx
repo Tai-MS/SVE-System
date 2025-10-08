@@ -93,7 +93,7 @@ export default function Alumnos() {
 
 
   return (
-    <div className="p-6 mt-20 bg-white rounded-lg shadow-md">
+    <div className="p-3 mt-10 bg-white rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-4">
         <Typography variant="h5" className="font-semibold text-purple-700">
           Gestión de Alumnos
@@ -122,6 +122,7 @@ export default function Alumnos() {
               <TableCell><b>Teléfono</b></TableCell>
               <TableCell><b>Email</b></TableCell>
               <TableCell><b>Año de ingreso</b></TableCell>
+              <TableCell><b></b></TableCell>
               <TableCell><b>Acciones</b></TableCell>
             </TableRow>
           </TableHead>
