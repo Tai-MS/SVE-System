@@ -6,4 +6,6 @@ export type MaterialAttributes = {
     url: string | null
     descripcion: string | null
     tipo_material: TipoMaterial
+    creado: Date
+    fecha_limite: Date | null
 }

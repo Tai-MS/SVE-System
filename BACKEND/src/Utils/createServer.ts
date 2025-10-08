@@ -16,6 +16,7 @@ import { ComisionRouter } from "#components/Comision/ComisionRoutes"
 import { sessionStore } from "#db/initModels"
 import { ClaseSessionRouter } from "#components/ClassSession/ClassSessionRoutes"
 import { ClassRoomRouter } from "#components/Classroom/ClassRoomRoutes"
+import { MaterialRouter } from "#components/Material/MaterialRoutes"
 /**
  * Se encarga de levantar el servidor
  * y crear las funciones necesarias
@@ -52,6 +53,7 @@ export const create_server = async () => {
     .use("/comunicados", comunicadosRouter)
     .use("/clase", ClaseSessionRouter)
     .use("/aula", ClassRoomRouter)
+    .use("/material", MaterialRouter)
     .use(passport.initialize())
     .use(passport.session())
 

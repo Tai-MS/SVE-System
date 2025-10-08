@@ -7,4 +7,6 @@ export const MaterialSchema = z.object({
   url: z.string().optional().nullable(),
   descripcion: z.string().optional().nullable(),
   tipo_material: z.enum([...Object.values(TipoMaterial)] as [string, ...string[]]),
+  creado: z.date().optional().nullable(),
+  fecha_limite: z.date().optional().nullable()
 });
