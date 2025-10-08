@@ -14,6 +14,14 @@ export class ComisionControllers {
       res.status(respuesta.status).json(respuesta.respuesta)
     }
   }
+
+  traerTodas = async (req: Request, res: Response) => {
+    const carrera = req.params.carreraID
+    console.log(carrera);
+    
+    const respuesta = await Comision.traerTodas(carrera)
+    res.status(respuesta.status).json(respuesta.respuesta)
+  }
   verDetallesComision = async (req: Request, res: Response) => {
     const id: number = Number(req.params.id)
     const respuesta = await Comision.buscarComisionPorId(id)

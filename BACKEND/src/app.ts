@@ -1,7 +1,7 @@
-import { clearDB, updateDB, connectDB } from "#db/connection"
+import { clearDB, connectDB, updateDB } from "#db/connection"
+// import { crearUsuarios } from "#db/crearUsuarios"
 import { create_server } from "#Utils/createServer"
 import "dotenv/config"
-const app = create_server()
 
 const PORT = process.env.PORT || 3030
 
@@ -12,8 +12,10 @@ async function bootstrap() {
     console.log(`Servidor corriendo en: http://localhost:${PORT}`)
     // await clearDB()
     // await updateDB()
+    // crearUsuarios()
     await connectDB()
   })
 }
 
 bootstrap()
+// 

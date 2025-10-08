@@ -3,8 +3,8 @@ import { useAuth } from "./hooks/useAuth";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Header from "./components/Header";
-import Comunicados from "./pages/Comunicados/Comunicados";
-import CrearComunicado from "./pages/Comunicados/CrearComunicado";
+import Materias from "./components/Materias";
+import UnidadCurricular from "./components/UnidadCurricular";
 import Home from "./pages/Home/Home";
 
 function App() {
@@ -20,26 +20,12 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <Home user={user} />
+              <Home />
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/comunicados"
-          element={
-            <ProtectedRoute>
-              <Comunicados />
-            </ProtectedRoute>
-          }
-        />
-        <Route 
-        path="/comunicados/crear/:id" 
-        element={
-          <ProtectedRoute>
-            <CrearComunicado />
-          </ProtectedRoute>} />
-
-        <Route path="*" element={<div>404 Not Found</div>} />
+        <Route path="/materias/:comisionId" element={<ProtectedRoute><Materias /></ProtectedRoute>} />
+        <Route path="/unidadcurricular/:materiaId/:materiaNombre/:materiaProfe" element={<ProtectedRoute><UnidadCurricular /></ProtectedRoute>} />
 
       </Routes>
     </Router>

@@ -61,7 +61,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
       email: req.body.email,
       contraseña: req.body.contraseña,
     }
-
+    console.log(data)
     if (!data.email || !data.contraseña) {
       return res.status(400).json({
         error: "Bad request",
@@ -79,6 +79,9 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
 
     const token = await generarToken(iniciar_sesion)
     const dato = await datosDelToken(token)
+    console.log(token);
+    console.log(typeof token);
+    
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],
       token: token,
@@ -149,6 +152,7 @@ async function incluirEnUC(req: Request, res: Response, next: NextFunction): Pro
 async function actualizarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
     const token = req.headers["auth-token"] as string | undefined
+    
     const datos: Partial<InferCreationAttributes<Usuario>> = {
       id: req.body.id,
       dni: req.body.dni,
@@ -165,7 +169,7 @@ async function actualizarUsuario(req: Request, res: Response, next: NextFunction
     }
 
     const call = await UserService.actualizarUsuario(datos)
-
+    
     return res.status(200).send(call)
   } catch (error) {
     return res.status(500).json({

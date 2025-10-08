@@ -7,19 +7,11 @@ export class Comision extends Model<InferAttributes<Comision>, InferCreationAttr
   declare numero_comision: string
   declare cupo_maximo: number | null
   declare activo: boolean
-  declare cant_alumnos: number
-  declare carrera_id: string
-  declare anio_creacion: CreationOptional<number>
 
-  static async encontrarPorNro(numero_comision: string) {
+  static async encontrarPorNro(numero_comision: number){
     return await Comision.findOne({
-      where: { numero_comision },
-    })
-  }
-
-  static async encontrarPorCarrera(carrera: string){
-    return await Comision.findAll({
-      where: {carrera_id: carrera}
+      where: {numero_comision}
     })
   }
 }
+

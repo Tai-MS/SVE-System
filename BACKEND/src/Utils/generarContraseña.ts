@@ -3,6 +3,7 @@ import crypto from "crypto"
 export function generarContraseña(longitud: number = 8): string {
 
   if(process.env.ENV === "dev"){
+    console.log("HGOLASDASD")
       return "contraseña"
   }
 
