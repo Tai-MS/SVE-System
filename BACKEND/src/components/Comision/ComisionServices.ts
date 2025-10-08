@@ -17,6 +17,8 @@ export class ComisionServices {
         numero_comision: data.numero_comision,
         carrera_id: data.carrera_id,
       })
+      console.log(comisionDB);
+      
       if (comisionDB.respuesta.length > 0) return { status: 409, respuesta: "La comision que intenta crear ya existe" }
       await Comision.create({ ...data, activo: data.activo ?? true }, { transaction: t })
       await t.commit()

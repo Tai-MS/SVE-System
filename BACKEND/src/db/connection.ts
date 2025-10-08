@@ -34,6 +34,7 @@ export const connectDB = async () => {
   try {
     import("#db/initModels")
     await sequelize.sync()
+    // cargar()
     process.env.PORT === "8080"
       ? console.log("Conectado correctamente a la DB local!")
       : console.log("Conectado correctamente a la DB remota!")

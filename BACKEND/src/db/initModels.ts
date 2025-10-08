@@ -9,7 +9,7 @@ import { Clase } from "#components/ClassSession/ClassSessionModel"
 import { ComisionUC } from "#components/ComisionUC/ComisionUCModel"
 import { Comision } from "#components/Comision/ComisionModel"
 import { UnidadCurricular, TipoUC } from "#components/CurricularUnit/CurricularUnitModel"
-import { Material } from "#components/Material/MaterialModel"
+import { Material, TipoMaterial } from "#components/Material/MaterialModel"
 import { Period } from "#components/Period/PeriodModel"
 import Usuario, { Rol } from "#components/User/UserModel"
 import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
@@ -235,6 +235,7 @@ Material.init(
     titulo: { type: DataTypes.STRING(200), allowNull: false },
     url: { type: DataTypes.STRING(500), allowNull: true },
     descripcion: { type: DataTypes.TEXT, allowNull: true },
+    tipo_material: { type: DataTypes.ENUM(...Object.values(TipoMaterial)), allowNull: false}
   },
   { sequelize, tableName: "materiales" }
 )
@@ -325,6 +326,7 @@ Calificacion.init(
     nota: { type: DataTypes.DECIMAL(5, 2), allowNull: false },
     fecha: { type: DataTypes.DATEONLY, allowNull: false, defaultValue: DataTypes.NOW },
     observaciones: { type: DataTypes.STRING(255), allowNull: true },
+    material_id_fk: { type: DataTypes.BIGINT.UNSIGNED, allowNull: true}
   },
   {
     sequelize,
