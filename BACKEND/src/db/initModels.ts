@@ -166,8 +166,22 @@ Comunicado.init(
 
 Asistencia.init(
   {
-    clase_id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true },
-    alumno_id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true },
+    clase_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
+      references: {
+        model: "clases",
+        key: "id",
+      },
+      primaryKey: true,
+    },
+    alumno_id: {
+      type: DataTypes.UUID,
+      references: {
+        model: "usuario",
+        key: "id",
+      },
+      primaryKey: true,
+    },
     presente: { type: DataTypes.BOOLEAN, allowNull: false },
   },
   { sequelize, tableName: "asistencias" }
@@ -187,7 +201,7 @@ ComisionUC.init(
     id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true, autoIncrement: true },
     uc_id: { type: DataTypes.STRING, allowNull: false },
     comision_id: { type: DataTypes.BIGINT, allowNull: false },
-    link_meet: { type: DataTypes.STRING, allowNull: true}
+    link_meet: { type: DataTypes.STRING, allowNull: true },
   },
   {
     sequelize,
@@ -210,7 +224,7 @@ Comision.init(
     cupo_maximo: { type: DataTypes.SMALLINT.UNSIGNED, defaultValue: 60 },
     cant_alumnos: { type: DataTypes.SMALLINT.UNSIGNED, defaultValue: 0 },
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
-    anio_creacion: {type: DataTypes.INTEGER, defaultValue: new Date().getFullYear()}
+    anio_creacion: { type: DataTypes.INTEGER, defaultValue: new Date().getFullYear() },
   },
   {
     sequelize,
@@ -235,7 +249,7 @@ Material.init(
     titulo: { type: DataTypes.STRING(200), allowNull: false },
     url: { type: DataTypes.STRING(500), allowNull: true },
     descripcion: { type: DataTypes.TEXT, allowNull: true },
-    tipo_material: { type: DataTypes.ENUM(...Object.values(TipoMaterial)), allowNull: false}
+    tipo_material: { type: DataTypes.ENUM(...Object.values(TipoMaterial)), allowNull: false },
   },
   { sequelize, tableName: "materiales" }
 )
@@ -298,8 +312,8 @@ UsuarioUnidadCurricular.init(
     comision_id: {
       type: DataTypes.BIGINT.UNSIGNED,
       primaryKey: true,
-      references: {model: "comisiones", key: "id"}
-    }
+      references: { model: "comisiones", key: "id" },
+    },
   },
   {
     sequelize,
@@ -326,7 +340,7 @@ Calificacion.init(
     nota: { type: DataTypes.DECIMAL(5, 2), allowNull: false },
     fecha: { type: DataTypes.DATEONLY, allowNull: false, defaultValue: DataTypes.NOW },
     observaciones: { type: DataTypes.STRING(255), allowNull: true },
-    material_id_fk: { type: DataTypes.BIGINT.UNSIGNED, allowNull: true}
+    material_id_fk: { type: DataTypes.BIGINT.UNSIGNED, allowNull: true },
   },
   {
     sequelize,
