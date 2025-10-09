@@ -36,7 +36,6 @@ export class ComisionServices {
 
   traerTodas = async () => {
     const comisiones = await Comision.findAll()
-    console.log(comisiones)
 
     if (comisiones) {
       return { status: 200, respuesta: comisiones }

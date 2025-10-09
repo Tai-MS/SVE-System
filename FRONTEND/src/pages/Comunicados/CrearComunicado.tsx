@@ -10,7 +10,6 @@ const CrearComunicado: React.FC = () => {
     titulo: "",
     descripcion: "",
     img: [],
-    general: true,
     eliminado: false,
   });
   const [usuario, setUsuario] = useState<Usuario>();
@@ -33,7 +32,6 @@ const CrearComunicado: React.FC = () => {
       );
       const jsonDataUsuario = await fetchDataUsuario.json();
       setUsuario(jsonDataUsuario);
-      console.log(jsonDataUsuario);
 
       const fetchDataComisiones = await fetch(
         `${import.meta.env.VITE_BACKURL}/comision/traerTodas`
@@ -66,6 +64,7 @@ const CrearComunicado: React.FC = () => {
       setSelectTipoComunicado(e.target.value);
     } else if (e.target.name === "tipo_carrera") {
       setSelectTipoCarrera(e.target.value);
+      console.log(selectTipoCarrera);
     } else if (e.target.name === "tipo_comision") {
       setSelectComision(e.target.value);
     } else {
@@ -80,7 +79,14 @@ const CrearComunicado: React.FC = () => {
     formData.append("id_usuario", comunicado.id_usuario);
     formData.append("titulo", comunicado.titulo);
     formData.append("descripcion", comunicado.descripcion);
-
+    if (selectTipoComunicado === "general") {
+      formData.append("general", selectTipoComunicado);
+    } else if (selectTipoComunicado === "division") {
+      formData.append("division", selectDivision.toString());
+      formData.append("carrera", selectTipoCarrera);
+    } else if (selectTipoComunicado === "comision") {
+      formData.append("id_comision", selectComision);
+    }
     comunicado.img?.forEach((file) => {
       formData.append("img", file);
     });
@@ -208,7 +214,7 @@ const CrearComunicado: React.FC = () => {
                   name="tipo_division"
                   id="tipo_division"
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-300"
-                  onSelect={handleSelect}
+                  onChange={handleSelect}
                   required
                 >
                   <option value="none">
@@ -234,7 +240,7 @@ const CrearComunicado: React.FC = () => {
                 name="tipo_comision"
                 id="tipo_comision"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-300"
-                onSelect={handleSelect}
+                onChange={handleSelect}
                 required
               >
                 <option value="none">

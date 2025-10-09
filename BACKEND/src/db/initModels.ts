@@ -156,7 +156,7 @@ Comunicado.init(
     division: { type: DataTypes.INTEGER, allowNull: true, defaultValue: null },
     carrera: { type: DataTypes.STRING, allowNull: true, defaultValue: "ALL" },
     id_comision: {
-      type: DataTypes.BIGINT.UNSIGNED,
+      type: DataTypes.INTEGER,
       references: {
         model: "comisiones",
         key: "id",
@@ -207,7 +207,7 @@ ComisionUC.init(
 
 Comision.init(
   {
-    id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     numero_comision: { type: DataTypes.STRING(20), allowNull: false },
     carrera_id: {
       type: DataTypes.STRING,

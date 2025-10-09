@@ -15,9 +15,18 @@ export class ComunicadoController {
     if (archivos) {
       req.body.archivos = archivos
     }
+    // VERIFICA SI EL COMUNICADO ES GENERAL
+    req.body.general ? (req.body = { ...req.body, general: true }) : (req.body = { ...req.body, general: false })
+    // VERIFICA SI EL COMUNICADO ES PARA UNA COMISION
+    if (req.body.comision) req.body = { ...req.body, comision: Number(req.body.comision) }
+    // VERIFICA SI EL COMUNICADO ES PARA UNA COMISION
+    if (req.body.division && req.body.carrera) req.body = { ...req.body, division: Number(req.body.division) }
+    console.log(req.body)
     const verificacion = await comunicadoSchema.safeParseAsync(req.body)
     if (!verificacion.success) {
-      res.status(400).json({ respuesta: "Los datos ingresados para crear un comunicado son incorrectos" })
+      res.status(400).json({
+        respuesta: "Los datos ingresados para crear un comunicado son incorrectos: " + verificacion.error.message,
+      })
     } else {
       const respuesta = await comunicadoService.crearComunicado(verificacion.data as unknown as comunicadosAttributes)
       res.status(respuesta.status).json(respuesta.respuesta)
