@@ -2,8 +2,7 @@ import getErrorMessage from "#Utils/errorHandling"
 import { NextFunction, Request, Response } from "express"
 import UserService from "./UserService"
 import passport from "passport"
-import User, { UserCreation } from "./UserModel"
-import { ActualizarUsuarioDTO, CrearUsuarioDTO, DatosBasicos, IniciarSesionDTO } from "./UserDTO"
+import User from "./UserModel"
 import { generarContraseña } from "#Utils/generarContraseña"
 import { datosDelToken, generarToken } from "#middlewares/auth"
 import { excelSchema, Usuarios } from "#components/User/userSchemas"
@@ -61,7 +60,6 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
       email: req.body.email,
       contraseña: req.body.contraseña,
     }
-    console.log(data)
     if (!data.email || !data.contraseña) {
       return res.status(400).json({
         error: "Bad request",
@@ -79,8 +77,6 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
     const token = await generarToken(iniciar_sesion)
     console.log(token)
     const dato = await datosDelToken(token)
-    console.log(token)
-    console.log(typeof token)
 
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],

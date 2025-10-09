@@ -11,7 +11,7 @@ export default {
     logging: console.log,
   },
   test: {
-    username: process.env.DB_USER,
+    username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD || null,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
@@ -19,7 +19,7 @@ export default {
     dialect: "mysql",
   },
   prod: {
-    username: process.env.DB_USER,
+    username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD || null,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,

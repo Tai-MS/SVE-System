@@ -32,11 +32,28 @@ export class ComunicadoController {
       res.status(respuesta.status).json(respuesta.respuesta)
     }
   }
-  filtrar = async (req: Request, res: Response) => {
-    const id_comunicado = req.params.id
-    const respuesta = await comunicadoService.filtrarComunicado(id_comunicado as string)
-    res.status(respuesta.status).json(respuesta.respuesta)
+  // filtrar = async (req: Request, res: Response) => {
+  //   const id_comunicado = req.params.id
+  //   const respuesta = await comunicadoService.filtrarComunicado(id_comunicado as string)
+  //   res.status(respuesta.status).json(respuesta.respuesta)
+  // }
+
+  comunicadosPorUsuario = async (req: Request, res: Response) => {
+    const { idUser, type } = req.query
+
+    if (!idUser) {
+      return res.status(400).json("Falta el parámetro 'idUser'")
+    }
+
+    if (!type) {
+      return res.status(400).json("Falta el parámetro 'type' ('comision' | 'division')")
+    }
+
+    const respuesta = await comunicadoService.comunicadosPorUsuario(idUser as string, type as string)
+
+    return res.status(respuesta.status).json(respuesta.respuesta)
   }
+
   actualizar = async (req: Request, res: Response) => {
     const id_comunicado = req.params.id
     const verificacion = await comunicadoSchema.safeParseAsync(req.body)

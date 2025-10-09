@@ -1,18 +1,17 @@
-import { TipoUC, UnidadCurricular } from './CurricularUnitModel';
+import { UnidadCurricular } from './CurricularUnitModel';
 import getErrorMessage from "#Utils/errorHandling"
 import { NextFunction, Request, Response } from "express"
 import CurricularUnitService from "./CurricularUnitService"
 import { InferCreationAttributes } from 'sequelize';
-import { unescape } from 'querystring';
 
 async function traerTodas(req: Request, res: Response, next: NextFunction): Promise<Response>{
     try {
         const token = req.headers["token"] as string || undefined
         if(token === undefined){
-            return res.status(304).send("Acceso denegado")
+            return res.status(304).json("Acceso denegado")
         }
         const respuesta = await CurricularUnitService.traerTodas(token)
-        return res.status(200).send(respuesta)
+        return res.status(200).json(respuesta)
     } catch (error: unknown) {
         return res.status(500).json({
             error: "internal server error",
@@ -27,7 +26,8 @@ async function traerUnaUC(req: Request, res: Response, next: NextFunction): Prom
             id: req.body.id,
             nombre: req.body.nombre
         }
-        return res.status(200).send(CurricularUnitService.traerUnaUC(unidad))
+        const respuesta = await CurricularUnitService.traerUnaUC(unidad) 
+        return res.status(200).json(respuesta)
     } catch (error: unknown) {
         return res.status(500).json({
             error: "internal server error",
