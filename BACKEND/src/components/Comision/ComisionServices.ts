@@ -17,10 +17,14 @@ export class ComisionServices {
         numero_comision: data.numero_comision,
         carrera_id: data.carrera_id,
       })
-      console.log(comisionDB);
-      
+      console.log(comisionDB)
+
       if (comisionDB.respuesta.length > 0) return { status: 409, respuesta: "La comision que intenta crear ya existe" }
-      await Comision.create({ ...data, activo: data.activo ?? true }, { transaction: t })
+      const { division_id, cupo_maximo, ...rest } = data
+      const comisionData: any = { ...rest, activo: data.activo ?? true }
+      if (division_id !== undefined) comisionData.division_id = division_id
+      if (cupo_maximo !== undefined) comisionData.cupo_maximo = cupo_maximo
+      await Comision.create(comisionData, { transaction: t })
       await t.commit()
       return { status: 201, respuesta: "Comision creada correctamente" }
     } catch (error: any) {
@@ -30,14 +34,14 @@ export class ComisionServices {
     }
   }
 
-  traerTodas = async(carrera: string) => {
+  traerTodas = async (carrera: string) => {
     const comisiones = await Comision.encontrarPorCarrera(carrera)
-    console.log(comisiones);
-    
-    if(comisiones){
-      return {status: 200, respuesta: comisiones}
+    console.log(comisiones)
+
+    if (comisiones) {
+      return { status: 200, respuesta: comisiones }
     }
-    return { status: 404, respuesta: "Esta carrera aún no tiene comisiones."}
+    return { status: 404, respuesta: "Esta carrera aún no tiene comisiones." }
   }
 
   buscarComisionQuery = async (filtros: ComisionFiltros) => {
