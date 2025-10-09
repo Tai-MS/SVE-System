@@ -19,9 +19,6 @@ export function applyAssociations() {
   if (associationsApplied) return
   associationsApplied = true
 
-  Calificacion.belongsTo(Material, { foreignKey: "material_id_fk"})
-  Material.hasMany(Calificacion, {foreignKey: "material_id_fk"})
-
   Usuario.belongsToMany(UnidadCurricular, {
     through: UsuarioUnidadCurricular,
     foreignKey: "usuario_id",

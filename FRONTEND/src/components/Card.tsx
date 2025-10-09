@@ -59,7 +59,7 @@ export function Card({
             />
           ) : (
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-sm font-medium text-gray-600">
-              {instructor.charAt(0).toUpperCase()}
+              {instructor}
             </div>
           )}
           <div>

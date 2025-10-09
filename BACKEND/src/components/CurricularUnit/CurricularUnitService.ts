@@ -6,31 +6,10 @@ import { Not } from 'sequelize-typescript'
 import { skip } from 'node:test'
 import { ComisionUC } from '#components/ComisionUC/ComisionUCModel'
 import { Comision } from '#components/Comision/ComisionModel'
-import Usuario, { Rol } from '#components/User/UserModel'
+import Usuario from '#components/User/UserModel'
 import UsuarioUnidadCurricular from '#components/UsuarioUC/UsuarioUC'
-import { datosDelToken } from '#middlewares/auth'
-import UsuarioComision from '#components/UsuarioComision/UsuarioComisionModel'
 
-/**
- * 
- * MODIFICAR EP PARA VER UC DEL ALUMNO LOGEADO
- * 
- */
-async function traerTodas(token: string): Promise<UsuarioUnidadCurricular[] | null | UnidadCurricular[]>{
-
-    
-    const usuario = await datosDelToken(token)
-    if(usuario.rol !== Rol.ADMINISTRADOR && usuario.rol !== Rol.BEDELIA && usuario.rol !== Rol.DIRECTIVO){
-
-        const id = usuario.id
-
-        
-        const us_com = await UsuarioUnidadCurricular.findAll({
-            where: { usuario_id: id }
-        });
-        
-        return us_com
-    }
+async function traerTodas(): Promise<UnidadCurricular[] | null>{
     return await UnidadCurricular.findAll()
 }
 
@@ -51,8 +30,7 @@ async function traerUnaUC(unidad: BusquedaUnidadDTO): Promise<UnidadCurricular |
         if(uc){
             return uc
         }
-        return 'UC no encontrada'    
-    }
+        return 'UC no encontrada'    }
 
     return "Se requieren parametros de busqueda"
 

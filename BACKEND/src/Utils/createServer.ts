@@ -15,7 +15,6 @@ import CarreraRouter from "#components/Career/CarreraRoutes"
 import { ComisionRouter } from "#components/Comision/ComisionRoutes"
 import { sessionStore } from "#db/initModels"
 import { ClaseSessionRouter } from "#components/ClassSession/ClassSessionRoutes"
-import { ClassRoomRouter } from "#components/Classroom/ClassRoomRoutes"
 /**
  * Se encarga de levantar el servidor
  * y crear las funciones necesarias
@@ -51,7 +50,6 @@ export const create_server = async () => {
     .use("/usuarios", userRouter)
     .use("/comunicados", comunicadosRouter)
     .use("/clase", ClaseSessionRouter)
-    .use("/aula", ClassRoomRouter)
     .use(passport.initialize())
     .use(passport.session())
 

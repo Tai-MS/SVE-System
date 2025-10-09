@@ -58,8 +58,6 @@ export type usuarioI = {
   creado?: Date
   ultima_conexion?: Date
   token?: string
-  comision?: number
-  anio_comision?: Date
 }
 
 export type UsuarioExcel = {
