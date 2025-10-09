@@ -39,6 +39,7 @@ export default function Usuarios() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Usuario | null>(null);
   const [rolActivo, setRolActivo] = useState<"ESTUDIANTE" | "PROFESOR">("ESTUDIANTE");
+  const [busqueda, setBusqueda] = useState("");
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
@@ -114,9 +115,18 @@ export default function Usuarios() {
     }
   };
 
-  const usuariosFiltrados = usuarios.filter(
-    (u) => u.rol === rolActivo && u.activo !== false
-  );
+  const usuariosFiltrados = usuarios.filter((u) => {
+    const coincideRol = u.rol === rolActivo && u.activo !== false;
+    const termino = busqueda.toLowerCase();
+    const coincideBusqueda =
+      (u.nombre?.toLowerCase() ?? "").includes(termino) ||
+      (u.apellido?.toLowerCase() ?? "").includes(termino) ||
+      (u.dni?.toLowerCase() ?? "").includes(termino) ||
+      (u.telefono?.toLowerCase() ?? "").includes(termino) ||
+      (u.email?.toLowerCase() ?? "").includes(termino) ||
+      (u.anioIngreso?.toString().toLowerCase() ?? "").includes(termino);
+    return coincideRol && coincideBusqueda;
+  });
 
   return (
     <div className="p-3 mt-10 bg-white rounded-lg shadow-md">
@@ -127,7 +137,10 @@ export default function Usuarios() {
       {/* 🔹 Tabs para alternar entre roles */}
       <Tabs
         value={rolActivo}
-        onChange={(_, nuevoRol) => setRolActivo(nuevoRol)}
+        onChange={(_, nuevoRol) => {
+          setRolActivo(nuevoRol);
+          setBusqueda(""); // limpia búsqueda al cambiar rol
+        }}
         textColor="primary"
         indicatorColor="primary"
         centered
@@ -136,81 +149,91 @@ export default function Usuarios() {
         <Tab label="Profesores" value="PROFESOR" />
       </Tabs>
 
-      {/* 🔹 Botones superiores */}
-      <div className="flex justify-end gap-3 mt-4 mb-3">
-        {rolActivo === "ESTUDIANTE" && (
-          <>
-            <input
-              id="fileInput"
-              type="file"
-              accept=".xlsx, .xls"
-              style={{ display: "none" }}
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
+      {/* 🔹 Filtros y botones */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mt-4 mb-3">
+        {/* Campo de búsqueda */}
+        <TextField
+          label={`Buscar ${rolActivo === "ESTUDIANTE" ? "Alumno" : "Profesor"}`}
+          variant="outlined"
+          size="small"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          style={{ width: "250px" }}
+        />
 
-                const formData = new FormData();
-                formData.append("file", file);
+        <div className="flex gap-3">
+          {rolActivo === "ESTUDIANTE" && (
+            <>
+              <input
+                id="fileInput"
+                type="file"
+                accept=".xlsx, .xls"
+                style={{ display: "none" }}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
 
-                try {
-                  const res = await fetch("http://localhost:8080/usuarios/public/importarAlumnos", {
-                    method: "POST",
-                    body: formData,
-                  });
+                  const formData = new FormData();
+                  formData.append("file", file);
 
-                  const text = await res.text();
-                  console.log("POST /usuarios/public/importarAlumnos status:", res.status, "body:", text);
+                  try {
+                    const res = await fetch("http://localhost:8080/usuarios/public/importarAlumnos", {
+                      method: "POST",
+                      body: formData,
+                    });
 
-                  if (res.ok) {
-                    alert("Usuarios importados correctamente ✅");
-                    obtenerUsuarios();
-                  } else {
-                    alert("Error al importar: " + text);
+                    const text = await res.text();
+                    console.log("POST /usuarios/public/importarAlumnos status:", res.status, "body:", text);
+
+                    if (res.ok) {
+                      alert("Usuarios importados correctamente ✅");
+                      obtenerUsuarios();
+                    } else {
+                      alert("Error al importar: " + text);
+                    }
+                  } catch (err) {
+                    console.error("Error al importar:", err);
+                    alert("Error al importar el archivo");
                   }
-                } catch (err) {
-                  console.error("Error al importar:", err);
-                  alert("Error al importar el archivo");
-                }
 
-                // limpia el input para permitir volver a seleccionar el mismo archivo
-                e.target.value = "";
-              }}
-            />
+                  e.target.value = "";
+                }}
+              />
 
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={() => document.getElementById("fileInput")?.click()}
-            >
-              Importar Excel de Estudiantes
-            </Button>
-          </>
-        )}
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => document.getElementById("fileInput")?.click()}
+              >
+                Importar Excel de Estudiantes
+              </Button>
+            </>
+          )}
 
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          color="primary"
-          onClick={() => {
-            setEditing(null);
-            setForm({
-              nombre: "",
-              apellido: "",
-              dni: "",
-              telefono: "",
-              email: "",
-              anioIngreso: "",
-              rol: rolActivo,
-              activo: true,
-              token: localStorage.getItem("token"),
-            });
-            setOpen(true);
-          }}
-        >
-          Nuevo {rolActivo === "ESTUDIANTE" ? "Alumno" : "Profesor"}
-        </Button>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            color="primary"
+            onClick={() => {
+              setEditing(null);
+              setForm({
+                nombre: "",
+                apellido: "",
+                dni: "",
+                telefono: "",
+                email: "",
+                anioIngreso: "",
+                rol: rolActivo,
+                activo: true,
+                token: localStorage.getItem("token"),
+              });
+              setOpen(true);
+            }}
+          >
+            Nuevo {rolActivo === "ESTUDIANTE" ? "Alumno" : "Profesor"}
+          </Button>
+        </div>
       </div>
-
 
       {/* 🔹 Tabla de usuarios */}
       <TableContainer component={Paper} className="shadow-md">
@@ -261,6 +284,14 @@ export default function Usuarios() {
                 </TableCell>
               </TableRow>
             ))}
+
+            {usuariosFiltrados.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} align="center">
+                  No se encontraron resultados.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
