@@ -76,11 +76,9 @@ export class ComunicadoService {
         return { status: 400, respuesta: "El parámetro 'type' debe ser 'comision' o 'division'." }
       }
 
-      // 1) Usuario existe
       const user = await Usuario.findByPk(idUser)
       if (!user) return { status: 404, respuesta: "El usuario no existe." }
 
-      // 2) Comisiones del usuario (sin include)
       const ucRows = await UsuarioComision.findAll({
         where: { usuario_id: idUser },
         attributes: ["comision_id"],
@@ -92,13 +90,11 @@ export class ComunicadoService {
 
       const comisionIds = Array.from(new Set(ucRows.map((r) => r.comision_id as number)))
 
-      // 3) Armar filtro segun 'type'
       let whereByType: Record<string, any>
 
       if (filtro === "comision") {
         whereByType = { id_comision: { [Op.in]: comisionIds } }
       } else {
-        // division: obtener divisiones de esas comisiones
         const comisiones = await Comision.findAll({
           where: { id: { [Op.in]: comisionIds } },
           attributes: ["division_id"],
@@ -109,11 +105,9 @@ export class ComunicadoService {
           new Set(comisiones.map((c) => c.division_id).filter((v) => v != null))
         ) as number[]
 
-        // si no hay divisiones, devolvemos solo los generales
-        whereByType = divisionIds.length ? { division: { [Op.in]: divisionIds } } : { id: null } // forzamos a que el OR dependa de general=true
+        whereByType = divisionIds.length ? { division: { [Op.in]: divisionIds } } : { id: null }
       }
 
-      // 4) Traer comunicados (siempre generales + por comisión/división)
       const comunicados = await Comunicado.findAll({
         where: {
           eliminado: false,
