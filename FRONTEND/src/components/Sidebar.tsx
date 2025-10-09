@@ -21,7 +21,7 @@ const Sidebar = ({ links }) => {
     <>
       <div className="fixed mt-8 h-full bg-white shadow-md p-10 transition-all duration-500 z-40 shadow-gray-400">
         <nav className="space-y-10">
-          {links.map((link: Link, index: number) => {
+          {links != undefined && links.map((link: Link, index: number) => {
             if (link.rol.includes(usuarioRol as string)) {
               return (
                 <NavLink

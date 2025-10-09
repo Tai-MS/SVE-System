@@ -1,6 +1,6 @@
 // import { useState, useEffect } from "react";
 import Header from "./Header";
-import Sidebar from "./SideBar";
+import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 // import Dropdown from "./Dropdown";
 import { useLocation } from "react-router-dom";
