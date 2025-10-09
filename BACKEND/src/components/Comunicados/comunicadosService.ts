@@ -9,7 +9,7 @@ const archivoService = new ArchivoService()
 export class ComunicadoService {
   traerComunicados = async () => {
     const respuestaDB = await Comunicado.findAll({
-      where: { eliminado: false },
+      where: { eliminado: false, general: true },
       include: {
         model: Usuario,
         attributes: ["nombre", "apellido", "rol"],

@@ -1,36 +1,52 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import type { crearComunicado } from "../../types/ComunicadoTypes";
+import type { Comunicado } from "../../types/ComunicadoTypes";
 import type { Usuario } from "../../types/UsuarioTypes";
+import type { Comision, Division, Carrera } from "../../types/ComisionesTypes";
 
 const CrearComunicado: React.FC = () => {
-  const [comunicado, setComunicado] = useState<crearComunicado>({
+  const [comunicado, setComunicado] = useState<Comunicado>({
     id_usuario: localStorage.getItem("userId") || "",
     titulo: "",
     descripcion: "",
     img: [],
+    general: true,
+    eliminado: false,
   });
   const [usuario, setUsuario] = useState<Usuario>();
+  const [comisiones, setComisiones] = useState<Comision>();
   const [selectTipoComunicado, setSelectTipoComunicado] =
     useState<string>("none");
   const [selectTipoCarrera, setSelectTipoCarrera] = useState<string>("none");
+  const [selectDivision, setSelectDivision] = useState<number>(0);
+  const [selectComision, setSelectComision] = useState<string>("none");
+
+  const id_usuario = localStorage.getItem("userId");
+  const rol_usuario = localStorage.getItem("rol");
 
   useEffect(() => {
-    const id_usuario = localStorage.getItem("userId");
     const fetchFunction = async () => {
-      const fetchData = await fetch(
+      const fetchDataUsuario = await fetch(
         `${
           import.meta.env.VITE_BACKURL
         }/usuarios/obtenerUsuario?id=${id_usuario}`
       );
-      const jsonData = await fetchData.json();
-      setUsuario(jsonData);
-      console.log(jsonData);
+      const jsonDataUsuario = await fetchDataUsuario.json();
+      setUsuario(jsonDataUsuario);
+      console.log(jsonDataUsuario);
+
+      const fetchDataComisiones = await fetch(
+        `${import.meta.env.VITE_BACKURL}/comision/traerTodas`
+      );
+      const jsonDataComisiones = await fetchDataComisiones.json();
+      setComisiones(jsonDataComisiones);
+      setUsuario(jsonDataComisiones);
     };
     fetchFunction();
   }, []);
 
   const navigate = useNavigate();
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -50,6 +66,10 @@ const CrearComunicado: React.FC = () => {
       setSelectTipoComunicado(e.target.value);
     } else if (e.target.name === "tipo_carrera") {
       setSelectTipoCarrera(e.target.value);
+    } else if (e.target.name === "tipo_comision") {
+      setSelectComision(e.target.value);
+    } else {
+      setSelectDivision(Number(e.target.value));
     }
   };
 
@@ -61,7 +81,7 @@ const CrearComunicado: React.FC = () => {
     formData.append("titulo", comunicado.titulo);
     formData.append("descripcion", comunicado.descripcion);
 
-    comunicado.img.forEach((file) => {
+    comunicado.img?.forEach((file) => {
       formData.append("img", file);
     });
 
@@ -83,7 +103,7 @@ const CrearComunicado: React.FC = () => {
   };
 
   const opcionesExtra =
-    usuario?.rol === "ADMINISTRADOR" || usuario?.rol === "BEDELÍA" ? (
+    rol_usuario === "ADMINISTRADOR" || rol_usuario === "BEDELÍA" ? (
       <>
         <option value="general">- General (toda la escuela)</option>
         <option value="division">- División</option>
@@ -169,13 +189,12 @@ const CrearComunicado: React.FC = () => {
                   onChange={handleSelect}
                   required
                 >
-                  <option value="none">Seleccionar la carrera...</option>
-                  <option value="ds">- Programación (DS)</option>
-                  <option value="af">- Sistemas (AF)</option>
-                  <option value="iti">
+                  <option value="ALL">- Todas</option>
+                  <option value="DS">- Programación (DS)</option>
+                  <option value="AF">- Sistemas (AF)</option>
+                  <option value="ITI">
                     - Redes y Sistemas Operativos (ITI)
                   </option>
-                  <option value="todas">- Todas</option>
                 </select>
               </div>
               <div>
@@ -186,8 +205,8 @@ const CrearComunicado: React.FC = () => {
                   Que division?:
                 </label>
                 <select
-                  name="tipo_comunicado"
-                  id="tipo_comunicado"
+                  name="tipo_division"
+                  id="tipo_division"
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-300"
                   onSelect={handleSelect}
                   required
@@ -195,9 +214,9 @@ const CrearComunicado: React.FC = () => {
                   <option value="none">
                     Seleccionar que división va a recibir el comunicado...
                   </option>
-                  <option value="id_division_1">- Primero (1ro)</option>
-                  <option value="id_division_2">- Segundo (2do)</option>
-                  <option value="id_division_3">- Tercero (3ro)</option>
+                  <option value="1">- Primero (1ro)</option>
+                  <option value="2">- Segundo (2do)</option>
+                  <option value="3">- Tercero (3ro)</option>
                 </select>
               </div>
             </div>
@@ -221,9 +240,13 @@ const CrearComunicado: React.FC = () => {
                 <option value="none">
                   Seleccionar que comisión va a recibir el comunicado...
                 </option>
-                <option value="general">- General (toda la escuela)</option>
-                <option value="division">- División</option>
-                <option value="comision">- Comisión</option>
+                {comisiones !== undefined &&
+                  comisiones.map((comision: Comision) => (
+                    <option value={comision.id}>
+                      - {comision.carrera_id} {comision.division_id}º
+                      {comision.numero_comision}
+                    </option>
+                  ))}
               </select>
             </div>
           )}
@@ -240,16 +263,17 @@ const CrearComunicado: React.FC = () => {
               onChange={handleFileChange}
               className="w-full"
             />
-            {comunicado.img.length > 0 && (
+            {comunicado !== undefined && (comunicado.img ?? []).length > 0 && (
               <div className="mt-3 flex gap-2 flex-wrap">
-                {comunicado.img.map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={URL.createObjectURL(img)}
-                    alt={`preview-${idx}`}
-                    className="w-20 h-20 object-cover rounded-lg border"
-                  />
-                ))}
+                {comunicado !== undefined &&
+                  (comunicado.img ?? []).map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={URL.createObjectURL(img)}
+                      alt={`preview-${idx}`}
+                      className="w-20 h-20 object-cover rounded-lg border"
+                    />
+                  ))}
               </div>
             )}
           </div>

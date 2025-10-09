@@ -154,6 +154,7 @@ Comunicado.init(
     // UNA VEZ CREADO LOS CAMPOS DE DIVISIONES Y COMISIONES HACER LAS RELACIONES CON DICHAS TABLAS
     general: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     division: { type: DataTypes.INTEGER, allowNull: true, defaultValue: null },
+    carrera: { type: DataTypes.STRING, allowNull: true, defaultValue: "ALL" },
     id_comision: {
       type: DataTypes.BIGINT.UNSIGNED,
       references: {

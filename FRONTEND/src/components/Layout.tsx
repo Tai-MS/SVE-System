@@ -8,6 +8,7 @@ import { useLocation } from "react-router-dom";
 const Layout = ({ children, User, Logout }) => {
   // const [isMobile, setIsMobile] = useState(null);
 
+  const id = localStorage.getItem("userId");
   const location = useLocation();
   const routeLinks = {
     "/comunicados": [
@@ -28,7 +29,14 @@ const Layout = ({ children, User, Logout }) => {
         rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR"],
       },
       {
-        name: "",
+        name: "Ver comunicados de tu divison",
+        path: `/comunicados?userId=${id}&type=division`,
+        rol: ["ESTUDIANTE", "ADMINISTRADOR"],
+      },
+      {
+        name: "Ver comunicados de tu comision",
+        path: `/comunicados/comision?userId=${id}&type=comision`,
+        rol: ["ESTUDIANTE", "ADMINISTRADOR"],
       },
     ],
     "/carreras": [

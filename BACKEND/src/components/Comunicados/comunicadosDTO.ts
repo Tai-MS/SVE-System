@@ -11,6 +11,7 @@ export type comunicadosAttributes = {
   archivos?: archivos
   general?: boolean
   division?: string
+  carrera?: string
   id_comision?: number
   creado?: Date
   actualizado?: Date
