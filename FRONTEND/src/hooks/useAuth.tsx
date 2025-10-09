@@ -22,12 +22,15 @@ export function useAuth(): AuthReturn {
     }
   }, []);
 
-    const googleLogin = async() => {
-        try {
-      const res = await fetch(import.meta.env.VITE_BACKURL + "/user/auth/google/callback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+  const googleLogin = async () => {
+    try {
+      const res = await fetch(
+        import.meta.env.VITE_BACKURL + "/user/auth/google/callback",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       const data = await res.json();
 
@@ -42,24 +45,28 @@ export function useAuth(): AuthReturn {
       console.error("Error en login:", err);
       return false;
     }
-  }
+  };
   // Login
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (
+    username: string,
+    password: string
+  ): Promise<boolean> => {
     try {
-      const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/public/iniciarsesion", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: username, contraseña: password }),
-      });
+      const res = await fetch(
+        import.meta.env.VITE_BACKURL + "/usuarios/public/iniciarSesion",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: username, contraseña: password }),
+        }
+      );
 
       const data = await res.json();
-
       if (data.success && data.token) {
-
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", username);
         localStorage.setItem("userId", data.id);
-        
+        localStorage.setItem("rol", data.rol);
         setToken(data.token);
         setUser(username);
         return true;
@@ -77,12 +84,11 @@ export function useAuth(): AuthReturn {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("userId");
+    localStorage.removeItem("rol");
 
     setToken(null);
     setUser(null);
   };
-
-
 
   return { user, token, login, logout, googleLogin };
 }
