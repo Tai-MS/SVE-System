@@ -3,10 +3,15 @@ import getErrorMessage from "#Utils/errorHandling"
 import { NextFunction, Request, Response } from "express"
 import CurricularUnitService from "./CurricularUnitService"
 import { InferCreationAttributes } from 'sequelize';
+import { unescape } from 'querystring';
 
 async function traerTodas(req: Request, res: Response, next: NextFunction): Promise<Response>{
     try {
-        const respuesta = await CurricularUnitService.traerTodas()
+        const token = req.headers["token"] as string || undefined
+        if(token === undefined){
+            return res.status(304).send("Acceso denegado")
+        }
+        const respuesta = await CurricularUnitService.traerTodas(token)
         return res.status(200).send(respuesta)
     } catch (error: unknown) {
         return res.status(500).json({

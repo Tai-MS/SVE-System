@@ -1,8 +1,8 @@
-import { clearDB, connectDB } from "#db/connection"
+import { clearDB, connectDB, updateDB } from "#db/connection"
+// import { crearUsuarios } from "#db/crearUsuarios"
 import { create_server } from "#Utils/createServer"
 import { crearUsuarios } from "#db/usuariosInsert"
 import "dotenv/config"
-const app = create_server()
 
 const PORT = process.env.PORT || 3030
 
@@ -29,3 +29,4 @@ async function bootstrap() {
 }
 
 bootstrap()
+//

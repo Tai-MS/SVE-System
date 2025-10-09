@@ -1,6 +1,6 @@
 // import { useState, useEffect } from "react";
 import Header from "./Header";
-import Sidebar from "./SideBar";
+import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 // import Dropdown from "./Dropdown";
 import { useLocation } from "react-router-dom";
@@ -27,16 +27,15 @@ const Layout = ({ children, User, Logout }) => {
         path: "/comunicados/crear",
         rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR"],
       },
+      {
+        name: "",
+      },
     ],
     "/carreras": [
-      { name: "Ver carreras",
-        path: "/carreras",
-        rol: ["ADMINISTRADOR"], },
+      { name: "Ver carreras", path: "/carreras", rol: ["ADMINISTRADOR"] },
     ],
     "/usuarios": [
-      { name: "Ver usuarios",
-        path: "/usuarios",
-        rol: ["ADMINISTRADOR"] }
+      { name: "Ver usuarios", path: "/usuarios", rol: ["ADMINISTRADOR"] },
     ],
   };
 

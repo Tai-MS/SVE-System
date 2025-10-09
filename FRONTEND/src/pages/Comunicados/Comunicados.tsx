@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { Comunicado } from "../../types/UsuarioTypes";
+import type { Comunicado } from "../../types/ComunicadoTypes";
 import CardComunicado from "../../components/CardComunicado";
 
 export default function Comunicados() {
@@ -13,8 +13,6 @@ export default function Comunicados() {
       .catch((err) => console.error("Error cargando comunicados:", err));
   }, []);
 
-  const comunicado = comunicados;
-  console.log(comunicado);
   return (
     <>
       {/* Main Content */}

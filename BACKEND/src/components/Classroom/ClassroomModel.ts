@@ -4,5 +4,11 @@ export class Aula extends Model<InferAttributes<Aula>, InferCreationAttributes<A
   declare id: number
   declare nombre: string
   declare activa: boolean
+
+  static async encontrarPorNombre(nombre: string){
+    return Aula.findOne({
+      where: {nombre: nombre}
+    })
+  }
 }
 

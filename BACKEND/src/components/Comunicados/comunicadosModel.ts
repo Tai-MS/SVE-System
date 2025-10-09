@@ -13,7 +13,7 @@ class Comunicado extends Model<comunicadosAttributes, comunicadosCreation> {
   declare eliminado: boolean
   declare general: boolean
   declare division: number
-  declare id_comision: string
+  declare id_comision: number
   declare creado: Date
   declare actualizado: Date
 }
