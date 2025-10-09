@@ -27,7 +27,8 @@ async function traerUnaUC(req: Request, res: Response, next: NextFunction): Prom
             id: req.body.id,
             nombre: req.body.nombre
         }
-        return res.status(200).send(CurricularUnitService.traerUnaUC(unidad))
+        const respuesta = await CurricularUnitService.traerUnaUC(unidad) 
+        return res.status(200).json(respuesta)
     } catch (error: unknown) {
         return res.status(500).json({
             error: "internal server error",

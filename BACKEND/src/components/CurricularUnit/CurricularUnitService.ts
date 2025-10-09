@@ -13,11 +13,11 @@ import UsuarioComision from '#components/UsuarioComision/UsuarioComisionModel'
 
 /**
  * 
- * MODIFICAR EP PARA VER UC DEL ALUMNO LOGEADO
+ * hacer q traerTodas y traerUnaUC devuelvan tambien informacion del profesor
  * 
  */
-async function traerTodas(token: string): Promise<UsuarioUnidadCurricular[] | null | UnidadCurricular[]>{
-
+async function traerTodas(token: string): Promise<any>{
+    let respuesta
     
     const usuario = await datosDelToken(token)
     if(usuario.rol !== Rol.ADMINISTRADOR && usuario.rol !== Rol.BEDELIA && usuario.rol !== Rol.DIRECTIVO){
@@ -29,17 +29,27 @@ async function traerTodas(token: string): Promise<UsuarioUnidadCurricular[] | nu
             where: { usuario_id: id }
         });
         
-        return us_com
+        const info_profesor = await Usuario.findByPk(id)
+        
+        respuesta = {
+            profesor: info_profesor,
+            uc: us_com
+        }
+
+        return respuesta
     }
+    
     return await UnidadCurricular.findAll()
 }
 
 async function traerUnaUC(unidad: BusquedaUnidadDTO): Promise<UnidadCurricular | string | null>{
     const id = unidad.id
     const nombre = unidad.nombre
-
+    
     if(id){
         const uc = await UnidadCurricular.findByPk(id)
+    console.log(uc);
+
         if(uc){
             return uc
         }
@@ -48,6 +58,7 @@ async function traerUnaUC(unidad: BusquedaUnidadDTO): Promise<UnidadCurricular |
 
     if(nombre){
         const uc = await UnidadCurricular.findByPk(nombre)
+
         if(uc){
             return uc
         }
