@@ -7,11 +7,27 @@ export default function Comunicados() {
 
   // Obtener comunicados de la API
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKURL}/comunicados/`)
-      .then((res) => res.json())
-      .then((data: Comunicado[]) => setComunicados(data))
-      .catch((err) => console.error("Error cargando comunicados:", err));
-  }, []);
+    const queryParams = new URLSearchParams(location.search);
+    const userId = queryParams.get("idUser") || "";
+    const type = queryParams.get("type") || "";
+
+    if (userId && type) {
+      fetch(
+        `${
+          import.meta.env.VITE_BACKURL
+        }/comunicados/comunicadosfiltro?idUser=${userId}&type=${type}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setComunicados(data.respuesta);
+          console.log(data.respuesta);
+        });
+    } else {
+      fetch(`${import.meta.env.VITE_BACKURL}/comunicados`)
+        .then((res) => res.json())
+        .then((data) => setComunicados(data));
+    }
+  }, [location.search]);
 
   return (
     <>

@@ -29,6 +29,10 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/comunicados" element={<Comunicados />} />
                   <Route
+                    path="/comunicados/comunicadosfiltro"
+                    element={<Comunicados />}
+                  />
+                  <Route
                     path="/comunicados/crear"
                     element={<CrearComunicado />}
                   />

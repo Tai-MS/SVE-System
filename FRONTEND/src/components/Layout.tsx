@@ -30,12 +30,40 @@ const Layout = ({ children, User, Logout }) => {
       },
       {
         name: "Ver comunicados de tu divison",
-        path: `/comunicados?userId=${id}&type=division`,
+        path: `/comunicados/comunicadosfiltro?idUser=${id}&type=division`,
         rol: ["ESTUDIANTE", "ADMINISTRADOR"],
       },
       {
         name: "Ver comunicados de tu comision",
-        path: `/comunicados/comision?userId=${id}&type=comision`,
+        path: `/comunicados/comunicadosfiltro?idUser=${id}&type=comision`,
+        rol: ["ESTUDIANTE", "ADMINISTRADOR"],
+      },
+    ],
+    "/comunicadosfiltro": [
+      {
+        name: "Ver Comunicados",
+        path: "/comunicados",
+        rol: [
+          "ESTUDIANTE",
+          "PROFESOR",
+          "BEDELIA",
+          "DIRECTIVO",
+          "ADMINISTRADOR",
+        ],
+      },
+      {
+        name: "Agregar Comunicado",
+        path: "/comunicados/crear",
+        rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR"],
+      },
+      {
+        name: "Ver comunicados de tu divison",
+        path: `/comunicados/comunicadosfiltro?idUser=${id}&type=division`,
+        rol: ["ESTUDIANTE", "ADMINISTRADOR"],
+      },
+      {
+        name: "Ver comunicados de tu comision",
+        path: `/comunicados/comunicadosfiltro?idUser=${id}&type=comision`,
         rol: ["ESTUDIANTE", "ADMINISTRADOR"],
       },
     ],
