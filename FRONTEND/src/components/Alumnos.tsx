@@ -58,7 +58,7 @@ export default function Usuarios() {
 
   const obtenerUsuarios = async () => {
     try {
-      const res = await fetch("http://localhost:8080/usuarios/obtenerTodos");
+      const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/obtenerTodos");
       const data = await res.json();
       setUsuarios(data);
     } catch (error) {
@@ -69,7 +69,7 @@ export default function Usuarios() {
   const guardarUsuario = async () => {
     try {
       if (editing) {
-        const res = await fetch("http://localhost:8080/usuarios/actualizar", {
+        const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/actualizar", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export default function Usuarios() {
         console.log("PUT /usuarios/actualizar status:", res.status, "body:", text);
         if (!res.ok) throw new Error(`Error actualizar: ${res.status} ${text}`);
       } else {
-        const res = await fetch("http://localhost:8080/usuarios/crearUsuario", {
+        const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...form }),
@@ -177,7 +177,7 @@ export default function Usuarios() {
                   formData.append("file", file);
 
                   try {
-                    const res = await fetch("http://localhost:8080/usuarios/public/importarAlumnos", {
+                    const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/public/importarAlumnos", {
                       method: "POST",
                       body: formData,
                     });
