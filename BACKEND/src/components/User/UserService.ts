@@ -1,20 +1,19 @@
 import { generarContraseña } from "#Utils/generarContraseña"
 import { hashContraseña } from "#Utils/hashContraseña"
 import bcrypt from "bcrypt"
-import { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO, DatosBasicos } from "./UserDTO"
+import { IniciarSesionDTO, DatosBasicos } from "./UserDTO"
 import Usuario, { Rol, UserCreation } from "./UserModel"
 import userClass from "./UserPersistence"
 import { Usuarios } from "#components/User/userSchemas"
 import transport from "#Utils/mailer"
 import { usuarioI } from "./UserDTO"
-import { InferCreationAttributes, Sequelize, UUID, where } from "sequelize"
+import { InferCreationAttributes, Sequelize } from "sequelize"
 import { datosDelToken } from "#middlewares/auth"
 import { UnidadCurricular } from "#components/CurricularUnit/CurricularUnitModel"
 import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
 import sequelize from "#db/connection"
 import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
 import { Comision } from "#components/Comision/ComisionModel"
-import { Career } from "#components/Career/CareerModel"
 
 async function traerTodos() {
   return userClass.traerTodos()

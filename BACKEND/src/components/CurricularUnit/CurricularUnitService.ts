@@ -1,145 +1,186 @@
-import { object } from 'zod'
-import {TipoUC, UnidadCurricular} from './CurricularUnitModel'
-import { BusquedaUnidadDTO, CrearUnidadCurricularDTO } from './CurricularUnitDTO'
-import { InferCreationAttributes } from 'sequelize'
-import { Not } from 'sequelize-typescript'
-import { skip } from 'node:test'
-import { ComisionUC } from '#components/ComisionUC/ComisionUCModel'
-import { Comision } from '#components/Comision/ComisionModel'
-import Usuario, { Rol } from '#components/User/UserModel'
-import UsuarioUnidadCurricular from '#components/UsuarioUC/UsuarioUC'
-import { datosDelToken } from '#middlewares/auth'
-import UsuarioComision from '#components/UsuarioComision/UsuarioComisionModel'
+import { UnidadCurricular } from "./CurricularUnitModel"
+import { BusquedaUnidadDTO } from "./CurricularUnitDTO"
+import { InferCreationAttributes, Op } from "sequelize"
+import { ComisionUC } from "#components/ComisionUC/ComisionUCModel"
+import { Comision } from "#components/Comision/ComisionModel"
+import Usuario, { Rol } from "#components/User/UserModel"
+import { datosDelToken } from "#middlewares/auth"
 
-/**
- * 
- * hacer q traerTodas y traerUnaUC devuelvan tambien informacion del profesor
- * 
- */
-async function traerTodas(token: string): Promise<any>{
-    let respuesta
-    
-    const usuario = await datosDelToken(token)
-    if(usuario.rol !== Rol.ADMINISTRADOR && usuario.rol !== Rol.BEDELIA && usuario.rol !== Rol.DIRECTIVO){
+async function traerTodas(token: string): Promise<any> {
+  const usuario = await datosDelToken(token)
 
-        const id = usuario.id
+  if (usuario.rol !== Rol.ADMINISTRADOR && usuario.rol !== Rol.BEDELIA && usuario.rol !== Rol.DIRECTIVO) {
+    const id = usuario.id
 
-        
-        const us_com = await UsuarioUnidadCurricular.findAll({
-            where: { usuario_id: id }
-        });
-        
-        const info_profesor = await Usuario.findByPk(id)
-        
-        respuesta = {
-            profesor: info_profesor,
-            uc: us_com
-        }
-
-        return respuesta
-    }
-    
-    return await UnidadCurricular.findAll()
-}
-
-async function traerUnaUC(unidad: BusquedaUnidadDTO): Promise<UnidadCurricular | string | null>{
-    const id = unidad.id
-    const nombre = unidad.nombre
-    
-    if(id){
-        const uc = await UnidadCurricular.findByPk(id)
-    console.log(uc);
-
-        if(uc){
-            return uc
-        }
-        return 'UC no encontrada'
-    }
-
-    if(nombre){
-        const uc = await UnidadCurricular.findByPk(nombre)
-
-        if(uc){
-            return uc
-        }
-        return 'UC no encontrada'    
-    }
-
-    return "Se requieren parametros de busqueda"
-
-}
-
-async function crearUc(datos: InferCreationAttributes<UnidadCurricular>, datos_com_uc:any): Promise<{ uc_creacion: UnidadCurricular; com_uc_creacion: ComisionUC } | string>{
-    const {nombre, carga_horaria, activo, carrera_id_fk, tipo_uc, id} = datos
-    const { uc_id, dni_profesor, nro_comision} = datos_com_uc
-
-    if(!nombre || !carga_horaria || !carrera_id_fk || !tipo_uc || !id || !uc_id || !dni_profesor || !nro_comision){
-        return "Faltan campos"
-    }
-
-    const comision = await Comision.encontrarPorNro(nro_comision.toString())
-    if(!comision){
-        return "Comision no encontrada"
-    }
-
-    const profesor = await Usuario.encontrarPorDNI(dni_profesor)
-    if(!profesor){
-        return "Profesor no encontrado"
-    } 
-
-    if(profesor!.rol !== 'PROFESOR'){
-        return "Usuario no válido como profesor"
-    }
-
-    const datos_crear_uc_com = {
-        uc_id: uc_id,
-        profesor_id: profesor!.id,
-        comision_id: comision!.id
-    }
-    const uc_creacion = await UnidadCurricular.create(datos)
-    const com_uc_creacion = await ComisionUC.create(datos_crear_uc_com)
-    return { uc_creacion, com_uc_creacion }
-}
-
-async function modificarUc(datos: InferCreationAttributes<UnidadCurricular>): Promise<UnidadCurricular | string | null>{
-
-    const nuevosCampos: Partial<InferCreationAttributes<UnidadCurricular>> = {}
-
-    if (datos.nombre !== null) {
-        nuevosCampos.nombre = datos.nombre
-    }
-    if (datos.carga_horaria !== null) {
-        nuevosCampos.carga_horaria = datos.carga_horaria
-    }
-    if (datos.activo !== null) {
-        nuevosCampos.activo = datos.activo
-    }
-    if (datos.tipo_uc !== null) {
-        nuevosCampos.tipo_uc = datos.tipo_uc
-    }
-
-    await UnidadCurricular.update(nuevosCampos, {
-        where: { id: datos.id }
+    // Sequelize realiza una serie de inner joins partiendo de Usuario hasta llegar a Comision
+    // y limitando los datos que debe traer
+    const usuario_con_uc = await Usuario.findByPk(id, {
+      attributes: ["id", "nombre", "apellido"],
+      include: [
+        {
+          model: UnidadCurricular,
+          attributes: ["id", "nombre"],
+          include: [
+            {
+              model: ComisionUC,
+              as: "comisionesUC",
+              include: [
+                {
+                  model: Usuario,
+                  as: "profesor",
+                  attributes: ["id", "nombre", "apellido"],
+                },
+                {
+                  model: Comision,
+                  as: "comision",
+                  attributes: ["id", "numero_comision"],
+                },
+              ],
+            },
+          ],
+        },
+      ],
     })
 
-    return await traerUnaUC({id: datos.id})
+    return usuario_con_uc
+  }
+
+  return await UnidadCurricular.findAll({
+    attributes: ["id", "nombre"],
+    include: [
+      {
+        model: ComisionUC,
+        as: "comisionesUC",
+        include: [
+          {
+            model: Usuario,
+            as: "profesor",
+            attributes: ["id", "nombre", "apellido"],
+          },
+          {
+            model: Comision,
+            as: "comision",
+            attributes: ["id", "numero_comision"],
+          },
+        ],
+      },
+    ],
+  })
 }
 
-async function eliminarUc(id: string): Promise<UnidadCurricular | string | null>{
+async function traerUnaUC(unidad: BusquedaUnidadDTO): Promise<UnidadCurricular | string | null> {
+  const { id, nombre } = unidad
 
-    const uc = await UnidadCurricular.findByPk(id)
+  let param_busqueda = {}
+  if (id) {
+    param_busqueda = { id }
+  } else if (nombre) {
+    param_busqueda = { nombre }
+  } else {
+    return "Se requieren parametros de busqueda"
+  }
 
-    if(uc){
-        await uc.destroy()
-        return `La unidad curricular con el ID ${id} ha sido eliminada.`
-    }
-    return "Unidad curricular no encontrada"
+  const uc = await UnidadCurricular.findOne({
+    where: param_busqueda,
+    attributes: ["id", "nombre"],
+    include: [
+      {
+        model: ComisionUC,
+        as: "comisionesUC",
+        include: [
+          {
+            model: Usuario,
+            as: "profesor",
+            attributes: ["id", "nombre", "apellido"],
+          },
+          {
+            model: Comision,
+            as: "comision",
+            attributes: ["id", "numero_comision"],
+          },
+        ],
+      },
+    ],
+  })
+
+  if (!uc) return "UC no encontrada"
+  return uc
+}
+
+async function crearUc(
+  datos: InferCreationAttributes<UnidadCurricular>,
+  datos_com_uc: any
+): Promise<{ uc_creacion: UnidadCurricular; com_uc_creacion: ComisionUC } | string> {
+  const { nombre, carga_horaria, activo, carrera_id_fk, tipo_uc, id } = datos
+  const { uc_id, dni_profesor, nro_comision } = datos_com_uc
+
+  if (!nombre || !carga_horaria || !carrera_id_fk || !tipo_uc || !id || !uc_id || !dni_profesor || !nro_comision) {
+    return "Faltan campos"
+  }
+
+  const comision = await Comision.encontrarPorNro(nro_comision.toString())
+  if (!comision) {
+    return "Comision no encontrada"
+  }
+
+  const profesor = await Usuario.encontrarPorDNI(dni_profesor)
+  if (!profesor) {
+    return "Profesor no encontrado"
+  }
+
+  if (profesor!.rol !== "PROFESOR") {
+    return "Usuario no válido como profesor"
+  }
+
+  const datos_crear_uc_com = {
+    uc_id: uc_id,
+    profesor_id: profesor!.id,
+    comision_id: comision!.id,
+  }
+  const uc_creacion = await UnidadCurricular.create(datos)
+  const com_uc_creacion = await ComisionUC.create(datos_crear_uc_com)
+  return { uc_creacion, com_uc_creacion }
+}
+
+async function modificarUc(
+  datos: InferCreationAttributes<UnidadCurricular>
+): Promise<UnidadCurricular | string | null> {
+  const nuevosCampos: Partial<InferCreationAttributes<UnidadCurricular>> = {}
+
+  if (datos.nombre !== null) {
+    nuevosCampos.nombre = datos.nombre
+  }
+  if (datos.carga_horaria !== null) {
+    nuevosCampos.carga_horaria = datos.carga_horaria
+  }
+  if (datos.activo !== null) {
+    nuevosCampos.activo = datos.activo
+  }
+  if (datos.tipo_uc !== null) {
+    nuevosCampos.tipo_uc = datos.tipo_uc
+  }
+
+  await UnidadCurricular.update(nuevosCampos, {
+    where: { id: datos.id },
+  })
+
+  return await traerUnaUC({ id: datos.id })
+}
+
+async function eliminarUc(id: string): Promise<UnidadCurricular | string | null> {
+  const uc = await UnidadCurricular.findByPk(id)
+
+  if (uc) {
+    await uc.destroy()
+    return `La unidad curricular con el ID ${id} ha sido eliminada.`
+  }
+  return "Unidad curricular no encontrada"
 }
 
 export default {
-    traerTodas,
-    traerUnaUC,
-    crearUc,
-    modificarUc,
-    eliminarUc
+  traerTodas,
+  traerUnaUC,
+  crearUc,
+  modificarUc,
+  eliminarUc,
 }

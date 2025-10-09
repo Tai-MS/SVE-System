@@ -2,8 +2,8 @@ import "dotenv/config"
 
 export default {
   dev: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS || null,
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD || null,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
@@ -11,7 +11,7 @@ export default {
     logging: console.log,
   },
   test: {
-    username: process.env.DB_USER,
+    username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD || null,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
@@ -19,7 +19,7 @@ export default {
     dialect: "mysql",
   },
   prod: {
-    username: process.env.DB_USER,
+    username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD || null,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
