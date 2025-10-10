@@ -1,20 +1,19 @@
 import { generarContraseña } from "#Utils/generarContraseña"
 import { hashContraseña } from "#Utils/hashContraseña"
 import bcrypt from "bcrypt"
-import { CrearUsuarioDTO, ActualizarUsuarioDTO, IniciarSesionDTO, DatosBasicos } from "./UserDTO"
+import { IniciarSesionDTO, DatosBasicos } from "./UserDTO"
 import Usuario, { Rol, UserCreation } from "./UserModel"
 import userClass from "./UserPersistence"
 import { Usuarios } from "#components/User/userSchemas"
 import transport from "#Utils/mailer"
 import { usuarioI } from "./UserDTO"
-import { InferCreationAttributes, Sequelize, UUID, where } from "sequelize"
+import { InferCreationAttributes, Sequelize } from "sequelize"
 import { datosDelToken } from "#middlewares/auth"
 import { UnidadCurricular } from "#components/CurricularUnit/CurricularUnitModel"
 import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
 import sequelize from "#db/connection"
 import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
 import { Comision } from "#components/Comision/ComisionModel"
-import { Career } from "#components/Career/CareerModel"
 
 async function traerTodos() {
   return userClass.traerTodos()
@@ -71,12 +70,23 @@ async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
     to: dni + "@terciariourquiza.edu.ar",
     subject: "Cuenta creada",
     html: `
-              <div>
-                  <p>Tu contraseña es: ${contraseña_generada}</p>
-              </div>
-          `,
+    <div>
+    <p>Tu contraseña es: ${contraseña_generada}</p>
+    </div>
+    `,
   })
   const crear = await userClass.crearUsuario(datosFinal)
+  if(rol === Rol.ESTUDIANTE){
+    if(datos.comision && datos.anio_comision){
+      await UsuarioComision.create({
+        usuario_id: crear.id,
+        comision_id: datos.comision,
+        anio_comision: datos.anio_comision
+      })
+    }else{
+      return "Faltan datos para añadir al alumno a su comisión."
+    }
+  }
 
   return crear
 }
@@ -129,10 +139,9 @@ async function actualizarUsuario(
   const actualizarCampos: Partial<InferCreationAttributes<Usuario>> = {}
 
   if (guardarToken) {
-    if (process.env.DEV === "dev") {
+    if (process.env.ENV === "dev") {
       actualizarCampos.token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRjZmEyYzMyLWMxM2QtNGNmMi1hY2I1LTAxYmQ4YjU2ODBiMSIsImRuaSI6IjQ0MDYyODI4Iiwibm9tYnJlIjoiQ0FSTEEgVkVSw5NOSUNBIiwiYXBlbGxpZG8iOiJGRVJOw4FOREVaIiwicm9sIjoiQURNSU5JU1RSQURPUiIsImlhdCI6MTc1OTM1MTIzNSwiZXhwIjoxNzU5NDM3NjM1fQ.hZHbAZQgtuTs5pQACFiOu20YMDTf08DUkInoe6Nth5s"
-
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRjZmEyYzMyLWMxM2QtNGNmMi1hY2I1LTAxYmQ4YjU2ODBiMSIsImRuaSI6IjQ0MDYyODI4Iiwibm9tYnJlIjoiQ0FSTEEgVkVSw5NOSUNBIiwiYXBlbGxpZG8iOiJGRVJOw4FOREVaIiwicm9sIjoiQURNSU5JU1RSQURPUiIsImlhdCI6MTc1OTM1MTIzNSwiZXhwIjoxNzU5NDM3NjM1fQ.hZHbAZQgtuTs5pQACFiOu20YMDTf08DUkInoe6Nth5s"
       await Usuario.update(actualizarCampos, {
         where: { dni: datos.dni },
       })
@@ -145,6 +154,8 @@ async function actualizarUsuario(
     }
     return "token guardado"
   }
+
+  
   if (dni !== null && dni !== undefined && typeof datos.token === "string") {
     actualizarCampos.dni = datos.dni
   } else {
@@ -195,7 +206,7 @@ const confirmarUsuario = await datosDelToken(datos.token)
   if (datos.carrera_id_fk !== null && datos.carrera_id_fk !== undefined) {
     actualizarCampos.carrera_id_fk = datos.carrera_id_fk
   }
-
+  
   await Usuario.update(actualizarCampos, {
     where: { dni: datos.dni },
   })

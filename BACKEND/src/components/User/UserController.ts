@@ -2,8 +2,7 @@ import getErrorMessage from "#Utils/errorHandling"
 import { NextFunction, Request, Response } from "express"
 import UserService from "./UserService"
 import passport from "passport"
-import User, { UserCreation } from "./UserModel"
-import { ActualizarUsuarioDTO, CrearUsuarioDTO, DatosBasicos, IniciarSesionDTO } from "./UserDTO"
+import User from "./UserModel"
 import { generarContraseña } from "#Utils/generarContraseña"
 import { datosDelToken, generarToken } from "#middlewares/auth"
 import { excelSchema, Usuarios } from "#components/User/userSchemas"
@@ -61,7 +60,6 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
       email: req.body.email,
       contraseña: req.body.contraseña,
     }
-
     if (!data.email || !data.contraseña) {
       return res.status(400).json({
         error: "Bad request",
@@ -79,6 +77,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
     const token = await generarToken(iniciar_sesion)
     console.log(token)
     const dato = await datosDelToken(token)
+    
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],
       token: token,
@@ -149,6 +148,7 @@ async function incluirEnUC(req: Request, res: Response, next: NextFunction): Pro
 async function actualizarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
     const token = req.headers["auth-token"] as string | undefined
+    
     const datos: Partial<InferCreationAttributes<Usuario>> = {
       id: req.body.id,
       dni: req.body.dni,
@@ -164,7 +164,7 @@ async function actualizarUsuario(req: Request, res: Response, next: NextFunction
       carrera_id_fk: req.body.carrera_id_fk || null,
     }
     const call = await UserService.actualizarUsuario(datos)
-
+    
     return res.status(200).send(call)
   } catch (error) {
     return res.status(500).json({
@@ -246,6 +246,7 @@ async function ImportarAlumnos(req: Request, res: Response) {
   const datos = XLSX.utils.sheet_to_json(hoja)
   // Verifica con ZOD que los campos del JSON sean correctos
   const verificacion_datos = await excelSchema.safeParseAsync(datos)
+  
   if (!verificacion_datos.success) {
     res.status(400).json({
       respuesta: "Los datos del excel no son compatibles para la importación",

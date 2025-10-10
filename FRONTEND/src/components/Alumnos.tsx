@@ -58,7 +58,7 @@ export default function Usuarios() {
 
   const obtenerUsuarios = async () => {
     try {
-      const res = await fetch("http://localhost:8080/usuarios/obtenerTodos");
+      const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/obtenerTodos");
       const data = await res.json();
       setUsuarios(data);
     } catch (error) {
@@ -69,7 +69,7 @@ export default function Usuarios() {
   const guardarUsuario = async () => {
     try {
       if (editing) {
-        const res = await fetch("http://localhost:8080/usuarios/actualizar", {
+        const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/actualizar", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export default function Usuarios() {
         console.log("PUT /usuarios/actualizar status:", res.status, "body:", text);
         if (!res.ok) throw new Error(`Error actualizar: ${res.status} ${text}`);
       } else {
-        const res = await fetch("http://localhost:8080/usuarios/crearUsuario", {
+        const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...form }),
@@ -123,7 +123,6 @@ export default function Usuarios() {
       (u.apellido?.toLowerCase() ?? "").includes(termino) ||
       (u.dni?.toLowerCase() ?? "").includes(termino) ||
       (u.telefono?.toLowerCase() ?? "").includes(termino) ||
-      (u.email?.toLowerCase() ?? "").includes(termino) ||
       (u.anioIngreso?.toString().toLowerCase() ?? "").includes(termino);
     return coincideRol && coincideBusqueda;
   });
@@ -177,7 +176,7 @@ export default function Usuarios() {
                   formData.append("file", file);
 
                   try {
-                    const res = await fetch("http://localhost:8080/usuarios/public/importarAlumnos", {
+                    const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/public/importarAlumnos", {
                       method: "POST",
                       body: formData,
                     });
@@ -308,7 +307,7 @@ export default function Usuarios() {
           <TextField label="Apellido" value={form.apellido} onChange={(e) => setForm({ ...form, apellido: e.target.value })} />
           <TextField label="DNI" value={form.dni} onChange={(e) => setForm({ ...form, dni: e.target.value })} />
           <TextField label="Teléfono" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
-          <TextField label="Email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          <TextField label="Email" type="email" value={form.email} disabled helperText="El email no puede ser modificado" />
           <TextField label="Año de ingreso" value={form.anioIngreso} onChange={(e) => setForm({ ...form, anioIngreso: e.target.value })} />
           <div className="flex items-center gap-2 mt-2">
             <Typography>Activo</Typography>
