@@ -109,7 +109,9 @@ const CrearComunicado: React.FC = () => {
   };
 
   const opcionesExtra =
-    rol_usuario === "ADMINISTRADOR" || rol_usuario === "BEDELÍA" ? (
+    rol_usuario === "ADMINISTRADOR" ||
+    rol_usuario === "BEDELIA" ||
+    rol_usuario === "DIRECTIVO" ? (
       <>
         <option value="general">- General (toda la escuela)</option>
         <option value="division">- División</option>

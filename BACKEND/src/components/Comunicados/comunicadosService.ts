@@ -67,7 +67,7 @@ export class ComunicadoService {
       return { status: 500, respuesta: "Ocurrio un error en el servidor al momento de subir el comunicado" }
     }
   }
-  comunicadosPorUsuario = async (idUser: string, type: string) => {
+  comunicadosPorUsuario = async (idUser: string, type: string, career?: string) => {
     type FiltroTipo = "comision" | "division"
     try {
       const filtro: FiltroTipo | null = type === "comision" || type === "division" ? (type as FiltroTipo) : null
@@ -108,10 +108,30 @@ export class ComunicadoService {
         whereByType = divisionIds.length ? { division: { [Op.in]: divisionIds } } : { id: null }
       }
 
+      if (career) {
+        const comunicados = await Comunicado.findAll({
+          where: {
+            eliminado: false,
+            [Op.or]: [whereByType],
+          },
+          order: [["creado", "DESC"]],
+        })
+
+        const comunicadosFinal = comunicados.filter(
+          (comunicado) => comunicado.carrera === "ALL" || comunicado.carrera === career
+        )
+
+        if (comunicadosFinal.length === 0) {
+          return { status: 404, respuesta: "No hay comunicados" }
+        }
+
+        return { status: 200, respuesta: comunicadosFinal }
+      }
+
       const comunicados = await Comunicado.findAll({
         where: {
           eliminado: false,
-          [Op.or]: [{ general: true }, whereByType],
+          [Op.or]: [whereByType],
         },
         order: [["creado", "DESC"]],
       })

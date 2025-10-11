@@ -15,6 +15,7 @@ export const comunicadoSchema = z.object({
   descripcion: z.string(),
   archivos: z.array(archivo).optional(),
   general: z.boolean().optional(),
+  carrera: z.string().optional(),
   division: z.number().optional(),
   id_comision: z.string().optional(),
 })

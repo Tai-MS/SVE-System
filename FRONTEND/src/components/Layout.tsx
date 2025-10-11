@@ -4,16 +4,32 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 // import Dropdown from "./Dropdown";
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import type { Usuario } from "../types/UsuarioTypes";
 
 const Layout = ({ children, User, Logout }) => {
   // const [isMobile, setIsMobile] = useState(null);
+  const [usuario, setUsuario] = useState<Usuario>();
+  useEffect(() => {
+    const fetchFunction = async () => {
+      const id_usuario = localStorage.getItem("userId");
+      const data = await fetch(
+        `${
+          import.meta.env.VITE_BACKURL
+        }/usuarios/obtenerUsuario?id=${id_usuario}`
+      );
+      const dataJson = await data.json();
+      setUsuario(dataJson);
+      console.log(dataJson);
+    };
 
-  const id = localStorage.getItem("userId");
+    fetchFunction();
+  }, []);
   const location = useLocation();
   const routeLinks = {
     "/comunicados": [
       {
-        name: "Ver Comunicados",
+        name: "Ver Comunicados generales",
         path: "/comunicados",
         rol: [
           "ESTUDIANTE",
@@ -30,40 +46,12 @@ const Layout = ({ children, User, Logout }) => {
       },
       {
         name: "Ver comunicados de tu divison",
-        path: `/comunicados/comunicadosfiltro?idUser=${id}&type=division`,
+        path: `/comunicados?idUser=${usuario?.id}&type=division&career=${usuario?.carrera_id_fk}`,
         rol: ["ESTUDIANTE", "ADMINISTRADOR"],
       },
       {
         name: "Ver comunicados de tu comision",
-        path: `/comunicados/comunicadosfiltro?idUser=${id}&type=comision`,
-        rol: ["ESTUDIANTE", "ADMINISTRADOR"],
-      },
-    ],
-    "/comunicadosfiltro": [
-      {
-        name: "Ver Comunicados",
-        path: "/comunicados",
-        rol: [
-          "ESTUDIANTE",
-          "PROFESOR",
-          "BEDELIA",
-          "DIRECTIVO",
-          "ADMINISTRADOR",
-        ],
-      },
-      {
-        name: "Agregar Comunicado",
-        path: "/comunicados/crear",
-        rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR"],
-      },
-      {
-        name: "Ver comunicados de tu divison",
-        path: `/comunicados/comunicadosfiltro?idUser=${id}&type=division`,
-        rol: ["ESTUDIANTE", "ADMINISTRADOR"],
-      },
-      {
-        name: "Ver comunicados de tu comision",
-        path: `/comunicados/comunicadosfiltro?idUser=${id}&type=comision`,
+        path: `/comunicados?idUser=${usuario?.id}&type=comision`,
         rol: ["ESTUDIANTE", "ADMINISTRADOR"],
       },
     ],

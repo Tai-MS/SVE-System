@@ -251,10 +251,9 @@ Material.init(
     titulo: { type: DataTypes.STRING(200), allowNull: false },
     url: { type: DataTypes.STRING(500), allowNull: true },
     descripcion: { type: DataTypes.TEXT, allowNull: true },
-    tipo_material: { type: DataTypes.ENUM(...Object.values(TipoMaterial)), allowNull: false},
-    creado: { type: DataTypes.DATE, allowNull: false},
-    fecha_limite: { type: DataTypes.DATE, allowNull: true}
-  
+    tipo_material: { type: DataTypes.ENUM(...Object.values(TipoMaterial)), allowNull: false },
+    creado: { type: DataTypes.DATE, allowNull: false },
+    fecha_limite: { type: DataTypes.DATE, allowNull: true },
   },
   { sequelize, tableName: "materiales" }
 )
@@ -315,7 +314,7 @@ UsuarioUnidadCurricular.init(
       references: { model: "unidades_curriculares", key: "id" },
     },
     comision_id: {
-      type: DataTypes.BIGINT.UNSIGNED,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       references: { model: "comisiones", key: "id" },
     },

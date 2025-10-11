@@ -27,4 +27,5 @@ export interface Usuario {
   creado?: Date;
   ultima_conexion?: Date;
   token?: string;
+  carrera_id_fk: string;
 }

@@ -1,5 +1,4 @@
 import { clearDB, connectDB, updateDB } from "#db/connection"
-// import { crearUsuarios } from "#db/crearUsuarios"
 import { create_server } from "#Utils/createServer"
 import { crearUsuarios } from "#db/usuariosInsert"
 import "dotenv/config"
@@ -24,7 +23,7 @@ async function bootstrap() {
     } 
     */
     // await crearUsuarios()
-    await connectDB()
+    // await connectDB()
   })
 }
 
