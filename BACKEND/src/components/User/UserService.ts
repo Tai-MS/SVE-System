@@ -270,7 +270,7 @@ async function guardarAlumnosImportados(datos: Usuarios, carrera: string | null 
             usuarios_sin_comision.push(usuario)
           }
         }
-        if (process.env.DEV !== "dev") {
+        if (process.env.ENV !== "dev") {
           await transport.sendMail({
             from: process.env.USER_MAILER,
             to: dniLimpio + "@terciariourquiza.edu.ar",
