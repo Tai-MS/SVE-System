@@ -38,7 +38,7 @@ function Home(): JSX.Element  {
         setLoading(false)
       }
     }
-
+    
     fetchClassrooms()
   }, [])
 
@@ -68,14 +68,12 @@ function Home(): JSX.Element  {
             {classrooms.map((classroom) => (
               <Card
                 key={classroom.id}
-                title={classroom.title}
-                code={classroom.code}
-                instructor={classroom.instructor}
+                nombre={classroom.nombre}
+                instructor={classroom.profesor}
                 instructorAvatar={classroom.instructorAvatar}
                 coverImage={classroom.coverImage}
                 coverColor={classroom.coverColor}
                 studentsCount={classroom.studentsCount}
-                nextClass={classroom.nextClass}
                 description={classroom.description}
               />
             ))}

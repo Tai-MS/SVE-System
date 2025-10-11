@@ -215,7 +215,7 @@ Comision.init(
   {
     sequelize,
     tableName: "comisiones",
-    indexes: [{ unique: true, fields: ["numero_comision"] }],
+    // indexes: [{ unique: true, fields: ["numero_comision"] }],
   }
 )
 

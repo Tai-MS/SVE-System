@@ -1,8 +1,7 @@
 import { Users, Calendar, MoreVertical } from "lucide-react"
 
 interface CardProps {
-  title: string
-  code: string
+  nombre: string
   instructor: string
   instructorAvatar?: string
   coverImage?: string
@@ -13,8 +12,7 @@ interface CardProps {
 }
 
 export function Card({
-  title,
-  code,
+  nombre,
   instructor,
   instructorAvatar,
   coverImage,
@@ -42,8 +40,8 @@ export function Card({
 
         {/* Título y código */}
         <div className="absolute bottom-3 left-4 right-4">
-          <h3 className="text-balance text-xl font-semibold text-white">{title}</h3>
-          <p className="mt-1 text-sm text-white/90">{code}</p>
+          <h3 className="text-balance text-xl font-semibold text-white">{nombre}</h3>
+          <p className="mt-1 text-sm text-white/90">Codigo Materia</p>
         </div>
       </div>
 
