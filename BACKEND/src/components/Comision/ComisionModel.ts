@@ -10,6 +10,7 @@ export class Comision extends Model<InferAttributes<Comision>, InferCreationAttr
   declare cant_alumnos: number
   declare carrera_id: string
   declare anio_creacion: CreationOptional<number>
+  declare division_id: number
 
   static async encontrarPorNro(numero_comision: string) {
     return await Comision.findOne({
@@ -17,9 +18,9 @@ export class Comision extends Model<InferAttributes<Comision>, InferCreationAttr
     })
   }
 
-  static async encontrarPorCarrera(carrera: string){
+  static async encontrarPorCarrera(carrera: string) {
     return await Comision.findAll({
-      where: {carrera_id: carrera}
+      where: { carrera_id: carrera },
     })
   }
 }

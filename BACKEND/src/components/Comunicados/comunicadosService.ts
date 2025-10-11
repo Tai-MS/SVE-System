@@ -12,7 +12,7 @@ export class ComunicadoService {
       where: { eliminado: false },
       include: {
         model: Usuario,
-        attributes: ["nombre", "apellido"],
+        attributes: ["nombre", "apellido", "rol"],
       },
       order: [["creado", "DESC"]],
     })

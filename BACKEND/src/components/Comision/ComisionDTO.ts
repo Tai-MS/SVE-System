@@ -5,4 +5,5 @@ export type ComisionAttributes = {
   carrera_id: string
   activo?: boolean
   cupo_maximo?: number
+  division_id?: number
 }
