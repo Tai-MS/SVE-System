@@ -2,8 +2,7 @@ import getErrorMessage from "#Utils/errorHandling"
 import { NextFunction, Request, Response } from "express"
 import UserService from "./UserService"
 import passport from "passport"
-import User, { UserCreation } from "./UserModel"
-import { ActualizarUsuarioDTO, CrearUsuarioDTO, DatosBasicos, IniciarSesionDTO } from "./UserDTO"
+import User from "./UserModel"
 import { generarContraseña } from "#Utils/generarContraseña"
 import { datosDelToken, generarToken } from "#middlewares/auth"
 import { excelSchema, Usuarios } from "#components/User/userSchemas"
@@ -29,16 +28,16 @@ async function traerTodos(req: Request, res: Response, next: NextFunction): Prom
 
 async function traerUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const dni: string = req.query.dni as string
+    const id: string = req.query.id as string
 
-    if (!dni) {
+    if (!id) {
       return res.status(400).json({
         error: "Bad request",
         message: "Se requiere el parametro: DNI",
       })
     }
 
-    const usuario = await UserService.traerUsuario(dni)
+    const usuario = await UserService.traerUsuario(id)
 
     if (!usuario) {
       return res.status(204).json({
@@ -61,7 +60,6 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
       email: req.body.email,
       contraseña: req.body.contraseña,
     }
-
     if (!data.email || !data.contraseña) {
       return res.status(400).json({
         error: "Bad request",
@@ -76,9 +74,10 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
         message: iniciar_sesion,
       })
     }
-
     const token = await generarToken(iniciar_sesion)
+    console.log(token)
     const dato = await datosDelToken(token)
+
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],
       token: token,
@@ -96,6 +95,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
         success: true,
         message: "logeado",
         token: token,
+        rol: dato.rol,
       })
   } catch (error: unknown) {
     return res.status(500).json({
@@ -131,9 +131,9 @@ async function incluirEnUC(req: Request, res: Response, next: NextFunction): Pro
       dni: req.body.dni,
       token: token,
       unidad_curricular_id_fk: req.body.unidad_curricular_id_fk || null,
-      comision_id: req.body.comision_id || null
+      comision_id: req.body.comision_id || null,
     }
-    
+
     const call = await UserService.incluirEnUC(datos)
 
     return res.status(200).send(call)
@@ -148,6 +148,7 @@ async function incluirEnUC(req: Request, res: Response, next: NextFunction): Pro
 async function actualizarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
     const token = req.headers["auth-token"] as string | undefined
+
     const datos: Partial<InferCreationAttributes<Usuario>> = {
       id: req.body.id,
       dni: req.body.dni,
@@ -157,12 +158,11 @@ async function actualizarUsuario(req: Request, res: Response, next: NextFunction
       telefono: req.body.telefono || null,
       anioIngreso: req.body.anioIngreso || null,
       contraseña: req.body.contraseña || null,
-      activo: req.body.activo || null,
+      activo: req.body.activo,
       ultima_conexion: req.body.ultima_conexion || null,
       token: token,
       carrera_id_fk: req.body.carrera_id_fk || null,
     }
-
     const call = await UserService.actualizarUsuario(datos)
 
     return res.status(200).send(call)
@@ -201,7 +201,6 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
 
     const token = await generarToken(user)
     const dato = await datosDelToken(token)
-
     req.logIn(user, function (error) {
       if (error) {
         return next(error)
@@ -231,7 +230,7 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
 
 async function ImportarAlumnos(req: Request, res: Response) {
   const archivoCasting = (req as unknown as { file?: Express.Multer.File }).file
-  
+
   if (!archivoCasting || !archivoCasting.buffer) {
     return res.status(400).json({ error: "No se recibió ningún archivo." })
   }
@@ -240,13 +239,14 @@ async function ImportarAlumnos(req: Request, res: Response) {
   //buscando desde el nombre del archivo
   const nombreArchivo = archivoCasting.originalname.toUpperCase()
   const siglas = ["DS", "ITI", "AF"]
-  const siglaEncontrada = siglas.find(sigla => nombreArchivo.includes(`-${sigla}`))
+  const siglaEncontrada = siglas.find((sigla) => nombreArchivo.includes(`-${sigla}`))
 
   const archivo = XLSX.read(archivoCasting.buffer, { type: "buffer" })
   const hoja = archivo.Sheets[archivo.SheetNames[0]]
   const datos = XLSX.utils.sheet_to_json(hoja)
   // Verifica con ZOD que los campos del JSON sean correctos
   const verificacion_datos = await excelSchema.safeParseAsync(datos)
+  
   if (!verificacion_datos.success) {
     res.status(400).json({
       respuesta: "Los datos del excel no son compatibles para la importación",
@@ -255,7 +255,7 @@ async function ImportarAlumnos(req: Request, res: Response) {
   }
   // Envia los registros al Services para subirlos a la DB
   const resultado = await UserService.guardarAlumnosImportados(verificacion_datos.data as Usuarios, siglaEncontrada)
-  
+
   res.status(resultado.status).json(resultado.mensaje)
 }
 

@@ -9,7 +9,7 @@ import { Clase } from "#components/ClassSession/ClassSessionModel"
 import { ComisionUC } from "#components/ComisionUC/ComisionUCModel"
 import { Comision } from "#components/Comision/ComisionModel"
 import { UnidadCurricular, TipoUC } from "#components/CurricularUnit/CurricularUnitModel"
-import { Material } from "#components/Material/MaterialModel"
+import { Material, TipoMaterial } from "#components/Material/MaterialModel"
 import { Period } from "#components/Period/PeriodModel"
 import Usuario, { Rol } from "#components/User/UserModel"
 import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
@@ -18,6 +18,7 @@ import session from "express-session"
 import Comunicado from "#components/Comunicados/comunicadosModel"
 import Archivo from "#components/Archivos/archivosModel"
 import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
+import { Division } from "#components/Division/divisionModel"
 
 const SequelizeStore = connectSessionSequelize(session.Store)
 export const sessionStore = new SequelizeStore({
@@ -153,7 +154,16 @@ Comunicado.init(
     // UNA VEZ CREADO LOS CAMPOS DE DIVISIONES Y COMISIONES HACER LAS RELACIONES CON DICHAS TABLAS
     general: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     division: { type: DataTypes.INTEGER, allowNull: true, defaultValue: null },
-    id_comision: { type: DataTypes.UUID, allowNull: true, defaultValue: null },
+    carrera: { type: DataTypes.STRING, allowNull: true, defaultValue: "ALL" },
+    id_comision: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "comisiones",
+        key: "id",
+      },
+      allowNull: true,
+      defaultValue: null,
+    },
   },
   {
     sequelize,
@@ -187,6 +197,7 @@ ComisionUC.init(
     id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true, autoIncrement: true },
     uc_id: { type: DataTypes.STRING, allowNull: false },
     comision_id: { type: DataTypes.BIGINT, allowNull: false },
+    link_meet: { type: DataTypes.STRING, allowNull: true },
   },
   {
     sequelize,
@@ -196,7 +207,7 @@ ComisionUC.init(
 
 Comision.init(
   {
-    id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     numero_comision: { type: DataTypes.STRING(20), allowNull: false },
     carrera_id: {
       type: DataTypes.STRING,
@@ -209,11 +220,18 @@ Comision.init(
     cupo_maximo: { type: DataTypes.SMALLINT.UNSIGNED, defaultValue: 60 },
     cant_alumnos: { type: DataTypes.SMALLINT.UNSIGNED, defaultValue: 0 },
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    anio_creacion: { type: DataTypes.INTEGER, defaultValue: new Date().getFullYear() },
+    division_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
+      references: {
+        model: "divisiones",
+        key: "id",
+      },
+    },
   },
   {
     sequelize,
     tableName: "comisiones",
-    indexes: [{ unique: true, fields: ["numero_comision"] }],
   }
 )
 
@@ -233,6 +251,9 @@ Material.init(
     titulo: { type: DataTypes.STRING(200), allowNull: false },
     url: { type: DataTypes.STRING(500), allowNull: true },
     descripcion: { type: DataTypes.TEXT, allowNull: true },
+    tipo_material: { type: DataTypes.ENUM(...Object.values(TipoMaterial)), allowNull: false },
+    creado: { type: DataTypes.DATE, allowNull: false },
+    fecha_limite: { type: DataTypes.DATE, allowNull: true },
   },
   { sequelize, tableName: "materiales" }
 )
@@ -293,10 +314,10 @@ UsuarioUnidadCurricular.init(
       references: { model: "unidades_curriculares", key: "id" },
     },
     comision_id: {
-      type: DataTypes.BIGINT.UNSIGNED,
+      type: DataTypes.INTEGER,
       primaryKey: true,
-      references: {model: "comisiones", key: "id"}
-    }
+      references: { model: "comisiones", key: "id" },
+    },
   },
   {
     sequelize,
@@ -323,6 +344,7 @@ Calificacion.init(
     nota: { type: DataTypes.DECIMAL(5, 2), allowNull: false },
     fecha: { type: DataTypes.DATEONLY, allowNull: false, defaultValue: DataTypes.NOW },
     observaciones: { type: DataTypes.STRING(255), allowNull: true },
+    material_id_fk: { type: DataTypes.BIGINT.UNSIGNED, allowNull: true },
   },
   {
     sequelize,
@@ -355,6 +377,20 @@ Clase.init(
     sequelize,
     tableName: "clases",
     indexes: [{ fields: ["fecha"] }],
+  }
+)
+
+Division.init(
+  {
+    id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true, autoIncrement: true },
+    fecha_inicio: { type: DataTypes.DATEONLY, allowNull: false },
+    fecha_fin: { type: DataTypes.DATEONLY, allowNull: false },
+  },
+  {
+    sequelize,
+    tableName: "divisiones",
+    indexes: [{ fields: ["id"] }],
+    timestamps: false,
   }
 )
 
