@@ -2,7 +2,7 @@ import Usuario from "#components/User/UserModel"
 import { clearDB } from "./connection"
 export const crearUsuarios = async () => {
   try {
-    await clearDB()
+    // await clearDB()
 
     await Usuario.bulkCreate([
       {

@@ -17,9 +17,9 @@ export class ComisionControllers {
 
   traerTodas = async (req: Request, res: Response) => {
     const carrera = req.params.carreraID
-    console.log(carrera);
-    
-    const respuesta = await Comision.traerTodas(carrera)
+    console.log(carrera)
+
+    const respuesta = await Comision.traerTodas()
     res.status(respuesta.status).json(respuesta.respuesta)
   }
   verDetallesComision = async (req: Request, res: Response) => {

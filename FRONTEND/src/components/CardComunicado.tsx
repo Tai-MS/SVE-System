@@ -7,7 +7,6 @@ import type { Comunicado } from "../types/ComunicadoTypes";
 const CardComunicado = ({ Item }: { Item: Comunicado }) => {
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
   const time = ZonedDateTime.parse(Item.creado as string);
-  console.log(time);
   return (
     <>
       <main

@@ -4,15 +4,32 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 // import Dropdown from "./Dropdown";
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import type { Usuario } from "../types/UsuarioTypes";
 
 const Layout = ({ children, User, Logout }) => {
   // const [isMobile, setIsMobile] = useState(null);
+  const [usuario, setUsuario] = useState<Usuario>();
+  useEffect(() => {
+    const fetchFunction = async () => {
+      const id_usuario = localStorage.getItem("userId");
+      const data = await fetch(
+        `${
+          import.meta.env.VITE_BACKURL
+        }/usuarios/obtenerUsuario?id=${id_usuario}`
+      );
+      const dataJson = await data.json();
+      setUsuario(dataJson);
+      console.log(dataJson);
+    };
 
+    fetchFunction();
+  }, []);
   const location = useLocation();
   const routeLinks = {
     "/comunicados": [
       {
-        name: "Ver Comunicados",
+        name: "Ver Comunicados generales",
         path: "/comunicados",
         rol: [
           "ESTUDIANTE",
@@ -27,16 +44,22 @@ const Layout = ({ children, User, Logout }) => {
         path: "/comunicados/crear",
         rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR"],
       },
+      {
+        name: "Ver comunicados de tu divison",
+        path: `/comunicados?idUser=${usuario?.id}&type=division&career=${usuario?.carrera_id_fk}`,
+        rol: ["ESTUDIANTE", "ADMINISTRADOR"],
+      },
+      {
+        name: "Ver comunicados de tu comision",
+        path: `/comunicados?idUser=${usuario?.id}&type=comision`,
+        rol: ["ESTUDIANTE", "ADMINISTRADOR"],
+      },
     ],
     "/carreras": [
-      { name: "Ver carreras",
-        path: "/carreras",
-        rol: ["ADMINISTRADOR"], },
+      { name: "Ver carreras", path: "/carreras", rol: ["ADMINISTRADOR"] },
     ],
     "/usuarios": [
-      { name: "Ver usuarios",
-        path: "/usuarios",
-        rol: ["ADMINISTRADOR"] }
+      { name: "Ver usuarios", path: "/usuarios", rol: ["ADMINISTRADOR"] },
     ],
   };
 
@@ -68,7 +91,7 @@ const Layout = ({ children, User, Logout }) => {
         <Header user={User} onLogout={Logout} />
         <div className="flex flex-grow mt-16">
           <Sidebar links={links} />
-          <main className="flex-grow p-10 ml-60">{children}</main>
+          <main className="flex-grow p-10 ml-80">{children}</main>
         </div>
         <Footer />
       </div>

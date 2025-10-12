@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "./Header";
-import Footer from "./Footer";
 
 interface LoginProps {
   login: (username: string, password: string) => Promise<boolean>;
@@ -18,7 +16,7 @@ function Login({ login }: LoginProps) {
     const success = await login(username, password);
 
     if (success) {
-      navigate("/home"); // Redirigir al home
+      navigate("/comunicados"); // Redirigir al home
     } else {
       setError("Credenciales inválidas");
     }
@@ -26,15 +24,28 @@ function Login({ login }: LoginProps) {
 
   return (
     <>
-      <Header />
       <div id="login-body">
-        <div className="h-screen flex items-center justify-center">
-          <div className="bg-white p-8 rounded-2xl shadow-lg max-w-sm">
+        <div className="h-full flex flex-col items-center justify-center space-y-5">
+          <a
+            href="https://terciariourquiza.edu.ar/"
+            target="_blank"
+            className="md:mt-5"
+          >
+            <img
+              src="/logo.svg"
+              alt="Logo terciario urquiza"
+              className="object-contain h-30 w-30 mx-auto bg-white rounded-full"
+            />
+          </a>
+          <h1 className="font-bold text-gray-white text-white text-shadow-md text-shadow-black ">
+            Sistema Virtual Escolar
+          </h1>
+          <div className="bg-white p-8 rounded-2xl shadow-lg max-w-sm shadow-gray-800">
             <form
               className="flex flex-col text-black mx-2"
               onSubmit={handleSubmit}
             >
-              <label className="flex mb-2">E-mail o Usuario</label>
+              <label className="flex mb-2">E-mail o Usuario:</label>
               <input
                 className="mb-4"
                 type="text"
@@ -44,7 +55,7 @@ function Login({ login }: LoginProps) {
                 name="username"
               />
 
-              <label className="flex mb-2">Contraseña</label>
+              <label className="flex mb-2">Contraseña:</label>
               <input
                 className="mb-2"
                 type="password"
@@ -80,9 +91,6 @@ function Login({ login }: LoginProps) {
             </form>
           </div>
         </div>
-      </div>
-      <div id="login-footer">
-        <Footer />
       </div>
     </>
   );

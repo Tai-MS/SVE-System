@@ -2,14 +2,18 @@ import Comunicado from "./comunicadosModel"
 import { comunicadosAttributes } from "./comunicadosDTO"
 import { ArchivoService } from "#components/Archivos/archivoService"
 import Usuario from "#components/User/UserModel"
-import { archivo, archivoAttributes } from "#components/Archivos/archivoDTO"
+import { archivoAttributes } from "#components/Archivos/archivoDTO"
+import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
+import { Comision } from "#components/Comision/ComisionModel"
+import { Division } from "#components/Division/divisionModel"
+import { Op } from "sequelize"
 
 const archivoService = new ArchivoService()
 
 export class ComunicadoService {
   traerComunicados = async () => {
     const respuestaDB = await Comunicado.findAll({
-      where: { eliminado: false },
+      where: { eliminado: false, general: true },
       include: {
         model: Usuario,
         attributes: ["nombre", "apellido", "rol"],
@@ -63,13 +67,84 @@ export class ComunicadoService {
       return { status: 500, respuesta: "Ocurrio un error en el servidor al momento de subir el comunicado" }
     }
   }
-  filtrarComunicado = async (id: string) => {
-    const respuesta = await Comunicado.findByPk(id)
-    if (!respuesta) {
-      return { status: 404, respuesta: "No se encontró el comunicado" }
+  comunicadosPorUsuario = async (idUser: string, type: string, career?: string) => {
+    type FiltroTipo = "comision" | "division"
+    try {
+      const filtro: FiltroTipo | null = type === "comision" || type === "division" ? (type as FiltroTipo) : null
+
+      if (!filtro) {
+        return { status: 400, respuesta: "El parámetro 'type' debe ser 'comision' o 'division'." }
+      }
+
+      const user = await Usuario.findByPk(idUser)
+      if (!user) return { status: 404, respuesta: "El usuario no existe." }
+
+      const ucRows = await UsuarioComision.findAll({
+        where: { usuario_id: idUser },
+        attributes: ["comision_id"],
+        raw: true,
+      })
+      if (!ucRows.length) {
+        return { status: 404, respuesta: "El usuario no tiene comisión asignada." }
+      }
+
+      const comisionIds = Array.from(new Set(ucRows.map((r) => r.comision_id as number)))
+
+      let whereByType: Record<string, any>
+
+      if (filtro === "comision") {
+        whereByType = { id_comision: { [Op.in]: comisionIds } }
+      } else {
+        const comisiones = await Comision.findAll({
+          where: { id: { [Op.in]: comisionIds } },
+          attributes: ["division_id"],
+          raw: true,
+        })
+
+        const divisionIds = Array.from(
+          new Set(comisiones.map((c) => c.division_id).filter((v) => v != null))
+        ) as number[]
+
+        whereByType = divisionIds.length ? { division: { [Op.in]: divisionIds } } : { id: null }
+      }
+
+      if (career) {
+        const comunicados = await Comunicado.findAll({
+          where: {
+            eliminado: false,
+            [Op.or]: [whereByType],
+          },
+          order: [["creado", "DESC"]],
+        })
+
+        const comunicadosFinal = comunicados.filter(
+          (comunicado) => comunicado.carrera === "ALL" || comunicado.carrera === career
+        )
+
+        if (comunicadosFinal.length === 0) {
+          return { status: 404, respuesta: "No hay comunicados" }
+        }
+
+        return { status: 200, respuesta: comunicadosFinal }
+      }
+
+      const comunicados = await Comunicado.findAll({
+        where: {
+          eliminado: false,
+          [Op.or]: [whereByType],
+        },
+        order: [["creado", "DESC"]],
+      })
+      if (comunicados.length === 0) {
+        return { status: 404, respuesta: "No hay comunicados" }
+      }
+      return { status: 200, respuesta: comunicados }
+    } catch (err) {
+      console.error("Error buscando comunicados por usuario:", err)
+      return { status: 500, respuesta: "Ocurrió un error al obtener los comunicados." }
     }
-    return { status: 200, respuesta }
   }
+
   actualizarComunicado = async (id: string, data: comunicadosAttributes) => {
     const t = await Comunicado.sequelize!.transaction()
     try {
