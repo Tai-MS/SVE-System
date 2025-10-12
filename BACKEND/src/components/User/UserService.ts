@@ -19,10 +19,10 @@ async function traerTodos() {
   return userClass.traerTodos()
 }
 
-async function traerUsuario(dni: string): Promise<Usuario | string> {
-  const usuario = await userClass.traerUsuario(dni)
+async function traerUsuario(id: string): Promise<Usuario | string> {
+  const usuario = await userClass.traerUsuario(id)
   if (!usuario) {
-    return `Usuario con el DNI: ${dni} no encontrado`
+    return `Usuario con el ID: ${id} no encontrado`
   }
 
   return usuario
@@ -76,14 +76,14 @@ async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
     `,
   })
   const crear = await userClass.crearUsuario(datosFinal)
-  if(rol === Rol.ESTUDIANTE){
-    if(datos.comision && datos.anio_comision){
+  if (rol === Rol.ESTUDIANTE) {
+    if (datos.comision && datos.anio_comision) {
       await UsuarioComision.create({
         usuario_id: crear.id,
         comision_id: datos.comision,
-        anio_comision: datos.anio_comision
+        anio_comision: datos.anio_comision,
       })
-    }else{
+    } else {
       return "Faltan datos para añadir al alumno a su comisión."
     }
   }
@@ -141,7 +141,7 @@ async function actualizarUsuario(
   if (guardarToken) {
     if (process.env.ENV === "dev") {
       actualizarCampos.token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRjZmEyYzMyLWMxM2QtNGNmMi1hY2I1LTAxYmQ4YjU2ODBiMSIsImRuaSI6IjQ0MDYyODI4Iiwibm9tYnJlIjoiQ0FSTEEgVkVSw5NOSUNBIiwiYXBlbGxpZG8iOiJGRVJOw4FOREVaIiwicm9sIjoiQURNSU5JU1RSQURPUiIsImlhdCI6MTc1OTM1MTIzNSwiZXhwIjoxNzU5NDM3NjM1fQ.hZHbAZQgtuTs5pQACFiOu20YMDTf08DUkInoe6Nth5s"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRjZmEyYzMyLWMxM2QtNGNmMi1hY2I1LTAxYmQ4YjU2ODBiMSIsImRuaSI6IjQ0MDYyODI4Iiwibm9tYnJlIjoiQ0FSTEEgVkVSw5NOSUNBIiwiYXBlbGxpZG8iOiJGRVJOw4FOREVaIiwicm9sIjoiQURNSU5JU1RSQURPUiIsImlhdCI6MTc1OTM1MTIzNSwiZXhwIjoxNzU5NDM3NjM1fQ.hZHbAZQgtuTs5pQACFiOu20YMDTf08DUkInoe6Nth5s"
       await Usuario.update(actualizarCampos, {
         where: { dni: datos.dni },
       })
@@ -155,15 +155,18 @@ async function actualizarUsuario(
     return "token guardado"
   }
 
-  
   if (dni !== null && dni !== undefined && typeof datos.token === "string") {
     actualizarCampos.dni = datos.dni
   } else {
     return "DNI requerido"
   }
-const confirmarUsuario = await datosDelToken(datos.token)
+  const confirmarUsuario = await datosDelToken(datos.token)
 
-  if(confirmarUsuario.rol !== Rol.ADMINISTRADOR && confirmarUsuario.rol !== Rol.BEDELIA && confirmarUsuario.rol !== Rol.DIRECTIVO){
+  if (
+    confirmarUsuario.rol !== Rol.ADMINISTRADOR &&
+    confirmarUsuario.rol !== Rol.BEDELIA &&
+    confirmarUsuario.rol !== Rol.DIRECTIVO
+  ) {
     return "Error"
   }
 
@@ -206,7 +209,7 @@ const confirmarUsuario = await datosDelToken(datos.token)
   if (datos.carrera_id_fk !== null && datos.carrera_id_fk !== undefined) {
     actualizarCampos.carrera_id_fk = datos.carrera_id_fk
   }
-  
+
   await Usuario.update(actualizarCampos, {
     where: { dni: datos.dni },
   })

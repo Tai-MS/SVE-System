@@ -157,8 +157,9 @@ Comunicado.init(
     // UNA VEZ CREADO LOS CAMPOS DE DIVISIONES Y COMISIONES HACER LAS RELACIONES CON DICHAS TABLAS
     general: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     division: { type: DataTypes.INTEGER, allowNull: true, defaultValue: null },
+    carrera: { type: DataTypes.STRING, allowNull: true, defaultValue: "ALL" },
     id_comision: {
-      type: DataTypes.BIGINT.UNSIGNED,
+      type: DataTypes.INTEGER,
       references: {
         model: "comisiones",
         key: "id",
@@ -209,7 +210,7 @@ ComisionUC.init(
 
 Comision.init(
   {
-    id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     numero_comision: { type: DataTypes.STRING(20), allowNull: false },
     carrera_id: {
       type: DataTypes.STRING,
@@ -253,10 +254,9 @@ Material.init(
     titulo: { type: DataTypes.STRING(200), allowNull: false },
     url: { type: DataTypes.STRING(500), allowNull: true },
     descripcion: { type: DataTypes.TEXT, allowNull: true },
-    tipo_material: { type: DataTypes.ENUM(...Object.values(TipoMaterial)), allowNull: false},
-    creado: { type: DataTypes.DATE, allowNull: false},
-    fecha_limite: { type: DataTypes.DATE, allowNull: true}
-  
+    tipo_material: { type: DataTypes.ENUM(...Object.values(TipoMaterial)), allowNull: false },
+    creado: { type: DataTypes.DATE, allowNull: false },
+    fecha_limite: { type: DataTypes.DATE, allowNull: true },
   },
   { sequelize, tableName: "materiales" }
 )
@@ -317,7 +317,7 @@ UsuarioUnidadCurricular.init(
       references: { model: "unidades_curriculares", key: "id" },
     },
     comision_id: {
-      type: DataTypes.BIGINT.UNSIGNED,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       references: { model: "comisiones", key: "id" },
     },

@@ -19,23 +19,24 @@ const Sidebar = ({ links }) => {
 
   return (
     <>
-      <div className="flex mt-8 bg-white shadow-md p-10 transition-all duration-500 ">
+      <div className="fixed mt-8 h-full bg-white shadow-md p-10 transition-all duration-500 z-40 shadow-gray-400">
         <nav className="space-y-10">
-          {links.map((link: Link, index: number) => {
-            if (link.rol.includes(usuarioRol as string)) {
-              return (
-                <NavLink
-                  key={index}
-                  to={link.path}
-                  className="block text-gray-700 hover:text-blue-400"
-                >
-                  {link.name}
-                </NavLink>
-              );
-            } else {
-              return null;
-            }
-          })}
+          {links != undefined &&
+            links.map((link: Link, index: number) => {
+              if (link.rol.includes(usuarioRol as string)) {
+                return (
+                  <NavLink
+                    key={index}
+                    to={link.path}
+                    className="block text-gray-700 hover:text-blue-400"
+                  >
+                    {link.name}
+                  </NavLink>
+                );
+              } else {
+                return null;
+              }
+            })}
         </nav>
       </div>
       {/* Sidebar

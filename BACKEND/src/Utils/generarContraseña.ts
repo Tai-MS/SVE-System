@@ -13,8 +13,5 @@ export function generarContraseña(longitud: number = 8): string {
   for (let i = 0; i < longitud; i++) {
     contraseña += caracteres[valoresAleatorios[i] % caracteres.length]
   }
-  console.log("+++++++++++++++++++")
-  console.log(contraseña)
-  console.log("+++++++++++++++++++")
   return contraseña
 }

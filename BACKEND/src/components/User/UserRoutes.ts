@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express"
 import userController from "./UserController"
-import passport from "#config/passport"
+import passport from "config/passport"
 import upload from "#Utils/multer"
 import { datosDelToken, verificarToken } from "#middlewares/auth"
 
@@ -37,14 +37,14 @@ router.post("/crearUsuario", async (req: Request, res: Response, next: NextFunct
 })
 
 router.put("/actualizar", async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.body);
-  
+  console.log(req.body)
+
   await userController.actualizarUsuario(req, res, next)
 })
 
 router.put("/incluirEnUC", async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.body);
-  
+  console.log(req.body)
+
   await userController.incluirEnUC(req, res, next)
 })
 
