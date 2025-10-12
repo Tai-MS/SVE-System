@@ -41,7 +41,6 @@ async function traerTodas(token: string): Promise<any> {
         },
       ],
     })
-
     return usuario_con_uc
   }
 
