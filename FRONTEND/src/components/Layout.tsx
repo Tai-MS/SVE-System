@@ -61,6 +61,9 @@ const Layout = ({ children, User, Logout }) => {
     "/usuarios": [
       { name: "Ver usuarios", path: "/usuarios", rol: ["ADMINISTRADOR"] },
     ],
+    "/UC": [
+      { name: "Ver UCs", path: "/uc", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+    ]
   };
 
   const currentBasePath = `/${location.pathname.split("/")[1]}`;

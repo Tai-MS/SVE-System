@@ -16,7 +16,7 @@ function Login({ login }: LoginProps) {
     const success = await login(username, password);
 
     if (success) {
-      navigate("/"); // Redirigir al home
+      navigate("/comunicados"); // Redirigir al home
     } else {
       setError("Credenciales inválidas");
     }

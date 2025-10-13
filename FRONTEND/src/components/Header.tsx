@@ -44,7 +44,7 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
             Alumnos
           </NavLink>)}
           <NavLink
-            to="/carreras"
+            to="/UC"
             className="hover:text-blue-400 cursor-pointer"
           >
             Carreras

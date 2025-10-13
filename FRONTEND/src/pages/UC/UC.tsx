@@ -1,5 +1,4 @@
 import { type JSX } from "react";
-import Sidebar from "../../components/Sidebar";
 import { Card } from "../../components/Card";
 import { useEffect, useState } from "react";
 
@@ -49,8 +48,6 @@ function UC(): JSX.Element  {
 
   return (
     <>
-    <Sidebar />
-
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="mx-auto max-w-6xl">
         <h1 className="mb-8 text-3xl font-bold text-gray-900">Unidades Curriculares</h1>
