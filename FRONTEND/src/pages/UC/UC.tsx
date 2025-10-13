@@ -2,45 +2,50 @@ import { type JSX } from "react";
 import Sidebar from "../../components/Sidebar";
 import { Card } from "../../components/Card";
 import { useEffect, useState } from "react";
-import type {Classroom}  from "../../types/Classroom";
 
-function Home(): JSX.Element  {
-  const [classrooms, setClassrooms] = useState<Classroom[]>([])
-  const [loading, setLoading] = useState(true)
+type Profesor = {
+  nombre: string;
+  apellido: string;
+};
+
+type ComisionUC = {
+  profesor: Profesor;
+  id: string | number;
+};
+
+type Materia = {
+  id: string | number;
+  nombre: string;
+  comisionesUC: ComisionUC[];
+  studentsCount?: number;
+  description?: string;
+};
+
+function UC(): JSX.Element  {
+  const [materias, setMaterias] = useState<Materia[] | undefined>()
+  const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchClassrooms = async () => {
+    async function fetchMaterias() {
       try {
-        setLoading(true)
-        setError(null)
-
-        // Reemplaza esta URL con tu endpoint de API
-        const response = await fetch(import.meta.env.VITE_BACKURL + "/unidadcurricular/todas", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "token": localStorage.getItem("token") || ""
-          }
-        })
-
+        const response = await fetch(import.meta.env.VITE_BACKURL + "/unidadcurricular/todas")
         if (!response.ok) {
           throw new Error("Error al cargar las unidades curriculares")
         }
-
         const data = await response.json()
+        setMaterias(data)
         console.log(data)
-        setClassrooms(data)
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error desconocido")
-        console.error("Error fetching classrooms:", err)
+        setError((err as Error).message)
       } finally {
         setLoading(false)
       }
     }
-    
-    fetchClassrooms()
+
+    fetchMaterias()
   }, [])
+
 
   return (
     <>
@@ -65,22 +70,21 @@ function Home(): JSX.Element  {
 
         {!loading && !error && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {classrooms.map((classroom) => (
+
+            {materias != undefined && materias.map((materia) => (
               <Card
-                key={classroom.id}
-                nombre={classroom.nombre}
-                instructor={classroom.profesor}
-                instructorAvatar={classroom.instructorAvatar}
-                coverImage={classroom.coverImage}
-                coverColor={classroom.coverColor}
-                studentsCount={classroom.studentsCount}
-                description={classroom.description}
+                key={materia.id}
+                nombre={materia.nombre}
+                codigoMateria={materia.id}
+                instructor={materia.comisionesUC[0].profesor.nombre + " " + materia.comisionesUC[0].profesor.apellido}
+                studentsCount={materia.studentsCount}
+                description={materia.description}
               />
             ))}
           </div>
         )}
 
-        {!loading && !error && classrooms.length === 0 && (
+        {!loading && !error && materias === undefined && (
           <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
             <p className="text-gray-600">No hay unidades curriculares disponibles</p>
           </div>
@@ -91,4 +95,4 @@ function Home(): JSX.Element  {
   );
 }
 
-export default Home;
+export default UC;

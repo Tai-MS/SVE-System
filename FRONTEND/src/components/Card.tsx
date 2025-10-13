@@ -3,6 +3,7 @@ import { Users, Calendar, MoreVertical } from "lucide-react"
 interface CardProps {
   nombre: string
   instructor: string
+  codigoMateria: string | number
   instructorAvatar?: string
   coverImage?: string
   coverColor?: string
@@ -14,6 +15,7 @@ interface CardProps {
 export function Card({
   nombre,
   instructor,
+  codigoMateria,
   instructorAvatar,
   coverImage,
   coverColor = "#1967d2",
@@ -41,7 +43,7 @@ export function Card({
         {/* Título y código */}
         <div className="absolute bottom-3 left-4 right-4">
           <h3 className="text-balance text-xl font-semibold text-white">{nombre}</h3>
-          <p className="mt-1 text-sm text-white/90">Codigo Materia</p>
+          <p className="mt-1 text-sm text-white/90">{codigoMateria}</p>
         </div>
       </div>
 
@@ -56,8 +58,8 @@ export function Card({
               className="h-10 w-10 rounded-full object-cover"
             />
           ) : (
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-sm font-medium text-gray-600">
-              {instructor}
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-500">
+              <Users className="h-5 w-5" />
             </div>
           )}
           <div>

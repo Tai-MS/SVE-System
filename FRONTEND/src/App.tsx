@@ -3,9 +3,7 @@ import { useAuth } from "./hooks/useAuth";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Header from "./components/Header";
-import Materias from "./components/Materias";
-import UnidadCurricular from "./components/UnidadCurricular";
-import Home from "./pages/Home/Home";
+import UC from "./pages/UC/UC";
 
 function App() {
   const { user, logout, login } = useAuth();
@@ -17,16 +15,13 @@ function App() {
         <Route path="/login" element={<Login login={login} />} />
 
         <Route
-          path="/"
+          path="/UC"
           element={
             <ProtectedRoute>
-              <Home />
+              <UC />
             </ProtectedRoute>
           }
         />
-        <Route path="/materias/:comisionId" element={<ProtectedRoute><Materias /></ProtectedRoute>} />
-        <Route path="/unidadcurricular/:materiaId/:materiaNombre/:materiaProfe" element={<ProtectedRoute><UnidadCurricular /></ProtectedRoute>} />
-
       </Routes>
     </Router>
   );

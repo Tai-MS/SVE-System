@@ -33,7 +33,7 @@ async function traerTodas(token: string): Promise<any> {
                 {
                   model: Comision,
                   as: "comision",
-                  attributes: ["id", "numero_comision"],
+                  attributes: ["id", "numero_comision", "cant_alumnos"],
                 },
               ],
             },
@@ -60,7 +60,7 @@ async function traerTodas(token: string): Promise<any> {
           {
             model: Comision,
             as: "comision",
-            attributes: ["id", "numero_comision"],
+            attributes: ["id", "numero_comision", "cant_alumnos"],
           },
         ],
       },
@@ -96,7 +96,7 @@ async function traerUnaUC(unidad: BusquedaUnidadDTO): Promise<UnidadCurricular |
           {
             model: Comision,
             as: "comision",
-            attributes: ["id", "numero_comision"],
+            attributes: ["id", "numero_comision", "cant_alumnos"],
           },
         ],
       },
