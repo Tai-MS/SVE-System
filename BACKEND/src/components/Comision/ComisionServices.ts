@@ -34,9 +34,8 @@ export class ComisionServices {
     }
   }
 
-  traerTodas = async (carrera: string) => {
-    const comisiones = await Comision.encontrarPorCarrera(carrera)
-    console.log(comisiones)
+  traerTodas = async () => {
+    const comisiones = await Comision.findAll()
 
     if (comisiones) {
       return { status: 200, respuesta: comisiones }

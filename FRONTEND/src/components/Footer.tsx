@@ -1,4 +1,4 @@
-import { Grid3X3, X, Instagram, Youtube, Linkedin } from 'lucide-react'
+import { Grid3X3, X, Instagram, Youtube, Linkedin } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -11,20 +11,34 @@ export default function Footer() {
 
         {/* Social media icons on the right */}
         <div className="flex items-center space-x-4">
-          <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors">
+          <a
+            href="#"
+            className="text-gray-600 hover:text-gray-800 transition-colors"
+          >
             <X size={20} />
           </a>
-          <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors">
+          <a
+            href="https://www.instagram.com/terciariourquiza49/"
+            target="_blank"
+            className="text-gray-600 hover:text-gray-800 transition-colors"
+          >
             <Instagram size={20} />
           </a>
-          <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors">
+          <a
+            href="#"
+            className="text-gray-600 hover:text-gray-800 transition-colors"
+          >
             <Youtube size={20} />
           </a>
-          <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors">
+          <a
+            href="https://www.linkedin.com/school/terciario-urquiza/"
+            target="_blank"
+            className="text-gray-600 hover:text-gray-800 transition-colors"
+          >
             <Linkedin size={20} />
           </a>
         </div>
       </div>
     </footer>
-  )
+  );
 }
