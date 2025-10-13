@@ -55,6 +55,13 @@ export class ComunicadoController {
     return res.status(respuesta.status).json(respuesta.respuesta)
   }
 
+  comunicadosDeUnUsuario = async (req: Request, res: Response) => {
+    const idUser = req.params.idUser
+
+    const respuesta = await comunicadoService.ComunicadosDeUnUsuario(idUser as string)
+    return res.status(respuesta.status).json(respuesta.respuesta)
+  }
+
   actualizar = async (req: Request, res: Response) => {
     const id_comunicado = req.params.id
     const verificacion = await comunicadoSchema.safeParseAsync(req.body)

@@ -6,7 +6,7 @@ import { archivoAttributes } from "#components/Archivos/archivoDTO"
 import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
 import { Comision } from "#components/Comision/ComisionModel"
 import { Division } from "#components/Division/divisionModel"
-import { Op } from "sequelize"
+import { Op, where } from "sequelize"
 
 const archivoService = new ArchivoService()
 
@@ -114,6 +114,10 @@ export class ComunicadoService {
             eliminado: false,
             [Op.or]: [whereByType],
           },
+          include: {
+            model: Usuario,
+            attributes: ["nombre", "apellido", "rol"],
+          },
           order: [["creado", "DESC"]],
         })
 
@@ -133,6 +137,10 @@ export class ComunicadoService {
           eliminado: false,
           [Op.or]: [whereByType],
         },
+        include: {
+          model: Usuario,
+          attributes: ["nombre", "apellido", "rol"],
+        },
         order: [["creado", "DESC"]],
       })
       if (comunicados.length === 0) {
@@ -141,6 +149,26 @@ export class ComunicadoService {
       return { status: 200, respuesta: comunicados }
     } catch (err) {
       console.error("Error buscando comunicados por usuario:", err)
+      return { status: 500, respuesta: "Ocurrió un error al obtener los comunicados." }
+    }
+  }
+
+  ComunicadosDeUnUsuario = async (id: string) => {
+    try {
+      const respuesta = await Comunicado.findAll({
+        where: { eliminado: false, id_usuario: id },
+        order: [["creado", "DESC"]],
+        include: {
+          model: Usuario,
+          attributes: ["nombre", "apellido", "rol"],
+        },
+      })
+      if (respuesta.length === 0) {
+        return { status: 404, respuesta: "No hay comunicados" }
+      }
+      return { status: 200, respuesta: respuesta }
+    } catch (err) {
+      console.error("Error buscando comunicados de un usuario:", err)
       return { status: 500, respuesta: "Ocurrió un error al obtener los comunicados." }
     }
   }
@@ -174,6 +202,7 @@ export class ComunicadoService {
       return { status: 500, respuesta: "Error en el servidor al momento de actualizar el comunicado" }
     }
   }
+
   eliminarComunicado = async (id: string) => {
     try {
       await Comunicado.update({ eliminado: true }, { where: { id } })

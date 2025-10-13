@@ -14,4 +14,8 @@ comunicadosRouter.get(
   "/comunicadosfiltro",
   async (req, res) => await comunicadosController.comunicadosPorUsuario(req, res)
 )
+comunicadosRouter.get(
+  "/comunicadosUsuario/:idUser",
+  async (req, res) => await comunicadosController.comunicadosDeUnUsuario(req, res)
+)
 export default comunicadosRouter

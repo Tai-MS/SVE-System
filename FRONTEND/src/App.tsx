@@ -11,6 +11,8 @@ import Layout from "./components/Layout";
 import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
 import Home from "./pages/Home/Home";
+import MisComunicados from "./pages/Comunicados/MisComunicados";
+import DetallesComunicado from "./pages/Comunicados/DetallesComunicado";
 
 function App() {
   const { user, logout, login } = useAuth();
@@ -29,8 +31,16 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/comunicados" element={<Comunicados />} />
                   <Route
+                    path="/comunicados/misComunicados/:idUser"
+                    element={<MisComunicados />}
+                  />
+                  <Route
                     path="/comunicados/crear"
                     element={<CrearComunicado />}
+                  />
+                  <Route
+                    path="/comunicados/detalles/:idUser"
+                    element={<DetallesComunicado />}
                   />
                   <Route path="/carreras" element={<Carreras />} />
                   <Route path="/usuarios" element={<Alumnos />} />

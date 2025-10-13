@@ -4,7 +4,13 @@ import { Close as CloseIcon } from "@mui/icons-material";
 import ZonedDateTime from "ts-time/ZonedDateTime";
 import type { Comunicado } from "../types/ComunicadoTypes";
 
-const CardComunicado = ({ Item }: { Item: Comunicado }) => {
+const CardComunicado = ({
+  Item,
+  misComunicados,
+}: {
+  Item: Comunicado;
+  misComunicados: boolean;
+}) => {
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
   const time = ZonedDateTime.parse(Item.creado as string);
   return (
@@ -37,6 +43,11 @@ const CardComunicado = ({ Item }: { Item: Comunicado }) => {
                   onClick={() => setSelectedImg(ruta)}
                 />
               ))}
+            </div>
+          )}
+          {misComunicados && (
+            <div className="flex flex-row text-black">
+              <button className="border-2">ELIMINAR</button>
             </div>
           )}
         </div>

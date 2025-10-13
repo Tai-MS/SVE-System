@@ -54,6 +54,11 @@ const Layout = ({ children, User, Logout }) => {
         path: `/comunicados?idUser=${usuario?.id}&type=comision`,
         rol: ["ESTUDIANTE", "ADMINISTRADOR"],
       },
+      {
+        name: "Ver mis comunicados",
+        path: `/comunicados/misComunicados/${usuario?.id}`,
+        rol: ["BEDELIA", "ADMINISTRADOR", "DIRECTIVO", "PROFESOR"],
+      },
     ],
     "/carreras": [
       { name: "Ver carreras", path: "/carreras", rol: ["ADMINISTRADOR"] },
