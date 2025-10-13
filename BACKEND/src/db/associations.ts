@@ -58,11 +58,13 @@ export function applyAssociations() {
     through: UsuarioComision,
     foreignKey: "usuario_id",
     otherKey: "comision_id",
+    as: "comisiones"
   })
   Comision.belongsToMany(Usuario, {
     through: UsuarioComision,
     foreignKey: "comision_id",
     otherKey: "usuario_id",
+    as: "usuarios"
   })
 
   Usuario.hasMany(Comunicado, { foreignKey: "id_usuario" })

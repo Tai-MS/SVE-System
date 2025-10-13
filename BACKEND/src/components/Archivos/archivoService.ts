@@ -10,9 +10,10 @@ export class ArchivoService {
   subirArchivos = async (file: any): Promise<GaxiosResponseWithHTTP2<drive_v3.Schema$File> | string> => {
     const t = await Archivo.sequelize!.transaction()
     try {
+      const carpeta = process.env.ID_CARPETA
       const fileMetadata = {
         name: file.originalname,
-        parents: ["1XRCvPe8VlhF3VPTBChZihO3A-vEhhTtg"],
+        parents: [carpeta!],
       }
 
       const media = {

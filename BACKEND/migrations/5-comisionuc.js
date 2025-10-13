@@ -5,25 +5,25 @@ export async function up(queryInterface, Sequelize) {
       uc_id: "UC1",
       comision_id: 1,
       link_meet: "https://meet.google.com/uc1-com1",
-      profesor_id: "02679f74-adb4-4d39-8aa0-9cb4aea1902b"
+      profesor_id: "82b6980c-e304-4f79-882b-ff99e7cbebec"
     },
     {
       uc_id: "UC2",
       comision_id: 2,
       link_meet: "https://meet.google.com/uc2-com2",
-      profesor_id: "02679f74-adb4-4d39-8aa0-9cb4aea1902b"
+      profesor_id: "82b6980c-e304-4f79-882b-ff99e7cbebec"
     },
     {
       uc_id: "UC3",
       comision_id: 3,
       link_meet: "https://meet.google.com/uc3-com3",
-      profesor_id: "02679f74-adb4-4d39-8aa0-9cb4aea1902b"
+      profesor_id: "82b6980c-e304-4f79-882b-ff99e7cbebec"
     },
     {
       uc_id: "UC4",
       comision_id: 4,
       link_meet: null,
-      profesor_id: "02679f74-adb4-4d39-8aa0-9cb4aea1902b"
+      profesor_id: "82b6980c-e304-4f79-882b-ff99e7cbebec"
     },
   ];
 
