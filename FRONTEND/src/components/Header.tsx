@@ -42,7 +42,7 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
             to="/usuarios"
             className="hover:text-blue-400 cursor-pointer"
           >
-            Alumnos
+            Usuarios
           </NavLink>)}
           <NavLink
             to="/carreras"
