@@ -27,7 +27,7 @@ export default function Materias() {
   ];
 
   return (
-    <div className="flex h-screen mt-1">
+    <div>
 
         {/* Content */}
         <main className="p-6 mt-3">
