@@ -17,6 +17,7 @@ import {
   Typography,
   Tabs,
   Tab,
+  MenuItem,
 } from "@mui/material";
 import CheckBox from "@mui/material/Button";
 import { Add, Edit } from "@mui/icons-material";
@@ -32,14 +33,16 @@ interface Usuario {
   rol: string;
   activo: boolean;
   token: string;
-  carrera_id_fk: string;
+  carrera_id_fk: string | null;
 }
 
 export default function Usuarios() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Usuario | null>(null);
-  const [rolActivo, setRolActivo] = useState<"ESTUDIANTE" | "PROFESOR">("ESTUDIANTE");
+  const [rolActivo, setRolActivo] = useState<
+    "ESTUDIANTE" | "PROFESOR" | "BEDELIA" | "DIRECTIVO"
+  >("ESTUDIANTE");
   const [busqueda, setBusqueda] = useState("");
   const [form, setForm] = useState({
     nombre: "",
@@ -70,8 +73,17 @@ export default function Usuarios() {
 
   const guardarUsuario = async () => {
     try {
+      const body = {
+        ...form,
+        carrera_id_fk:
+          form.rol === "ESTUDIANTE" && form.carrera_id_fk
+            ? form.carrera_id_fk.toUpperCase()
+            : null,
+      };
+
+      let res: Response;
       if (editing) {
-        const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/actualizar", {
+        res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/actualizar", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -79,23 +91,20 @@ export default function Usuarios() {
           },
           body: JSON.stringify({
             id: editing.id,
-            ...form,
-            activo: form.activo,
+            ...body,
           }),
         });
-        const text = await res.text();
-        console.log("PUT /usuarios/actualizar status:", res.status, "body:", text);
-        if (!res.ok) throw new Error(`Error actualizar: ${res.status} ${text}`);
       } else {
-        const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario", {
+        res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...form }),
+          body: JSON.stringify(body),
         });
-        const text = await res.text();
-        console.log("POST /usuarios/crearUsuario status:", res.status, "body:", text);
-        if (!res.ok) throw new Error(`Error crear: ${res.status} ${text}`);
       }
+
+      const text = await res.text();
+      console.log("Guardar usuario status:", res.status, "body:", text);
+      if (!res.ok) throw new Error(`Error guardar: ${res.status} ${text}`);
 
       setOpen(false);
       setEditing(null);
@@ -137,12 +146,12 @@ export default function Usuarios() {
         Gestión de Usuarios
       </Typography>
 
-      {/* 🔹 Tabs para alternar entre roles */}
+      {/* 🔹 Tabs de roles */}
       <Tabs
         value={rolActivo}
         onChange={(_, nuevoRol) => {
           setRolActivo(nuevoRol);
-          setBusqueda(""); // limpia búsqueda al cambiar rol
+          setBusqueda("");
         }}
         textColor="primary"
         indicatorColor="primary"
@@ -150,13 +159,14 @@ export default function Usuarios() {
       >
         <Tab label="Estudiantes" value="ESTUDIANTE" />
         <Tab label="Profesores" value="PROFESOR" />
+        <Tab label="Bedelía" value="BEDELIA" />
+        <Tab label="Directivos" value="DIRECTIVO" />
       </Tabs>
 
       {/* 🔹 Filtros y botones */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mt-4 mb-3">
-        {/* Campo de búsqueda */}
         <TextField
-          label={`Buscar ${rolActivo === "ESTUDIANTE" ? "Alumno" : "Profesor"}`}
+          label={`Buscar ${rolActivo}`}
           variant="outlined"
           size="small"
           value={busqueda}
@@ -186,7 +196,7 @@ export default function Usuarios() {
                     });
 
                     const text = await res.text();
-                    console.log("POST /usuarios/public/importarAlumnos status:", res.status, "body:", text);
+                    console.log("Importar alumnos:", res.status, text);
 
                     if (res.ok) {
                       alert("Usuarios importados correctamente ✅");
@@ -234,12 +244,12 @@ export default function Usuarios() {
               setOpen(true);
             }}
           >
-            Nuevo {rolActivo === "ESTUDIANTE" ? "Alumno" : "Profesor"}
+            Nuevo {rolActivo}
           </Button>
         </div>
       </div>
 
-      {/* 🔹 Tabla de usuarios */}
+      {/* 🔹 Tabla */}
       <TableContainer component={Paper} className="shadow-md">
         <Table>
           <TableHead className="bg-purple-200">
@@ -251,7 +261,7 @@ export default function Usuarios() {
               <TableCell><b>Email</b></TableCell>
               <TableCell><b>Año de ingreso</b></TableCell>
               <TableCell><b>Activo</b></TableCell>
-              <TableCell><b>Carrera</b></TableCell>
+              {rolActivo === "ESTUDIANTE" && <TableCell><b>Carrera</b></TableCell>}
               <TableCell><b>Acciones</b></TableCell>
             </TableRow>
           </TableHead>
@@ -265,7 +275,9 @@ export default function Usuarios() {
                 <TableCell>{usuario.email}</TableCell>
                 <TableCell>{usuario.anioIngreso}</TableCell>
                 <TableCell>{usuario.activo ? "Sí" : "No"}</TableCell>
-                <TableCell>{usuario.carrera_id_fk}</TableCell>
+                {rolActivo === "ESTUDIANTE" && (
+                  <TableCell>{usuario.carrera_id_fk?.toUpperCase() ?? "-"}</TableCell>
+                )}
                 <TableCell>
                   <IconButton
                     color="primary"
@@ -281,7 +293,7 @@ export default function Usuarios() {
                         rol: usuario.rol,
                         activo: usuario.activo ?? true,
                         token: localStorage.getItem("token"),
-                        carrera_id_fk: usuario.carrera_id_fk,
+                        carrera_id_fk: usuario.carrera_id_fk ?? "",
                       });
                       setOpen(true);
                     }}
@@ -306,9 +318,7 @@ export default function Usuarios() {
       {/* 🔹 Diálogo Crear/Editar */}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>
-          {editing
-            ? `Editar ${rolActivo === "ESTUDIANTE" ? "Alumno" : "Profesor"}`
-            : `Agregar Nuevo ${rolActivo === "ESTUDIANTE" ? "Alumno" : "Profesor"}`}
+          {editing ? "Editar Usuario" : "Agregar Nuevo Usuario"}
         </DialogTitle>
         <DialogContent className="flex flex-col gap-4 mt-2">
           <TextField label="Nombre" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
@@ -317,7 +327,23 @@ export default function Usuarios() {
           <TextField label="Teléfono" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
           <TextField label="Email" type="email" value={form.email} disabled helperText="El email no puede ser modificado" />
           <TextField label="Año de ingreso" value={form.anioIngreso} onChange={(e) => setForm({ ...form, anioIngreso: e.target.value })} />
-          <TextField label="Carrera" value={form.carrera_id_fk} onChange={(e) => setForm({ ...form, carrera_id_fk: e.target.value })} />
+
+          {/* 🔹 Mostrar select de Carrera SOLO si es estudiante */}
+          {form.rol === "ESTUDIANTE" && (
+            <TextField
+              select
+              label="Carrera"
+              value={form.carrera_id_fk}
+              onChange={(e) =>
+                setForm({ ...form, carrera_id_fk: e.target.value.toUpperCase() })
+              }
+            >
+              <MenuItem value="DS">DS</MenuItem>
+              <MenuItem value="ITI">ITI</MenuItem>
+              <MenuItem value="AF">AF</MenuItem>
+            </TextField>
+          )}
+
           <div className="flex items-center gap-2 mt-2">
             <Typography>Activo</Typography>
             <CheckBox

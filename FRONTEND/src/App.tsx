@@ -10,7 +10,6 @@ import UnidadCurricular from "./components/UnidadCurricular";
 import Layout from "./components/Layout";
 import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
-import Home from "./pages/Home/Home";
 
 function App() {
   const { user, logout, login } = useAuth();
@@ -26,7 +25,6 @@ function App() {
             <ProtectedRoute>
               <Layout User={user} Logout={logout}>
                 <Routes>
-                  <Route path="/" element={<Home />} />
                   <Route path="/comunicados" element={<Comunicados />} />
                   <Route
                     path="/comunicados/crear"

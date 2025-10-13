@@ -37,7 +37,7 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
           >
             Comunicados
           </NavLink>
-          {(rol === "ADMINISTRADOR" || rol === "BEDELIA" || rol === "REGENCIA") && (
+          {(rol === "ADMINISTRADOR" || rol === "BEDELIA" || rol === "DIRECTIVO") && (
           <NavLink
             to="/usuarios"
             className="hover:text-blue-400 cursor-pointer"
