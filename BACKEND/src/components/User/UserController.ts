@@ -246,6 +246,7 @@ async function ImportarAlumnos(req: Request, res: Response) {
   const datos = XLSX.utils.sheet_to_json(hoja)
   // Verifica con ZOD que los campos del JSON sean correctos
   const verificacion_datos = await excelSchema.safeParseAsync(datos)
+  console.log(verificacion_datos);
   
   if (!verificacion_datos.success) {
     res.status(400).json({

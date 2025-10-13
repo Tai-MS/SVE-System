@@ -19,6 +19,7 @@ import Comunicado from "#components/Comunicados/comunicadosModel"
 import Archivo from "#components/Archivos/archivosModel"
 import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
 import { Division } from "#components/Division/divisionModel"
+import { AllowNull } from "sequelize-typescript"
 
 const SequelizeStore = connectSessionSequelize(session.Store)
 export const sessionStore = new SequelizeStore({
@@ -134,6 +135,8 @@ Archivo.init(
       allowNull: false,
     },
     moduloId: { type: DataTypes.INTEGER, allowNull: false },
+    material_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: true},
+    file_id: { type: DataTypes.STRING, allowNull: true}
   },
   { sequelize, tableName: "archivos", timestamps: true, createdAt: "subido", updatedAt: "actulizado" }
 )
