@@ -23,7 +23,7 @@ async function bootstrap() {
     } 
     */
     // await crearUsuarios()
-    // await connectDB()
+    await connectDB()
   })
 }
 

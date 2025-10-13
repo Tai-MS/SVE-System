@@ -32,6 +32,7 @@ interface Usuario {
   rol: string;
   activo: boolean;
   token: string;
+  carrera_id_fk: string;
 }
 
 export default function Usuarios() {
@@ -50,6 +51,7 @@ export default function Usuarios() {
     rol: "ESTUDIANTE",
     activo: true,
     token: localStorage.getItem("token"),
+    carrera_id_fk: "",
   });
 
   useEffect(() => {
@@ -107,6 +109,7 @@ export default function Usuarios() {
         rol: rolActivo,
         activo: true,
         token: localStorage.getItem("token"),
+        carrera_id_fk: "",
       });
       obtenerUsuarios();
     } catch (err) {
@@ -123,7 +126,8 @@ export default function Usuarios() {
       (u.apellido?.toLowerCase() ?? "").includes(termino) ||
       (u.dni?.toLowerCase() ?? "").includes(termino) ||
       (u.telefono?.toLowerCase() ?? "").includes(termino) ||
-      (u.anioIngreso?.toString().toLowerCase() ?? "").includes(termino);
+      (u.anioIngreso?.toString().toLowerCase() ?? "").includes(termino) ||
+      (u.carrera_id_fk?.toLowerCase() ?? "").includes(termino);
     return coincideRol && coincideBusqueda;
   });
 
@@ -225,6 +229,7 @@ export default function Usuarios() {
                 rol: rolActivo,
                 activo: true,
                 token: localStorage.getItem("token"),
+                carrera_id_fk: "",
               });
               setOpen(true);
             }}
@@ -246,6 +251,7 @@ export default function Usuarios() {
               <TableCell><b>Email</b></TableCell>
               <TableCell><b>Año de ingreso</b></TableCell>
               <TableCell><b>Activo</b></TableCell>
+              <TableCell><b>Carrera</b></TableCell>
               <TableCell><b>Acciones</b></TableCell>
             </TableRow>
           </TableHead>
@@ -259,6 +265,7 @@ export default function Usuarios() {
                 <TableCell>{usuario.email}</TableCell>
                 <TableCell>{usuario.anioIngreso}</TableCell>
                 <TableCell>{usuario.activo ? "Sí" : "No"}</TableCell>
+                <TableCell>{usuario.carrera_id_fk}</TableCell>
                 <TableCell>
                   <IconButton
                     color="primary"
@@ -274,6 +281,7 @@ export default function Usuarios() {
                         rol: usuario.rol,
                         activo: usuario.activo ?? true,
                         token: localStorage.getItem("token"),
+                        carrera_id_fk: usuario.carrera_id_fk,
                       });
                       setOpen(true);
                     }}
@@ -309,6 +317,7 @@ export default function Usuarios() {
           <TextField label="Teléfono" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
           <TextField label="Email" type="email" value={form.email} disabled helperText="El email no puede ser modificado" />
           <TextField label="Año de ingreso" value={form.anioIngreso} onChange={(e) => setForm({ ...form, anioIngreso: e.target.value })} />
+          <TextField label="Carrera" value={form.carrera_id_fk} onChange={(e) => setForm({ ...form, carrera_id_fk: e.target.value })} />
           <div className="flex items-center gap-2 mt-2">
             <Typography>Activo</Typography>
             <CheckBox
