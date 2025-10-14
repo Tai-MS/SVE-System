@@ -3,7 +3,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 // import Dropdown from "./Dropdown";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Usuario } from "../types/UsuarioTypes";
 
@@ -26,6 +26,7 @@ const Layout = ({ children, User, Logout }) => {
     fetchFunction();
   }, []);
   const location = useLocation();
+  const { id } = useParams();
   const routeLinks = {
     "/comunicados": [
       {
@@ -65,6 +66,10 @@ const Layout = ({ children, User, Logout }) => {
       { name: "Ver UCs", path: "/UC", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
       { name: "Agregar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
       { name: "Eliminar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
+    ],
+    [`/UC/detalles/${id}`] : [
+      { name: "Ver materia", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+      { name: "Ver trabajos", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
     ]
   };
 

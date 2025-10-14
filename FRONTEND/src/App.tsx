@@ -11,6 +11,7 @@ import UnidadCurricular from "./components/UnidadCurricular";
 import Layout from "./components/Layout";
 import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
+import UCdetalle from "./pages/UC/UCdetalle";
 
 function App() {
   const { user, logout, login } = useAuth();
@@ -52,7 +53,7 @@ function App() {
                   />
                   <Route 
                     path="UC/detalles/:id" 
-                    element={<UC />}
+                    element={<UCdetalle />}
                   />
                 </Routes>
               </Layout>

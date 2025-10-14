@@ -67,20 +67,21 @@ async function traerTodas(token: string): Promise<any> {
   })
 }
 
-async function traerUnaUC(unidad: BusquedaUnidadDTO): Promise<UnidadCurricular | string | null> {
-  const { id, nombre } = unidad
+async function traerUnaUC(datos: any): Promise<UnidadCurricular | string | null> {
+  const { token, id } = datos
 
-  let param_busqueda = {}
-  if (id) {
-    param_busqueda = { id }
-  } else if (nombre) {
-    param_busqueda = { nombre }
-  } else {
-    return "Se requieren parametros de busqueda"
+  const datos_token = await datosDelToken(token)
+
+  const usuario = await Usuario.findByPk(datos_token.id)
+
+  if(!usuario){
+    return "Error token"
   }
 
+
+
   const uc = await UnidadCurricular.findOne({
-    where: param_busqueda,
+    where: {id},
     attributes: ["id", "nombre"],
     include: [
       {
@@ -105,6 +106,7 @@ async function traerUnaUC(unidad: BusquedaUnidadDTO): Promise<UnidadCurricular |
   if (!uc) return "UC no encontrada"
   return uc
 }
+
 
 async function crearUc(
   datos: InferCreationAttributes<UnidadCurricular>,
@@ -163,7 +165,7 @@ async function modificarUc(
     where: { id: datos.id },
   })
 
-  return await traerUnaUC({ id: datos.id })
+  return await traerUnaUC(datos.id)
 }
 
 async function eliminarUc(id: string): Promise<UnidadCurricular | string | null> {

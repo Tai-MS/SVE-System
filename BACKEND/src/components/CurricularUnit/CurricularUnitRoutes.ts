@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.get("/todas", CurricularUnitController.traerTodas)
 
-router.get("/uc", CurricularUnitController.traerUnaUC)
+router.get("/uc/:id", CurricularUnitController.traerUnaUC)
 
 router.post("/crearUc", CurricularUnitController.crearUc)
 
