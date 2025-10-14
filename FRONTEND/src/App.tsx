@@ -12,7 +12,7 @@ import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
 import Home from "./pages/Home/Home";
 import MisComunicados from "./pages/Comunicados/MisComunicados";
-import DetallesComunicado from "./pages/Comunicados/DetallesComunicado";
+import ActualizarComunicado from "./pages/Comunicados/ActualizarComunicado";
 
 function App() {
   const { user, logout, login } = useAuth();
@@ -39,8 +39,8 @@ function App() {
                     element={<CrearComunicado />}
                   />
                   <Route
-                    path="/comunicados/detalles/:idUser"
-                    element={<DetallesComunicado />}
+                    path="/comunicados/actualizar/:id_comunicado"
+                    element={<ActualizarComunicado />}
                   />
                   <Route path="/carreras" element={<Carreras />} />
                   <Route path="/usuarios" element={<Alumnos />} />

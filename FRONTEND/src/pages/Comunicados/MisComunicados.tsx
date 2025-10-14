@@ -26,7 +26,7 @@ export default function MisComunicados() {
   }, []);
 
   return (
-    <main className="flex flex-col max-h-full mt-1">
+    <main className="flex flex-col max-h-full mt-1 justify-center">
       {comunicados.length > 0 ? (
         comunicados.map((item) => (
           <CardComunicado key={item.id} Item={item} misComunicados={true} />

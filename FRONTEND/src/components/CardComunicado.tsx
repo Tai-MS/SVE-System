@@ -1,8 +1,11 @@
 import { Avatar, Dialog, DialogContent, IconButton } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Close as CloseIcon } from "@mui/icons-material";
 import ZonedDateTime from "ts-time/ZonedDateTime";
 import type { Comunicado } from "../types/ComunicadoTypes";
+import { PenBoxIcon, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import type { Comision } from "../types/ComisionesTypes";
 
 const CardComunicado = ({
   Item,
@@ -12,7 +15,56 @@ const CardComunicado = ({
   misComunicados: boolean;
 }) => {
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
-  const time = ZonedDateTime.parse(Item.creado as string);
+  const [comisionTexto, setComisionTexto] = useState<string>("");
+  const timeCreado = ZonedDateTime.parse(Item.creado as string);
+  const timeActualizado = ZonedDateTime.parse(Item.actualizado as string);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (Item.id_comision) {
+      const fetchComision = async () => {
+        try {
+          const data = await fetch(
+            `${import.meta.env.VITE_BACKURL}/comision/detalles/${
+              Item.id_comision
+            }`
+          );
+          const dataJSON: Comision = await data.json();
+          setComisionTexto(
+            `${dataJSON.division_id}º${dataJSON.numero_comision} ${dataJSON.carrera_id}`
+          );
+        } catch (err) {
+          console.error(err);
+          setComisionTexto("No disponible");
+        }
+      };
+      fetchComision();
+    }
+  }, [Item.id_comision]);
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      `¿Estás seguro de que quieres eliminar este comunicado?`
+    );
+    if (confirmDelete) {
+      try {
+        await fetch(
+          `${import.meta.env.VITE_BACKURL}/comunicados/eliminar/${Item.id}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application-json" },
+          }
+        );
+        navigate("/comunicados");
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+  const handleUpdate = () => {
+    navigate("/comunicados/actualizar/" + Item.id);
+  };
+
   return (
     <>
       <main
@@ -24,11 +76,48 @@ const CardComunicado = ({
             <Avatar className="">
               {Item.Usuario?.nombre?.charAt(0) || "?"}
             </Avatar>
-            <div className="flex flex-col items-start space-y-1 py-2">
+            <div className="flex flex-col items-start py-2">
               <h2 className="text-gray-500 font-bold">
                 {Item.Usuario?.nombre || "Desconocido"}
               </h2>
-              <h3 className="text-gray-400">{`${time.month.value}/${time.month.value}/${time.year}`}</h3>
+              <div className="flex flex-row space-x-1">
+                <h3 className="text-gray-400">{`${timeCreado.dayOfMonth
+                  .toString()
+                  .toString()
+                  .padStart(2, "0")}/${timeCreado.month.value}/${
+                  timeCreado.year
+                } ${timeCreado.hour}:${timeCreado.minute
+                  .toString()
+                  .padStart(2, "0")}`}</h3>
+                {timeCreado.compareTo(timeActualizado) && (
+                  <h3 className="text-gray-400">
+                    (Actualizado:{" "}
+                    {`${timeActualizado.dayOfMonth
+                      .toString()
+                      .toString()
+                      .padStart(2, "0")}/${timeActualizado.month.value}/${
+                      timeActualizado.year
+                    } ${timeActualizado.hour}:${timeActualizado.minute
+                      .toString()
+                      .padStart(2, "0")}`}
+                    )
+                  </h3>
+                )}
+              </div>
+              {misComunicados && (
+                <h3 className="text-gray-400">
+                  Tipo de comunicado:{" "}
+                  <b>
+                    {Item.general
+                      ? "general"
+                      : Item.id_comision
+                      ? `comisión (${comisionTexto})`
+                      : `division (${Item.division}º ${
+                          Item.carrera === "ALL" ? "Todos" : Item.carrera
+                        })`}
+                  </b>
+                </h3>
+              )}
             </div>
           </div>
           <h1 className="text-gray-700 mb-3">{Item.titulo}</h1>
@@ -46,8 +135,19 @@ const CardComunicado = ({
             </div>
           )}
           {misComunicados && (
-            <div className="flex flex-row text-black">
-              <button className="border-2">ELIMINAR</button>
+            <div className="flex flex-row text-black my-2 gap-2">
+              <button
+                onClick={handleDelete}
+                className="mx-auto p-2 bg-red-600 text-white rounded-2xl shadow-md hover:bg-red-800 duration-300"
+              >
+                <Trash2 />
+              </button>
+              <button
+                onClick={handleUpdate}
+                className="mx-auto p-2 bg-green-600 text-white rounded-2xl shadow-md hover:bg-green-800 duration-300"
+              >
+                <PenBoxIcon />
+              </button>
             </div>
           )}
         </div>
