@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express"
 import userController from "./UserController"
-import passport from "config/passport"
+import passport from "#config/passport"
 import upload from "#Utils/multer"
 import { datosDelToken, verificarToken } from "#middlewares/auth"
 

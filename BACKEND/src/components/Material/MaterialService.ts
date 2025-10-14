@@ -127,9 +127,29 @@ export class MateriaServices {
     }
   }
 
-  traerTodosMateriales = async () => {
+  traerTodosMateriales = async (datos: any) => {
     try {
-      const materiales = await Material.findAll()
+      const {com_uc, token} = datos
+
+      const datos_token = await datosDelToken(token)
+
+      const usuario = await Usuario.findByPk(datos_token.id)
+
+      if(!usuario){
+        return { status: 404, respuesta: "Token error" }
+
+      }
+
+      const comision_uc = await ComisionUC.findByPk(com_uc)
+
+      if(!comision_uc){
+        return { status: 404, respuesta: "No se encontro la ComisionUC" }
+      }
+
+      const materiales = await Material.findAll({
+        where: {comision_uc_id: com_uc}
+      })
+
 
       if (!materiales) {
         return { status: 404, respuesta: "No se encontraron materiales" }
