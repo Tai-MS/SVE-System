@@ -27,7 +27,6 @@ async function traerUnaUC(req: Request, res: Response, next: NextFunction): Prom
             token: token,
             id: req.params.id
         }
-        console.log(token);
 
         const respuesta = await CurricularUnitService.traerUnaUC(datos) 
         return res.status(200).json(respuesta)

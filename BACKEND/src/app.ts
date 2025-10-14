@@ -11,17 +11,7 @@ async function bootstrap() {
   app.listen(PORT, async () => {
     console.log(`Servidor corriendo en: http://localhost:${PORT}`)
     // await clearDB()
-    await updateDB()
-    /* 
-    Crea usuarios con 5 permisos diferentes: {
-      PROFESOR ->  profesor@profesor.com
-      ADMIN -> admin@admin.com
-      ESTUDIANTE -> estudiante@estudiante.com
-      BEDELIA -> bedelia@bedelia.com
-      DIRECVTIVO -> directivo@directivo.com
-      (TODAS LAS CONTRASEÑA SON: "contraseña")
-    } 
-    */
+    // await updateDB()
     // await crearUsuarios()
     await connectDB()
   })

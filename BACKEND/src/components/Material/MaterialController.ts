@@ -39,8 +39,9 @@ export class MaterialControllers {
     }
 
     traerTodosMateriales = async (req: Request, res: Response) => {
+        const token = req.headers["auth-token"] as string || undefined
         
-        const respuesta = await Material.traerTodosMateriales()
+        const respuesta = await Material.traerTodosMateriales({com_uc: req.params.com_uc, token: token})
         return res.status(respuesta.status).json(respuesta.respuesta)
     }
 }

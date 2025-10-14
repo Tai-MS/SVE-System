@@ -15,7 +15,7 @@ passport.use(
     {
       clientID: process.env.ID_CLIENT_OAUTH || "",
       clientSecret: process.env.SECRET_CLIENT_OAUTH || "",
-      callbackURL: `http://localhost:${process.env.PORT}/user/auth/google/callback`,
+      callbackURL: `http://localhost:${process.env.PORT}/usuarios/auth/google/callback`,
     },
     async function (token: string, tokenSecret: string, profile: passport.Profile, done) {
       console.log(passport)
@@ -61,7 +61,7 @@ passport.use(
 passport.serializeUser((user: any, done) => {
   console.log(user);
   
-  done(null, user?.dataValues.id)
+  done(null, user?.dataValues)
 })
 
 //Deserializa el usuario
