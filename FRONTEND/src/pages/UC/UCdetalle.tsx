@@ -23,6 +23,13 @@ type Materias = {
   description?: string;
 };
 
+type Clase = {
+  aulal?: string;
+  fecha: string;
+  hora_inicio?: string;
+  hora_fin?: string;
+};
+
 export default function UCdetalle() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -33,7 +40,7 @@ export default function UCdetalle() {
     (location.state as { id: string | number }) || {};
 
   const [materia, setMateria] = useState<Materias | null>(null);
-  const [clase, setClase] = useState<Materias | null>(null);
+  const [clase, setClase] = useState<Clase[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -170,7 +177,16 @@ export default function UCdetalle() {
                 <Calendar className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">{clase[0].fecha.slice(-2)+ clase[0].fecha.slice(-6,-3) + " de " + clase[0].hora_inicio.slice(0,5) + " a " + clase[0].hora_fin.slice(0,5) || "Sin programar"}</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {clase && clase.length > 0 && clase[0]?.fecha && clase[0]?.hora_inicio && clase[0]?.hora_fin
+                    ? clase[0].fecha.slice(-2) +
+                      clase[0].fecha.slice(-6, -3) +
+                      " de " +
+                      clase[0].hora_inicio.slice(0, 5) +
+                      " a " +
+                      clase[0].hora_fin.slice(0, 5)
+                    : "Sin programar"}
+                </p>
                 <p className="text-sm text-gray-500">Próxima clase</p>
               </div>
             </div>
