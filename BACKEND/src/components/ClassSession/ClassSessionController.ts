@@ -14,7 +14,12 @@ export class ClassSessionControllers {
         const resp = await ClassSession.traerClase(id)
         return res.status(resp.status).json(resp.respuesta)
     }
+    todas = async (req: Request, res: Response) => {
+        console.log(req.params.uc);
 
+        const respuesta = await ClassSession.todas(req.params.uc)
+        return res.status(respuesta.status).json(respuesta.respuesta)
+    }
     crearClase = async (req: Request, res: Response) => {
         const verificacion = await ClassSessionSchema.safeParseAsync(req.body)
         console.log(verificacion);

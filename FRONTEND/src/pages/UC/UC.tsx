@@ -1,6 +1,7 @@
 import { type JSX } from "react";
 import { Card } from "../../components/Card";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Profesor = {
   nombre: string;
@@ -12,7 +13,7 @@ type ComisionUC = {
   id: string | number;
 };
 
-type Materia = {
+type Materias = {
   id: string | number;
   nombre: string;
   comisionesUC: ComisionUC[];
@@ -21,9 +22,10 @@ type Materia = {
 };
 
 function UC(): JSX.Element  {
-  const [materias, setMaterias] = useState<Materia[] | undefined>()
+  const [materias, setMaterias] = useState<Materias[] | undefined>()
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     async function fetchMaterias() {
@@ -67,10 +69,18 @@ function UC(): JSX.Element  {
 
         {!loading && !error && (
             
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 
             {materias != undefined && materias.map((materia) => (
-              <a href={"UC/detalles/" + materia.id}>
+              <div
+              key={materia.id}
+              onClick={() =>
+                navigate(`/UC/detalles/${materia.id}`, {
+                  state: { id: materia.id, nombre: materia.nombre },
+                })
+              }
+              className="cursor-pointer"
+            >
               <Card
                 key={materia.id}
                 nombre={materia.nombre}
@@ -79,7 +89,7 @@ function UC(): JSX.Element  {
                 studentsCount={materia.studentsCount}
                 description={materia.description}
                 />
-              </a>
+              </div>
             ))}
           </div>
         )}

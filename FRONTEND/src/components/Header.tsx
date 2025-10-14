@@ -18,9 +18,6 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
           />
         </a>
         <div className="flex space-x-3 md:mt-2 gap-10 text-m text-gray-700">
-          <NavLink to="/home" className="hover:text-blue-400 cursor-pointer">
-            Inicio
-          </NavLink>
           <NavLink
             to="/materiales"
             className="hover:text-blue-400 cursor-pointer"
