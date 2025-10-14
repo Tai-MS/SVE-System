@@ -41,5 +41,4 @@ export class ClassSessionControllers {
         
         return res.status(respuesta.status).json(respuesta.respuesta)
     }
-
 }
