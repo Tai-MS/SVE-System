@@ -3,7 +3,7 @@ import { ComisionUC } from "#components/ComisionUC/ComisionUCModel"
 import Usuario from "#components/User/UserModel"
 import { ClassSessionAttributes } from "./ClassSessionDTO"
 import { Clase } from "./ClassSessionModel"
-import { Op } from "sequelize"
+import { Op } from "sequelize";
 
 export class ClassSessionServices {
   traerClase = async (id: number) => {
@@ -183,6 +183,34 @@ export class ClassSessionServices {
     } catch (error: any) {
       await t.rollback()
       return { status: 500, respuesta: error.msg || "Ocurrio un error en el servidor al intentar modificar una clase" }
+    }
+  }
+  
+  todas = async (com_uc: string) => {
+    try {
+      const comision_uc = await ComisionUC.findByPk(com_uc)
+      console.log(comision_uc);
+      
+      if(!comision_uc){
+        return {status: 404, respuesta: "ComisionUC no encontrada"}
+      }
+  
+      const clases = await Clase.findAll({
+        where: {comision_uc_id: com_uc,
+          fecha: {
+          [Op.gte]: new Date()
+          }
+        },
+        attributes: ["fecha", "aula_id", "modalidad", "hora_fin", "hora_inicio"],
+        order: [
+          ["fecha", "DESC"]
+        ]
+        
+      })
+  
+      return {status: 200, respuesta: clases}
+    } catch (error: any) {
+      return { status: 500, respuesta: error.message || "Ocurrio un error en el servidor al intentar traer todoas las clases" }
     }
   }
 }

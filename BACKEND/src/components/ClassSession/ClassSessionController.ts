@@ -41,4 +41,15 @@ export class ClassSessionControllers {
         
         return res.status(respuesta.status).json(respuesta.respuesta)
     }
+
+    todas = async (req: Request, res: Response) => {
+        // const verificacion = await ClassSessionSchema.partial().safeParseAsync(req.body)
+        // if (!verificacion.success) {
+        //     return res.status(400).json({ respuesta: "Los datos ingresados para crear una clase son incorrectos" })
+        // }
+        console.log(req.params.uc);
+        
+        const respuesta = await ClassSession.todas(req.params.uc)
+        return res.status(respuesta.status).json(respuesta.respuesta)
+    }
 }

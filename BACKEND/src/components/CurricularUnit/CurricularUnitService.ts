@@ -4,7 +4,7 @@ import { InferCreationAttributes, Op } from "sequelize"
 import { ComisionUC } from "#components/ComisionUC/ComisionUCModel"
 import { Comision } from "#components/Comision/ComisionModel"
 import Usuario, { Rol } from "#components/User/UserModel"
-import { datosDelToken } from "#middlewares/auth"
+import { datosDelToken, verificarToken } from "#middlewares/auth"
 
 async function traerTodas(token: string): Promise<any> {
   const usuario = await datosDelToken(token)
