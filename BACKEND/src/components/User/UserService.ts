@@ -16,11 +16,36 @@ import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
 import { Comision } from "#components/Comision/ComisionModel"
 
 async function traerTodos() {
-  return userClass.traerTodos()
+  const usuario = await Usuario.findAll({
+  include: [
+    {
+      model: Comision,
+      as: "comisiones", 
+      attributes: ["numero_comision", "id"],
+      through: {
+        attributes: ["anio_comision"], 
+      },
+    },
+  ],
+});
+  return usuario
 }
 
 async function traerUsuario(id: string): Promise<Usuario | string> {
-  const usuario = await userClass.traerUsuario(id)
+  // const usuario = await userClass.traerUsuario(id)
+  const usuario = await Usuario.findOne({
+  where: { id },
+  include: [
+    {
+      model: Comision,
+      as: "comisiones", 
+      attributes: ["numero_comision", "id"],
+      through: {
+        attributes: ["anio_comision"], 
+      },
+    },
+  ],
+});
   if (!usuario) {
     return `Usuario con el ID: ${id} no encontrado`
   }
@@ -273,7 +298,7 @@ async function guardarAlumnosImportados(datos: Usuarios, carrera: string | null 
             usuarios_sin_comision.push(usuario)
           }
         }
-        if (process.env.DEV !== "dev") {
+        if (process.env.ENV !== "dev") {
           await transport.sendMail({
             from: process.env.USER_MAILER,
             to: dniLimpio + "@terciariourquiza.edu.ar",

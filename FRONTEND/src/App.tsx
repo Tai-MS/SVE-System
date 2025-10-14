@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import UC from "./pages/UC/UC";
 import Carreras from "./components/Carreras";
 import Alumnos from "./components/Alumnos";
 import Comisiones from "./components/Comisiones";
@@ -17,7 +18,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login login={login} />} />
+
+        <Route 
+          path="/login" 
+          element={<Login login={login} />}  
+          />
 
         <Route
           path="/*"
@@ -40,6 +45,14 @@ function App() {
                   <Route
                     path="/unidadcurricular/:materiaId/:materiaNombre/:materiaProfe"
                     element={<UnidadCurricular />}
+                  />
+                  <Route 
+                    path="/UC" 
+                    element={<UC />}
+                  />
+                  <Route 
+                    path="UC/detalles/:id" 
+                    element={<UC />}
                   />
                 </Routes>
               </Layout>

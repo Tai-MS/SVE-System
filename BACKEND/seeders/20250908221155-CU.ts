@@ -1,8 +1,13 @@
-"use strict"
-
-const { DataTypes, Op } = require("sequelize");
-const { v4: uuidv4 } = require("uuid");
-
+import { QueryInterface, DataTypes, Op } from "sequelize"
+import { v4 as uuidv4 } from "uuid"
+type TipoUC = "MATERIA" | "TALLER" | "PRACTICA PROFESIONALIZANTE" | "LABORATORIO"
+type UCSeed = {
+  carrera_id_fk: string
+  nombre: string
+  carga_horaria: number
+  tipo_uc: TipoUC
+  activo?: boolean
+}
 const MATERIAsDS = [
   { id: uuidv4(), nombre: "Comunicación", carga_horaria: 48, tipo_uc: "TALLER" },
   { id: uuidv4(), nombre: "UDI 1", carga_horaria: 48, tipo_uc: "TALLER" },
@@ -34,7 +39,7 @@ const MATERIAsDS = [
   },
   { id: uuidv4(), nombre: "Bases de Datos 2", carga_horaria: 128, tipo_uc: "MATERIA" },
   { id: uuidv4(), nombre: "Práctica Profesionalizante 2", carga_horaria: 192, tipo_uc: "PRACTICA PROFESIONALIZANTE" },
-]
+] as const
 const MATERIAsITI = [
   { id: uuidv4(), nombre: "Comunicación", carga_horaria: 48, tipo_uc: "MATERIA" },
   { id: uuidv4(), nombre: "UDI 1", carga_horaria: 48, tipo_uc: "TALLER" },
@@ -66,7 +71,7 @@ const MATERIAsITI = [
   { id: uuidv4(), nombre: "Integridadción de Datos", carga_horaria: 96, tipo_uc: "MATERIA" },
   { id: uuidv4(), nombre: "Administración de Sistemas Operativos y Redes", carga_horaria: 128, tipo_uc: "MATERIA" },
   { id: uuidv4(), nombre: "Práctica Profesionalizante 2", carga_horaria: 256, tipo_uc: "PRACTICA PROFESIONALIZANTE" },
-]
+] as const
 const MATERIAsAF = [
   { id: uuidv4(), nombre: "Comunicación", carga_horaria: 48, tipo_uc: "TALLER" },
   { id: uuidv4(), nombre: "UDI 1", carga_horaria: 48, tipo_uc: "MATERIA" },
@@ -94,9 +99,9 @@ const MATERIAsAF = [
   { id: uuidv4(), nombre: "Sistema de Información Organizacional", carga_horaria: 128, tipo_uc: "TALLER" },
   { id: uuidv4(), nombre: "Desarrollo de Sistemas Web", carga_horaria: 160, tipo_uc: "TALLER" },
   { id: uuidv4(), nombre: "Práctica Profesionalizante 2", carga_horaria: 192, tipo_uc: "PRACTICA PROFESIONALIZANTE" },
-]
-module.exports = {
-  up: async (queryInterface) => {
+] as const
+export default {
+  up: async (queryInterface: QueryInterface) => {
     await queryInterface.createTable("unidades_curriculares", {
       id: { type: DataTypes.STRING, primaryKey: true },
       carrera_id_fk: {
@@ -119,14 +124,14 @@ module.exports = {
 
     const now = new Date()
 
-    const baseMATERIAsITI = MATERIAsITI.map((m) => ({
+    const baseMATERIAsITI: UCSeed[] = MATERIAsITI.map<UCSeed>((m) => ({
       ...m,
       carrera_id_fk: "ITI",
       activo: true,
       // created_at: now,
       // updated_at: now,
     }))
-    const baseMATERIAsAF = MATERIAsAF.map((m) => ({
+    const baseMATERIAsAF: UCSeed[] = MATERIAsAF.map<UCSeed>((m) => ({
       ...m,
       carrera_id_fk: "AF",
       activo: true,
@@ -134,7 +139,7 @@ module.exports = {
       // updated_at: now,
     }))
 
-    const baseMATERIAsDS = MATERIAsDS.map((m) => ({
+    const baseMATERIAsDS: UCSeed[] = MATERIAsDS.map<UCSeed>((m) => ({
       ...m,
       carrera_id_fk: "DS",
       activo: true,
@@ -146,7 +151,7 @@ module.exports = {
     await queryInterface.bulkInsert("unidades_curriculares", baseMATERIAsITI)
   },
 
-  down: async (queryInterface) => {
+  down: async (queryInterface: QueryInterface) => {
     const nombresDS = MATERIAsDS.map((m) => m.nombre)
     const nombresAF = MATERIAsAF.map((m) => m.nombre)
     const nombresITI = MATERIAsITI.map((m) => m.nombre)

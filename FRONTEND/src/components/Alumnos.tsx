@@ -34,6 +34,8 @@ interface Usuario {
   activo: boolean;
   token: string;
   carrera_id_fk: string | null;
+  division_id?: number | null;
+  numero_comision?: string | null;
 }
 
 export default function Usuarios() {
@@ -55,6 +57,8 @@ export default function Usuarios() {
     activo: true,
     token: localStorage.getItem("token"),
     carrera_id_fk: "",
+    division_id: "",
+    numero_comision: "",
   });
 
   useEffect(() => {
@@ -79,6 +83,8 @@ export default function Usuarios() {
           form.rol === "ESTUDIANTE" && form.carrera_id_fk
             ? form.carrera_id_fk.toUpperCase()
             : null,
+        division_id: form.rol === "ESTUDIANTE" ? form.division_id : null,
+        numero_comision: form.rol === "ESTUDIANTE" ? form.numero_comision : null,
       };
 
       let res: Response;
@@ -119,6 +125,8 @@ export default function Usuarios() {
         activo: true,
         token: localStorage.getItem("token"),
         carrera_id_fk: "",
+        division_id: "",
+        numero_comision: "",
       });
       obtenerUsuarios();
     } catch (err) {
@@ -240,6 +248,8 @@ export default function Usuarios() {
                 activo: true,
                 token: localStorage.getItem("token"),
                 carrera_id_fk: "",
+                division_id: "",
+                numero_comision: "",
               });
               setOpen(true);
             }}
@@ -261,7 +271,13 @@ export default function Usuarios() {
               <TableCell><b>Email</b></TableCell>
               <TableCell><b>Año de ingreso</b></TableCell>
               <TableCell><b>Activo</b></TableCell>
-              {rolActivo === "ESTUDIANTE" && <TableCell><b>Carrera</b></TableCell>}
+              {rolActivo === "ESTUDIANTE" && (
+                <>
+                  <TableCell><b>Carrera</b></TableCell>
+                  <TableCell><b>División</b></TableCell>
+                  <TableCell><b>Comisión</b></TableCell>
+                </>
+              )}
               <TableCell><b>Acciones</b></TableCell>
             </TableRow>
           </TableHead>
@@ -276,7 +292,11 @@ export default function Usuarios() {
                 <TableCell>{usuario.anioIngreso}</TableCell>
                 <TableCell>{usuario.activo ? "Sí" : "No"}</TableCell>
                 {rolActivo === "ESTUDIANTE" && (
-                  <TableCell>{usuario.carrera_id_fk?.toUpperCase() ?? "-"}</TableCell>
+                  <>
+                    <TableCell>{usuario.carrera_id_fk?.toUpperCase() ?? "-"}</TableCell>
+                    <TableCell>{usuario.division_id ?? "-"}</TableCell>
+                    <TableCell>{usuario.numero_comision ?? "-"}</TableCell>
+                  </>
                 )}
                 <TableCell>
                   <IconButton
@@ -294,6 +314,8 @@ export default function Usuarios() {
                         activo: usuario.activo ?? true,
                         token: localStorage.getItem("token"),
                         carrera_id_fk: usuario.carrera_id_fk ?? "",
+                        division_id: usuario.division_id?.toString() ?? "",
+                        numero_comision: usuario.numero_comision ?? "",
                       });
                       setOpen(true);
                     }}
@@ -330,6 +352,7 @@ export default function Usuarios() {
 
           {/* 🔹 Mostrar select de Carrera SOLO si es estudiante */}
           {form.rol === "ESTUDIANTE" && (
+            <>
             <TextField
               select
               label="Carrera"
@@ -342,6 +365,33 @@ export default function Usuarios() {
               <MenuItem value="ITI">ITI</MenuItem>
               <MenuItem value="AF">AF</MenuItem>
             </TextField>
+
+            <TextField
+              select
+              label="División"
+              value={form.division_id}
+              onChange={(e) =>
+                setForm({ ...form, division_id: e.target.value })
+              }
+            >
+              <MenuItem value="1">1</MenuItem>
+              <MenuItem value="2">2</MenuItem>
+              <MenuItem value="3">3</MenuItem>
+            </TextField>
+
+            <TextField
+              select
+              label="Comisión"
+              value={form.numero_comision}
+              onChange={(e) =>
+                setForm({ ...form, numero_comision: e.target.value })
+              }
+            >
+              <MenuItem value="1ro">1ro</MenuItem>
+              <MenuItem value="2da">2da</MenuItem>
+              <MenuItem value="3ra">3ra</MenuItem>
+            </TextField>
+            </>
           )}
 
           <div className="flex items-center gap-2 mt-2">
