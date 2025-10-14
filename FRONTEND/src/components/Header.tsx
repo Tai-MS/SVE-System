@@ -18,7 +18,7 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
           />
         </a>
         <div className="flex space-x-3 md:mt-2 gap-10 text-m text-gray-700">
-          <NavLink
+          {/* <NavLink
             to="/materiales"
             className="hover:text-blue-400 cursor-pointer"
           >
@@ -26,7 +26,7 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
           </NavLink>
           <NavLink to="/tareas" className="hover:text-blue-400 cursor-pointer">
             Tareas
-          </NavLink>
+          </NavLink> */}
           <NavLink
             to="/comunicados"
             className="hover:text-blue-400 cursor-pointer"
