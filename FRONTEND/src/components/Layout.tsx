@@ -3,7 +3,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 // import Dropdown from "./Dropdown";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Usuario } from "../types/UsuarioTypes";
 
@@ -26,6 +26,7 @@ const Layout = ({ children, User, Logout }) => {
     fetchFunction();
   }, []);
   const location = useLocation();
+  const { id } = useParams();
   const routeLinks = {
     "/comunicados": [
       {
@@ -66,10 +67,23 @@ const Layout = ({ children, User, Logout }) => {
     "/usuarios": [
       { name: "Ver usuarios", path: "/usuarios", rol: ["ADMINISTRADOR"] },
     ],
+    "/UC": [
+      { name: "Ver UCs", path: "/UC", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+      // { name: "Agregar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
+      // { name: "Eliminar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
+    ],
+    [`/UC/detalles/${id}`] : [
+      { name: "Ver Materia", path: [`/UC/detalles/${id}`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+      // { name: "Ver Trabajos", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+    ]
   };
 
-  const currentBasePath = `/${location.pathname.split("/")[1]}`;
-  const links = routeLinks[currentBasePath] || [];
+let currentBasePath = `/${location.pathname.split("/")[1]}`;
+if (location.pathname.startsWith("/UC/detalles/")) {
+  currentBasePath = `/UC/detalles/${id}`;
+}
+const links = routeLinks[currentBasePath] || [];
+
 
   // useEffect(() => {
   //   const checkMobile = () => {

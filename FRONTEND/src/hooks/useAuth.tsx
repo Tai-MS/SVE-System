@@ -25,7 +25,7 @@ export function useAuth(): AuthReturn {
   const googleLogin = async () => {
     try {
       const res = await fetch(
-        import.meta.env.VITE_BACKURL + "/user/auth/google/callback",
+        import.meta.env.VITE_BACKURL + "/usuarios/auth/google/callback",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -33,9 +33,12 @@ export function useAuth(): AuthReturn {
       );
 
       const data = await res.json();
-
+      console.log(data);
+      
       if (data.success && data.token) {
         localStorage.setItem("token", data.token);
+        console.log(data);
+        setUser(data.nombre)
         setToken(data.token);
         return true;
       } else {

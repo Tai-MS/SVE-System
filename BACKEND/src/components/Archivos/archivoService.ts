@@ -2,8 +2,55 @@ import Archivo from "./archivosModel"
 import { archivoAttributes, archivos } from "./archivoDTO"
 import { imageURLTrasnform, uploadImage } from "#Utils/cloudinary"
 import { response } from "express"
-
+import { drive } from "#Utils/DriveConfig"
+import fs from "fs"
+import { Readable } from "stream"
+import { drive_v3 } from "googleapis"
+import { GaxiosResponse, GaxiosResponseWithHTTP2 } from "googleapis-common"
 export class ArchivoService {
+  subirArchivos = async (file: any): Promise<GaxiosResponseWithHTTP2<drive_v3.Schema$File> | string> => {
+    const t = await Archivo.sequelize!.transaction()
+    try {
+      const carpeta = process.env.ID_CARPETA
+      const fileMetadata = {
+        name: file.originalname,
+        parents: [carpeta!],
+      }
+
+      const media = {
+        mimeType: file.mimetype,
+        body: Readable.from(file.buffer),
+      }
+
+      const response = await drive.files.create({
+        requestBody: fileMetadata,
+        media,
+        fields: "id, name, webViewLink, webContentLink",
+      })
+
+      return response
+    } catch (error: any) {
+      return `Error al subir el archivo a Google Drive. Error: ${error.message}`
+    }
+  }
+
+  elimiarArchivoDrive = async (id: number) => {
+    const t = await Archivo.sequelize!.transaction()
+    try {
+      const registro_archivo = await Archivo.findByPk(id)
+
+      if (!registro_archivo) {
+        return { status: 404, respuesta: "Archivo no encontrado" }
+      }
+
+      const response = await drive.files.delete({ fileId: registro_archivo.file_id })
+
+      return response
+    } catch (error) {
+      return { status: 500, respuesta: "Ocurrio un error al momento de eliminar el archivo de la base de datos" }
+    }
+  }
+
   crear = async (archivos: archivos, modulo: string, id: string) => {
     const t = await Archivo.sequelize!.transaction()
     try {

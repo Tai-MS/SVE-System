@@ -11,6 +11,8 @@ class Archivo extends Model<archivoCreation, archivoAttributes> {
   declare moduloId: number
   declare subido: Date
   declare actualizado: Date
+  declare material_id: number
+  declare file_id: string
 }
 
 export default Archivo

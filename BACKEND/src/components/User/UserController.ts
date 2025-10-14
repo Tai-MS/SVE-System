@@ -77,7 +77,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
     const token = await generarToken(iniciar_sesion)
     console.log(token)
     const dato = await datosDelToken(token)
-
+  
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],
       token: token,
@@ -246,6 +246,7 @@ async function ImportarAlumnos(req: Request, res: Response) {
   const datos = XLSX.utils.sheet_to_json(hoja)
   // Verifica con ZOD que los campos del JSON sean correctos
   const verificacion_datos = await excelSchema.safeParseAsync(datos)
+  console.log(verificacion_datos);
   
   if (!verificacion_datos.success) {
     res.status(400).json({

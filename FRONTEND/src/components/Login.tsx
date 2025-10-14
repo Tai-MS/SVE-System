@@ -83,7 +83,7 @@ function Login({ login }: LoginProps) {
                 type="button"
                 onClick={async () => {
                   window.location.href =
-                    import.meta.env.VITE_BACKURL + "/user/google";
+                    import.meta.env.VITE_BACKURL + "/usuarios/google";
                 }}
               >
                 Iniciar Sesión con Google

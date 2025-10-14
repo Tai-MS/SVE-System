@@ -12,9 +12,12 @@ export class MaterialControllers {
         if(!verificacion.success){
             return res.status(400).json({ respuesta: "Los datos ingresados para crear un material son incorrectos" })
         }
+        const token = req.headers["auth-token"] as string || undefined
 
         const data: MaterialAttributes = verificacion.data as unknown as MaterialAttributes
-        const respuesta = await Material.crearMaterial(data)
+        data.token = token!
+        const respuesta = await Material.crearMaterial(data, req.file)
+
         return res.status(respuesta.status).json(respuesta.respuesta)
     }
 
@@ -36,8 +39,9 @@ export class MaterialControllers {
     }
 
     traerTodosMateriales = async (req: Request, res: Response) => {
+        const token = req.headers["auth-token"] as string || undefined
         
-        const respuesta = await Material.traerTodosMateriales()
+        const respuesta = await Material.traerTodosMateriales({com_uc: req.params.com_uc, token: token})
         return res.status(respuesta.status).json(respuesta.respuesta)
     }
 }

@@ -29,7 +29,7 @@
     "module": "commonjs" /* Specify what module code is generated. */,
     "rootDir": "./src" /* Specify the root folder within your source files. */,
     // "moduleResolution": "node10",                     /* Specify how TypeScript looks up a file from a given module specifier. */
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "baseUrl": "./" /* Specify the base directory to resolve non-relative module names. */,
     "paths": {
       "#Utils/*": ["./src/Utils/*"],
@@ -118,5 +118,5 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  "include": ["src/**/*.ts", "config/passport.ts"]
+  "include": ["src/**/*.ts", "src/config/passport.ts"]
 }
