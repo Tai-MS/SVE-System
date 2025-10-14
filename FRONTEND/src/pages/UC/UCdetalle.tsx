@@ -202,10 +202,11 @@ export default function UCdetalle() {
 					<div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
           <div
 									onClick={() =>
-										navigate(`/UC/detalles/${materia.id}/materiales`, {
+										navigate(`/UC/detalles/${materia.comisionesUC[0].id}/materiales`, {
 											state: {
+												id_com_uc: materia.comisionesUC[0].id,
 												id: materia.id,
-												nombre: materia.nombre,
+												nombre: materia.nombre
 											},
 										})
 									}>

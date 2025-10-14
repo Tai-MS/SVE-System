@@ -33,7 +33,7 @@ export default function Materiales() {
         setError(null);
 
         const response = await fetch(
-          `${import.meta.env.VITE_BACKURL}/materiales/traerTodos`,
+          `${import.meta.env.VITE_BACKURL}/material/traerTodos/${id}`,
           {
             headers: {
               token: localStorage.getItem("token") || "",
@@ -111,7 +111,7 @@ export default function Materiales() {
       <div className="min-h-screen bg-gray-50 p-8">
         <div className="mx-auto max-w-6xl">
           <button
-            onClick={() => navigate(`/classroom/${id}`)}
+            onClick={() => navigate(`UC/detalles/${id}/materiales`)}
             className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />

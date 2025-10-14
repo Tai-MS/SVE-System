@@ -30,7 +30,15 @@ function UC(): JSX.Element  {
   useEffect(() => {
     async function fetchMaterias() {
       try {
-        const response = await fetch(import.meta.env.VITE_BACKURL + "/unidadcurricular/todas")
+        const response = await fetch(import.meta.env.VITE_BACKURL + "/unidadcurricular/todas",
+        {
+            method: "GET",
+            headers: {
+            "Content-Type": "application/json",
+            token: localStorage.getItem("token") || "",
+						}
+        });
+
         if (!response.ok) {
           throw new Error("Error al cargar las unidades curriculares")
         }
@@ -46,7 +54,6 @@ function UC(): JSX.Element  {
 
     fetchMaterias()
   }, [])
-
 
   return (
     <>
