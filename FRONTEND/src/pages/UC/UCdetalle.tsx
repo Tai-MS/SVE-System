@@ -113,16 +113,16 @@ export default function UCdetalle() {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white shadow-2xl rounded-2xl mt-4">
       {/* Header con imagen o color */}
       <div
-        className="relative h-64 bg-cover bg-center"
+        className="rounded-2xl relative h-64 bg-cover bg-center"
         style={{
-          backgroundImage: undefined,
+        //   backgroundImage: undefined,
           backgroundColor: "#4F46E5",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60" />
+        <div className="shadow rounded-2xl absolute inset-0 bg-gradient-to-b from-black/40 to-black/60" />
 
         <div className="relative mx-auto max-w-4xl px-8 py-8">
           <button
