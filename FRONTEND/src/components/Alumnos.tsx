@@ -159,8 +159,8 @@ export default function Usuarios() {
       >
         <Tab label="Estudiantes" value="ESTUDIANTE" />
         <Tab label="Profesores" value="PROFESOR" />
-        <Tab label="Bedelía" value="BEDELIA" />
-        <Tab label="Directivos" value="DIRECTIVO" />
+        {(localStorage.getItem("rol") === "DIRECTIVO" || localStorage.getItem("rol") === "ADMINISTRADOR") && <Tab label="Bedelía" value="BEDELIA" />}
+        {(localStorage.getItem("rol") === "DIRECTIVO" || localStorage.getItem("rol") === "ADMINISTRADOR") && <Tab label="Directivos" value="DIRECTIVO" />}
       </Tabs>
 
       {/* 🔹 Filtros y botones */}
