@@ -72,13 +72,6 @@ export class MateriaServices {
     }
   }
 
-  /**
-   * 
-   * Terminar funcion modificarMaterial
-   * Para poder modificar los archivos relacionados
-   * 
-   */
-
   modificarMaterial = async (id: number, datos: Partial<MaterialAttributes>, file?: any) => {
     const t = await Material.sequelize!.transaction()
     try {
@@ -89,9 +82,16 @@ export class MateriaServices {
         if (!material) {
           return { status: 404, respuesta: "No se encontró el material" }
         }
-
         
-
+        if(file){
+          const archivo_material = await Archivo.findOne({
+            where: {material_id: material.id}
+          })
+          const ArchivoServices = new ArchivoService()
+          await ArchivoServices.elimiarArchivoDrive(archivo_material!.material_id)
+          await ArchivoServices.subirArchivos(file)
+        }
+        
         await material.update(
           {
             ...datos,
