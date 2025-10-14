@@ -47,7 +47,11 @@ function App() {
                     element={<UnidadCurricular />}
                   />
                   <Route 
-                    path="/uc" 
+                    path="/UC" 
+                    element={<UC />}
+                  />
+                  <Route 
+                    path="UC/detalles/:id" 
                     element={<UC />}
                   />
                 </Routes>

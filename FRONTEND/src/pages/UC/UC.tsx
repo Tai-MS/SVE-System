@@ -48,9 +48,9 @@ function UC(): JSX.Element  {
 
   return (
     <>
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="mx-auto max-w-6xl">
-        <h1 className="mb-8 text-3xl font-bold text-gray-900">Unidades Curriculares</h1>
+    <div className="bg-white shadow min-h-screen p-8 rounded-2xl mt-4">
+      <div className="mx-auto">
+        <header className="text-center mb-8 text-3xl font-bold text-gray-900">Unidades Curriculares</header>
 
         {loading && (
           <div className="flex items-center justify-center py-12">
@@ -66,9 +66,11 @@ function UC(): JSX.Element  {
         )}
 
         {!loading && !error && (
+            
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
             {materias != undefined && materias.map((materia) => (
+              <a href={"UC/detalles/" + materia.id}>
               <Card
                 key={materia.id}
                 nombre={materia.nombre}
@@ -76,7 +78,8 @@ function UC(): JSX.Element  {
                 instructor={materia.comisionesUC[0].profesor.nombre + " " + materia.comisionesUC[0].profesor.apellido}
                 studentsCount={materia.studentsCount}
                 description={materia.description}
-              />
+                />
+              </a>
             ))}
           </div>
         )}
