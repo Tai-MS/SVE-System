@@ -3,7 +3,7 @@ import { ComisionUC } from "#components/ComisionUC/ComisionUCModel"
 import Usuario from "#components/User/UserModel"
 import { ClassSessionAttributes } from "./ClassSessionDTO"
 import { Clase } from "./ClassSessionModel"
-import { Op } from "sequelize"
+import { Op } from "sequelize";
 
 export class ClassSessionServices {
   traerClase = async (id: number) => {
@@ -185,4 +185,5 @@ export class ClassSessionServices {
       return { status: 500, respuesta: error.msg || "Ocurrio un error en el servidor al intentar modificar una clase" }
     }
   }
+  
 }

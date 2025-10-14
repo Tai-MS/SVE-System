@@ -1,23 +1,16 @@
 import { useState, useEffect } from "react";
 import type { Comunicado } from "../../types/ComunicadoTypes";
 import CardComunicado from "../../components/CardComunicado";
-import { useLocation } from "react-router-dom";
 
-export default function Comunicados() {
+export default function MisComunicados() {
   const [comunicados, setComunicados] = useState<Comunicado[]>([]);
-  const location = useLocation();
-
+  const idUser = localStorage.getItem("userId");
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const userId = queryParams.get("idUser") || "";
-    const type = queryParams.get("type") || "";
-    const career = queryParams.get("career") || "";
     const fetchComunicados = async () => {
       try {
-        let url = `${import.meta.env.VITE_BACKURL}/comunicados`;
-        if (userId && type) {
-          url += `/comunicadosfiltro?idUser=${userId}&type=${type}&career=${career}`;
-        }
+        const url = `${
+          import.meta.env.VITE_BACKURL
+        }/comunicados/comunicadosUsuario/${idUser}`;
 
         const res = await fetch(url);
         const data = await res.json();
@@ -30,13 +23,13 @@ export default function Comunicados() {
     };
 
     fetchComunicados();
-  }, [location.search]);
+  }, []);
 
   return (
-    <main className="flex flex-col max-h-full mt-1 text-center items-center content-center">
+    <main className="flex flex-col max-h-full mt-1 justify-center">
       {comunicados.length > 0 ? (
         comunicados.map((item) => (
-          <CardComunicado key={item.id} Item={item} misComunicados={false} />
+          <CardComunicado key={item.id} Item={item} misComunicados={true} />
         ))
       ) : (
         <h1 className="font-bold text-black">

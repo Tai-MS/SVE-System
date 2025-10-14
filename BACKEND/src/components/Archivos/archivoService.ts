@@ -1,6 +1,7 @@
 import Archivo from "./archivosModel"
 import { archivoAttributes, archivos } from "./archivoDTO"
 import { imageURLTrasnform, uploadImage } from "#Utils/cloudinary"
+import { response } from "express"
 import { drive } from "#Utils/DriveConfig"
 import fs from "fs"
 import { Readable } from "stream"
@@ -26,9 +27,9 @@ export class ArchivoService {
         media,
         fields: "id, name, webViewLink, webContentLink",
       })
-      
+
       return response
-    } catch (error:any) {
+    } catch (error: any) {
       return `Error al subir el archivo a Google Drive. Error: ${error.message}`
     }
   }
@@ -41,7 +42,7 @@ export class ArchivoService {
       if (!registro_archivo) {
         return { status: 404, respuesta: "Archivo no encontrado" }
       }
-      
+
       const response = await drive.files.delete({ fileId: registro_archivo.file_id })
 
       return response
@@ -84,6 +85,15 @@ export class ArchivoService {
     } catch (err) {
       console.log(err)
       return { status: 500, respuesta: "Ocurrio un error en el servidor al momento de buscar las imagenes" }
+    }
+  }
+  eliminarImagen = async (ruta: string) => {
+    try {
+      await Archivo.destroy({ where: { ruta } })
+      return { status: 200, respuesta: "Imagene eliminada correctamente" }
+    } catch (err) {
+      console.log(err)
+      return { status: 500, respuesta: "Ocurrio un error en el servidor al momento de eliminar la imagen" }
     }
   }
 }

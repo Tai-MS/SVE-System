@@ -8,11 +8,12 @@ export interface Comunicado {
   eliminado: boolean;
   img?: string[];
   general?: boolean;
-  carrera?: number;
+  carrera?: string;
   division?: number;
   id_comision?: number;
   Usuario?: Usuario;
   creado?: string | Date;
+  actualizado?: string | Date;
 }
 
 export interface crearComunicado {

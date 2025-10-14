@@ -9,4 +9,5 @@ export type MaterialAttributes = {
     creado: Date
     fecha_limite: Date | null
     token: string
+    material_id: string | null 
 }

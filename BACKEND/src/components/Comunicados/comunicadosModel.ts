@@ -6,6 +6,7 @@ import Usuario from "#components/User/UserModel"
 type comunicadosCreation = Optional<comunicadosAttributes, "id">
 
 class Comunicado extends Model<comunicadosAttributes, comunicadosCreation> {
+  [x: string]: any
   declare id: string
   declare id_usuario: string
   declare titulo: string
