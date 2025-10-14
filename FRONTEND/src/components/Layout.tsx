@@ -68,7 +68,8 @@ const Layout = ({ children, User, Logout }) => {
       // { name: "Eliminar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
     ],
     [`/UC/detalles/${id}`] : [
-      { name: "Ver Materia", path: [`/UC/detalles/${id}`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+      { name: "Ver Unidad Curricular", path: [`/UC/detalles/${id}`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+      { name: "Ver Materiales", path: [`/UC/detalles/${id}/materiales`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
       // { name: "Ver Trabajos", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
     ]
   };

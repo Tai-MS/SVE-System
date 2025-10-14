@@ -12,6 +12,7 @@ import Layout from "./components/Layout";
 import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
 import UCdetalle from "./pages/UC/UCdetalle";
+import Materiales from "./pages/UC/Materiales";
 
 function App() {
   const { user, logout, login } = useAuth();
@@ -55,6 +56,11 @@ function App() {
                     path="UC/detalles/:id" 
                     element={<UCdetalle />}
                   />
+                  <Route 
+                    path="/UC/detalles/:id/materiales"
+                    element={<Materiales />} 
+                  />
+
                 </Routes>
               </Layout>
             </ProtectedRoute>
