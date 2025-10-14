@@ -2,7 +2,7 @@ import { Grid3X3, X, Instagram, Youtube, Linkedin } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-400 px-6 py-4 bottom-0 left-0 w-full z-50">
+    <footer className="bg-white border-t border-gray-200 px-6 py-4 bottom-0 left-0 w-full"> 
       <div className="flex items-center justify-between">
         {/* Grid icon on the left */}
         <div className="flex items-center">

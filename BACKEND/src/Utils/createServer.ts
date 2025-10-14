@@ -17,6 +17,7 @@ import { sessionStore } from "#db/initModels"
 import { ClaseSessionRouter } from "#components/ClassSession/ClassSessionRoutes"
 import { ClassRoomRouter } from "#components/Classroom/ClassRoomRoutes"
 import { MaterialRouter } from "#components/Material/MaterialRoutes"
+import { CalificacionRouter } from "#components/Calification/CalificacionRoutes"
 /**
  * Se encarga de levantar el servidor
  * y crear las funciones necesarias
@@ -54,6 +55,7 @@ export const create_server = async () => {
     .use("/clase", ClaseSessionRouter)
     .use("/aula", ClassRoomRouter)
     .use("/material", MaterialRouter)
+    .use("/calificacion", CalificacionRouter)
     .use(passport.initialize())
     .use(passport.session())
 

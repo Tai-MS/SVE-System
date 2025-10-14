@@ -5,6 +5,8 @@ export type archivoAttributes = {
   moduloId: string
   subido?: Date
   actualizado?: Date
+  material_id?: number
+  file_id?: string
 }
 
 export type archivo = {

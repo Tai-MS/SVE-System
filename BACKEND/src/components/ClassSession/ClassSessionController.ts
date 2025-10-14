@@ -17,6 +17,8 @@ export class ClassSessionControllers {
 
     crearClase = async (req: Request, res: Response) => {
         const verificacion = await ClassSessionSchema.safeParseAsync(req.body)
+        console.log(verificacion);
+        
         if (!verificacion.success) {
             return res.status(400).json({ respuesta: "Los datos ingresados para crear una clase son incorrectos" })
         }

@@ -13,6 +13,7 @@ import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
 import Comunicado from "#components/Comunicados/comunicadosModel"
 import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
 import { Division } from "#components/Division/divisionModel"
+import Archivo from "#components/Archivos/archivosModel"
 
 let associationsApplied = false
 
@@ -34,6 +35,9 @@ export function applyAssociations() {
     otherKey: "usuario_id",
   })
 
+  Material.hasMany(Archivo, { foreignKey: "material_id_fk"})
+  Archivo.belongsTo(Material, { foreignKey: "material_id_fk"})
+
   Career.hasMany(Usuario, { foreignKey: "carrera_id_fk" })
   Usuario.belongsTo(Career, { foreignKey: "carrera_id_fk" })
 
@@ -54,11 +58,13 @@ export function applyAssociations() {
     through: UsuarioComision,
     foreignKey: "usuario_id",
     otherKey: "comision_id",
+    as: "comisiones"
   })
   Comision.belongsToMany(Usuario, {
     through: UsuarioComision,
     foreignKey: "comision_id",
     otherKey: "usuario_id",
+    as: "usuarios"
   })
 
   Usuario.hasMany(Comunicado, { foreignKey: "id_usuario" })
