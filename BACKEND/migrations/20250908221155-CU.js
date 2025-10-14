@@ -1,5 +1,7 @@
-import { QueryInterface, DataTypes, Op } from "sequelize"
-import { v4 as uuidv4 } from "uuid"
+"use strict"
+
+const { DataTypes, Op } = require("sequelize");
+const { v4: uuidv4 } = require("uuid");
 
 const MATERIAsDS = [
   { id: uuidv4(), nombre: "Comunicación", carga_horaria: 48, tipo_uc: "TALLER" },
@@ -93,7 +95,7 @@ const MATERIAsAF = [
   { id: uuidv4(), nombre: "Desarrollo de Sistemas Web", carga_horaria: 160, tipo_uc: "TALLER" },
   { id: uuidv4(), nombre: "Práctica Profesionalizante 2", carga_horaria: 192, tipo_uc: "PRACTICA PROFESIONALIZANTE" },
 ]
-export default {
+module.exports = {
   up: async (queryInterface) => {
     await queryInterface.createTable("unidades_curriculares", {
       id: { type: DataTypes.STRING, primaryKey: true },
