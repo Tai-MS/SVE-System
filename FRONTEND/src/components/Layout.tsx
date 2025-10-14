@@ -68,13 +68,17 @@ const Layout = ({ children, User, Logout }) => {
       { name: "Eliminar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
     ],
     [`/UC/detalles/${id}`] : [
-      { name: "Ver materia", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
-      { name: "Ver trabajos", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+      { name: "Ver Materia", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+      { name: "Ver Trabajos", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
     ]
   };
 
-  const currentBasePath = `/${location.pathname.split("/")[1]}`;
-  const links = routeLinks[currentBasePath] || [];
+let currentBasePath = `/${location.pathname.split("/")[1]}`;
+if (location.pathname.startsWith("/UC/detalles/")) {
+  currentBasePath = `/UC/detalles/${id}`;
+}
+const links = routeLinks[currentBasePath] || [];
+
 
   // useEffect(() => {
   //   const checkMobile = () => {
