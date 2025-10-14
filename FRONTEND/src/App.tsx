@@ -11,6 +11,8 @@ import UnidadCurricular from "./components/UnidadCurricular";
 import Layout from "./components/Layout";
 import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
+import MisComunicados from "./pages/Comunicados/MisComunicados";
+import ActualizarComunicado from "./pages/Comunicados/ActualizarComunicado";
 import UCdetalle from "./pages/UC/UCdetalle";
 import Materiales from "./pages/UC/Materiales";
 
@@ -20,11 +22,7 @@ function App() {
   return (
     <Router>
       <Routes>
-
-        <Route 
-          path="/login" 
-          element={<Login login={login} />}  
-          />
+        <Route path="/login" element={<Login login={login} />} />
 
         <Route
           path="/*"
@@ -34,8 +32,16 @@ function App() {
                 <Routes>
                   <Route path="/comunicados" element={<Comunicados />} />
                   <Route
+                    path="/comunicados/misComunicados/:idUser"
+                    element={<MisComunicados />}
+                  />
+                  <Route
                     path="/comunicados/crear"
                     element={<CrearComunicado />}
+                  />
+                  <Route
+                    path="/comunicados/actualizar/:id_comunicado"
+                    element={<ActualizarComunicado />}
                   />
                   <Route path="/carreras" element={<Carreras />} />
                   <Route path="/usuarios" element={<Alumnos />} />

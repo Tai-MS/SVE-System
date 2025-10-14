@@ -55,12 +55,17 @@ const Layout = ({ children, User, Logout }) => {
         path: `/comunicados?idUser=${usuario?.id}&type=comision`,
         rol: ["ESTUDIANTE", "ADMINISTRADOR"],
       },
+      {
+        name: "Ver mis comunicados",
+        path: `/comunicados/misComunicados/${usuario?.id}`,
+        rol: ["BEDELIA", "ADMINISTRADOR", "DIRECTIVO", "PROFESOR"],
+      },
     ],
     "/carreras": [
       { name: "Ver carreras", path: "/carreras", rol: ["ADMINISTRADOR"] },
     ],
     "/usuarios": [
-      { name: "Ver usuarios", path: "/usuarios", rol: ["ADMINISTRADOR"] },
+      { name: "Ver usuarios", path: "/usuarios", rol: ["ADMINISTRADOR", "BEDELIA", "DIRECTIVO"] },
     ],
     "/UC": [
       { name: "Ver UCs", path: "/UC", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
@@ -106,7 +111,7 @@ const links = routeLinks[currentBasePath] || [];
         <Header user={User} onLogout={Logout} />
         <div className="flex flex-grow mt-16">
           <Sidebar links={links} />
-          <main className="flex-grow p-10 ml-80">{children}</main>
+          <main className="flex-grow p-10 ml-60">{children}</main>
         </div>
         <Footer />
       </div>

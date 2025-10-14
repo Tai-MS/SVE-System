@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid"
+const { v4: uuidv4 } = require("uuid")
 
 // IDs de comisiones (3 por división)
 const COMISIONES = {
@@ -255,74 +255,76 @@ const COMUNICADOS_POR_COMISION = [
   },
 ]
 
-export async function up(queryInterface, Sequelize) {
-  await queryInterface.createTable("comunicados", {
-    id: {
-      type: Sequelize.UUID,
-      primaryKey: true,
-      defaultValue: Sequelize.UUIDV4,
-    },
-    id_usuario: {
-      type: Sequelize.UUID,
-      allowNull: false,
-      references: { model: "usuarios", key: "id" },
-      onDelete: "CASCADE",
-      onUpdate: "CASCADE",
-    },
-    titulo: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    descripcion: {
-      type: Sequelize.TEXT,
-      allowNull: false,
-    },
-    eliminado: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    general: {
-      type: Sequelize.BOOLEAN,
-      allowNull: true,
-      defaultValue: false,
-    },
-    division: {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-      defaultValue: null,
-    },
-    id_comision: {
-      type: Sequelize.UUID,
-      allowNull: true,
-      defaultValue: null,
-    },
-    creado: {
-      type: Sequelize.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.NOW,
-    },
-    actualizado: {
-      type: Sequelize.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.NOW,
-    },
-  })
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("comunicados", {
+      id: {
+        type: Sequelize.UUID,
+        primaryKey: true,
+        defaultValue: Sequelize.UUIDV4,
+      },
+      id_usuario: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: { model: "usuarios", key: "id" },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      },
+      titulo: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      descripcion: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
+      eliminado: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      general: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+      },
+      division: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+      },
+      id_comision: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        defaultValue: null,
+      },
+      creado: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
+      actualizado: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
+    })
 
-  await queryInterface.bulkInsert("comunicados", COMUNICADOS_GENERALES)
-  await queryInterface.bulkInsert("comunicados", COMUNICADOS_POR_DIVISION)
-  await queryInterface.bulkInsert("comunicados", COMUNICADOS_POR_COMISION)
-}
-export async function down(queryInterface, Sequelize) {
-  const idsGenerales = COMUNICADOS_GENERALES.map((c) => c.id)
-  const idsDivision = COMUNICADOS_POR_DIVISION.map((c) => c.id)
-  const idsComision = COMUNICADOS_POR_COMISION.map((c) => c.id)
+    await queryInterface.bulkInsert("comunicados", COMUNICADOS_GENERALES)
+    await queryInterface.bulkInsert("comunicados", COMUNICADOS_POR_DIVISION)
+    await queryInterface.bulkInsert("comunicados", COMUNICADOS_POR_COMISION)
+  },
+  async down(queryInterface, Sequelize) {
+    const idsGenerales = COMUNICADOS_GENERALES.map((c) => c.id)
+    const idsDivision = COMUNICADOS_POR_DIVISION.map((c) => c.id)
+    const idsComision = COMUNICADOS_POR_COMISION.map((c) => c.id)
 
-  await queryInterface.bulkDelete("comunicados", {
-    id: {
-      [Sequelize.Op.in]: [...idsGenerales, ...idsDivision, ...idsComision],
-    },
-  })
+    await queryInterface.bulkDelete("comunicados", {
+      id: {
+        [Sequelize.Op.in]: [...idsGenerales, ...idsDivision, ...idsComision],
+      },
+    })
 
-  await queryInterface.dropTable("comunicados")
+    await queryInterface.dropTable("comunicados")
+  },
 }
