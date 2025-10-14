@@ -132,7 +132,7 @@ export default function Materiales() {
       <div className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-6xl px-8 py-6">
           <button
-            onClick={() => navigate(`/classroom/${id}`)}
+            onClick={() => navigate(`UC/detalles/${id}/`)}
             className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
