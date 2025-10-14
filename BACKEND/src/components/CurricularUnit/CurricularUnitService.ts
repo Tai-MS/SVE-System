@@ -74,14 +74,12 @@ async function traerUnaUC(datos: any): Promise<UnidadCurricular | string | null>
 
   const usuario = await Usuario.findByPk(datos_token.id)
 
-  if(!usuario){
+  if (!usuario) {
     return "Error token"
   }
 
-
-
   const uc = await UnidadCurricular.findOne({
-    where: {id},
+    where: { id },
     attributes: ["id", "nombre"],
     include: [
       {
@@ -106,7 +104,6 @@ async function traerUnaUC(datos: any): Promise<UnidadCurricular | string | null>
   if (!uc) return "UC no encontrada"
   return uc
 }
-
 
 async function crearUc(
   datos: InferCreationAttributes<UnidadCurricular>,

@@ -7,6 +7,7 @@ interface HeaderProps {
 }
 
 export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
+  const rol = localStorage.getItem("rol");
   return (
     <header className="fixed top-0 left-0 w-full bg-white shadow-md px-6 py-4 z-50 ">
       <div className="flex justify-between items-center px-10">
@@ -33,7 +34,9 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
           >
             Comunicados
           </NavLink>
-          {localStorage.getItem("rol") === "ADMINISTRADOR" && (
+          {(rol === "ADMINISTRADOR" ||
+            rol === "BEDELIA" ||
+            rol === "DIRECTIVO") && (
             <NavLink
               to="/usuarios"
               className="hover:text-blue-400 cursor-pointer"
@@ -41,10 +44,7 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
               Usuarios
             </NavLink>
           )}
-          <NavLink
-            to="/UC"
-            className="hover:text-blue-400 cursor-pointer"
-          >
+          <NavLink to="/UC" className="hover:text-blue-400 cursor-pointer">
             Carreras
           </NavLink>
           {user && onLogout && (
