@@ -85,3 +85,5 @@ npm run dev
 # Fin
 Si estos pasos se siguieron correctamente, el sistema ya se puede probar de forma **local** ya sea en POSTMAN o en un navegador.
 
+# Extra
+Link a la documentación: [https://drive.google.com/drive/folders/1kg6Qb5iE8SqVrg6TYunZQGKpX46HyzNJ?usp=sharing](https://drive.google.com/drive/folders/11K31KfrpFAeDKkqNg7UQQ60wxvIAk8lB?usp=sharing)
