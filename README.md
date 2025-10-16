@@ -1,12 +1,12 @@
-# Guía de uso e instalación para SVS
+# Guía de uso e instalación para SVE
 
 ## Descargar repositorio
 ```
-git clone https://github.com/Tai-MS/SVS-System.git
+git clone https://github.com/Tai-MS/SVE-System.git
 ```
 
 ## Instalación BACKEND
-Una vez clonado el repositorio debe entrar a la carpeta `SVS-System`
+Una vez clonado el repositorio debe entrar a la carpeta `SVE-System`
 
 El siguiente paso es entrar a la carpeta `BACKEND` e instalar las dependencias.
 
@@ -60,7 +60,7 @@ http://localhost:{PORT}/public/iniciarSesion
 
 # 
 ## Instalación FRONTEND
-Una vez clonado el repositorio debe entrar a la carpeta `SVS-System`
+Una vez clonado el repositorio debe entrar a la carpeta `SVE-System`
 
 El siguiente paso es entrar a la carpeta `FRONTEND` e instalar las dependencias.
 
