@@ -20,7 +20,7 @@ const Sidebar = ({ links }) => {
   return (
     <>
       <div className="fixed mt-8 h-full w-60 bg-white shadow-md pt-10 transition-all duration-500 z-40 shadow-gray-400">
-        <nav className="flex flex-col space-y-10 justify-center items-center">
+        <nav className="flex flex-col space-y-10 p-6">
           {links != undefined &&
             links.map((link: Link, index: number) => {
               if (link.rol.includes(usuarioRol as string)) {

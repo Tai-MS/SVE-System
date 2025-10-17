@@ -78,31 +78,61 @@ function UC(): JSX.Element {
 
           {!loading && !error && (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {materias != undefined &&
-                materias.map((materia) => (
-                  <div
-                    key={materia.id}
-                    onClick={() =>
-                      navigate(`/UC/detalles/${materia.id}`, {
-                        state: { id: materia.id, nombre: materia.nombre },
-                      })
-                    }
-                    className="cursor-pointer"
-                  >
-                    <Card
+              {localStorage.getItem("rol") != "ADMINISTRADOR" ? (<>
+                {materias.UnidadCurriculars != undefined &&
+                  materias.UnidadCurriculars.map((materia) => (
+                    <div
                       key={materia.id}
-                      nombre={materia.nombre}
-                      codigoMateria={materia.id}
-                      instructor={
-                        materia.comisionesUC[0].profesor.nombre +
-                        " " +
-                        materia.comisionesUC[0].profesor.apellido
+                      onClick={() =>
+                        navigate(`/UC/detalles/${materia.id}`, {
+                          state: { id: materia.id, nombre: materia.nombre },
+                        })
                       }
-                      studentsCount={materia.studentsCount}
-                      description={materia.description}
-                    />
-                  </div>
-                ))}
+                      className="cursor-pointer"
+                    >
+                      <Card
+                        key={materia.id}
+                        nombre={materia.nombre}
+                        codigoMateria={materia.id}
+                        instructor={
+                          materia.comisionesUC[0].profesor.nombre +
+                          " " +
+                          materia.comisionesUC[0].profesor.apellido
+                        }
+                        studentsCount={materia.studentsCount}
+                        description={materia.description}
+                      />
+                    </div>
+                  ))}
+              </>):(
+                <>
+                {materias != undefined &&
+                  materias.map((materia) => (
+                    <div
+                      key={materia.id}
+                      onClick={() =>
+                        navigate(`/UC/detalles/${materia.id}`, {
+                          state: { id: materia.id, nombre: materia.nombre },
+                        })
+                      }
+                      className="cursor-pointer"
+                    >
+                      <Card
+                        key={materia.id}
+                        nombre={materia.nombre}
+                        codigoMateria={materia.id}
+                        instructor={
+                          materia.comisionesUC[0].profesor.nombre +
+                          " " +
+                          materia.comisionesUC[0].profesor.apellido
+                        }
+                        studentsCount={materia.studentsCount}
+                        description={materia.description}
+                      />
+                    </div>
+                  ))}
+                </>
+              )} 
             </div>
           )}
 

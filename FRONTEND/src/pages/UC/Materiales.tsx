@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, BookOpen, FileText, Video, LinkIcon, File, Download } from "lucide-react";
+import { ArrowLeft, BookOpen, FileText, LinkIcon, File } from "lucide-react";
 
 type Material = {
   id: string;
-  title: string;
-  description?: string;
-  type: "libro" | "pdf" | "video" | "enlace" | "documento";
+  titulo: string;
+  descripcion?: string;
+  tipo_material: "TP" | "TAREA" | "MATERIAL";
   url?: string;
   author?: string;
   publishDate?: string;
@@ -46,6 +46,7 @@ export default function Materiales() {
 
         const data = await response.json();
         setMateriales (data.materiales || data);
+        console.log(data);
         setClassroomTitle(data.classroomTitle || materiaNombre || "Unidad Curricular");
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error desconocido");
@@ -57,45 +58,39 @@ export default function Materiales() {
     fetchMateriales();
   }, [id, materiaNombre]);
 
-  const getIcon = (type: Material["type"]) => {
-    switch (type) {
-      case "libro":
+  const getIcon = (tipo_material: Material["tipo_material"]) => {
+    switch (tipo_material) {
+      case "TP":
         return <BookOpen className="h-6 w-6" />
-      case "pdf":
+      case "MATERIAL":
         return <FileText className="h-6 w-6" />
-      case "video":
-        return <Video className="h-6 w-6" />
-      case "enlace":
+      case "TAREA":
         return <LinkIcon className="h-6 w-6" />
       default:
         return <File className="h-6 w-6" />
     }
   }
 
-  const getTypeColor = (type: Material["type"]) => {
-    switch (type) {
-      case "libro":
+  const gettipo_materialColor = (tipo_material: Material["tipo_material"]) => {
+    switch (tipo_material) {
+      case "TP":
         return "bg-blue-100 text-blue-700"
-      case "pdf":
+      case "MATERIAL":
         return "bg-red-100 text-red-700"
-      case "video":
-        return "bg-purple-100 text-purple-700"
-      case "enlace":
+      case "TAREA":
         return "bg-green-100 text-green-700"
       default:
         return "bg-gray-100 text-gray-700"
     }
   }
 
-  const getTypeLabel = (type: Material["type"]) => {
+  const gettipo_materialLabel = (tipo_material: Material["tipo_material"]) => {
     const labels = {
-      libro: "Libro",
-      pdf: "PDF",
-      video: "Video",
-      enlace: "Enlace",
-      documento: "Documento",
+      TP: "TP",
+      MATERIAL: "MATERIAL",
+      TAREA: "TAREA",
     }
-    return labels[type]
+    return labels[tipo_material]
   }
 
   if (loading) {
@@ -111,7 +106,7 @@ export default function Materiales() {
       <div className="min-h-screen bg-gray-50 p-8">
         <div className="mx-auto max-w-6xl">
           <button
-            onClick={() => navigate(`UC/detalles/${id}/materiales`)}
+            onClick={() => navigate(`/UC/detalles/${id}/materiales`)}
             className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -132,7 +127,7 @@ export default function Materiales() {
       <div className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-6xl px-8 py-6">
           <button
-            onClick={() => navigate(`UC/detalles/${id}/`)}
+            onClick={() => navigate(`/UC/detalles/${id}`)}
             className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -167,20 +162,20 @@ export default function Materiales() {
               >
                 {/* Thumbnail o icono */}
                 <div className="mb-4 flex items-center justify-between">
-                  <div className={`rounded-lg p-3 ${getTypeColor(material.type)}`}>{getIcon(material.type)}</div>
-                  <span className={`rounded-full px-3 py-1 text-xs font-medium ${getTypeColor(material.type)}`}>
-                    {getTypeLabel(material.type)}
+                  <div className={`rounded-lg p-3 ${gettipo_materialColor(material.tipo_material)}`}>{getIcon(material.tipo_material)}</div>
+                  <span className={`rounded-full px-3 py-1 text-xs font-medium ${gettipo_materialColor(material.tipo_material)}`}>
+                    {gettipo_materialLabel(material.tipo_material)}
                   </span>
                 </div>
 
                 {/* Título y descripción */}
                 <h3 className="text-balance text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                  {material.title}
+                  {material.titulo}
                 </h3>
 
-                {material.description && (
+                {material.descripcion && (
                   <p className="mt-2 text-pretty text-sm leading-relaxed text-gray-600 line-clamp-2">
-                    {material.description}
+                    {material.descripcion}
                   </p>
                 )}
 
@@ -204,7 +199,7 @@ export default function Materiales() {
                 </div>
 
                 {/* Botón de acción */}
-                {material.url && (
+                {/* {material.url && (
                   <a
                     href={material.url}
                     target="_blank"
@@ -212,9 +207,9 @@ export default function Materiales() {
                     className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                   >
                     <Download className="h-4 w-4" />
-                    {material.type === "enlace" ? "Abrir enlace" : "Descargar"}
+                    {material.tipo_material === "enlace" ? "Abrir enlace" : "Descargar"}
                   </a>
-                )}
+                )} */}
               </div>
             ))}
           </div>

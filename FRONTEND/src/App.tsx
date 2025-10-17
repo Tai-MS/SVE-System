@@ -66,7 +66,6 @@ function App() {
                     path="/UC/detalles/:id/materiales"
                     element={<Materiales />} 
                   />
-
                 </Routes>
               </Layout>
             </ProtectedRoute>

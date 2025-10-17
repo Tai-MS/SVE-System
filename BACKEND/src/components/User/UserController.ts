@@ -117,6 +117,7 @@ async function crearUsuario(req: Request, res: Response, next: NextFunction): Pr
     }
     return res.status(200).send(crear)
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       error: "Internal server error",
       message: getErrorMessage(error),
@@ -214,7 +215,7 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
       }
       UserService.actualizarUsuario(datos, true)
       return res
-        .cookie("auth-token", token, {
+        .cookie("token", token, {
           maxAge: 360 * 100 * 24,
         })
         .status(200)
