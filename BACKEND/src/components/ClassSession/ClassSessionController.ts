@@ -14,7 +14,12 @@ export class ClassSessionControllers {
         const resp = await ClassSession.traerClase(id)
         return res.status(resp.status).json(resp.respuesta)
     }
+    todas = async (req: Request, res: Response) => {
+        console.log(req.params.uc);
 
+        const respuesta = await ClassSession.todas(req.params.uc)
+        return res.status(respuesta.status).json(respuesta.respuesta)
+    }
     crearClase = async (req: Request, res: Response) => {
         const verificacion = await ClassSessionSchema.safeParseAsync(req.body)
         console.log(verificacion);
@@ -34,17 +39,6 @@ export class ClassSessionControllers {
         }
         const respuesta = await ClassSession.modificarClase(req.body)
         
-        return res.status(respuesta.status).json(respuesta.respuesta)
-    }
-
-    todas = async (req: Request, res: Response) => {
-        // const verificacion = await ClassSessionSchema.partial().safeParseAsync(req.body)
-        // if (!verificacion.success) {
-        //     return res.status(400).json({ respuesta: "Los datos ingresados para crear una clase son incorrectos" })
-        // }
-        console.log(req.params.uc);
-        
-        const respuesta = await ClassSession.todas(req.params.uc)
         return res.status(respuesta.status).json(respuesta.respuesta)
     }
 }

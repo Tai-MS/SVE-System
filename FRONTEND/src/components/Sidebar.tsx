@@ -19,7 +19,7 @@ const Sidebar = ({ links }) => {
 
   return (
     <>
-      <div className="fixed mt-8 h-full bg-white shadow-md p-10 transition-all duration-500 z-40 shadow-gray-400">
+      <div className="fixed min-w-72 mt-8 h-full bg-white shadow-md py-10 px-6 transition-all duration-500 z-40 shadow-gray-400">
         <nav className="space-y-10">
           {links != undefined &&
             links.map((link: Link, index: number) => {

@@ -107,6 +107,7 @@ async function traerUnaUC(datos: any): Promise<UnidadCurricular | string | null>
   return uc
 }
 
+
 async function crearUc(
   datos: InferCreationAttributes<UnidadCurricular>,
   datos_com_uc: any
@@ -164,7 +165,7 @@ async function modificarUc(
     where: { id: datos.id },
   })
 
-  return await traerUnaUC({ id: datos.id })
+  return await traerUnaUC(datos.id)
 }
 
 async function eliminarUc(id: string): Promise<UnidadCurricular | string | null> {

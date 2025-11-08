@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import UC from "./pages/UC/UC";
 import Carreras from "./components/Carreras";
 import Alumnos from "./components/Alumnos";
 import Comisiones from "./components/Comisiones";
@@ -10,7 +11,7 @@ import UnidadCurricular from "./components/UnidadCurricular";
 import Layout from "./components/Layout";
 import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
-import Home from "./pages/Home/Home";
+import UCdetalle from "./pages/UC/UCdetalle";
 
 function App() {
   const { user, logout, login } = useAuth();
@@ -18,7 +19,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login login={login} />} />
+
+        <Route 
+          path="/login" 
+          element={<Login login={login} />}  
+          />
 
         <Route
           path="/*"
@@ -26,7 +31,6 @@ function App() {
             <ProtectedRoute>
               <Layout User={user} Logout={logout}>
                 <Routes>
-                  <Route path="/" element={<Home />} />
                   <Route path="/comunicados" element={<Comunicados />} />
                   <Route
                     path="/comunicados/crear"
@@ -42,6 +46,14 @@ function App() {
                   <Route
                     path="/unidadcurricular/:materiaId/:materiaNombre/:materiaProfe"
                     element={<UnidadCurricular />}
+                  />
+                  <Route 
+                    path="/UC" 
+                    element={<UC />}
+                  />
+                  <Route 
+                    path="UC/detalles/:id" 
+                    element={<UCdetalle />}
                   />
                 </Routes>
               </Layout>

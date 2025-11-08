@@ -77,7 +77,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
     const token = await generarToken(iniciar_sesion)
     console.log(token)
     const dato = await datosDelToken(token)
-
+  
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],
       token: token,
