@@ -1,39 +1,31 @@
 export async function up(queryInterface, Sequelize) {
   const carreras = [
     {
-      id: "AF",
-      nombre: "Analista Funcional de Sistemas",
+      id: "DS",
+      nombre: "Desarrollo de Software",
       duracion_meses: 36,
       activo: true,
     },
     {
-      id: "DS",
-      nombre: "Desarrollador de Software",
+      id: "AF",
+      nombre: "Análisis funcional",
       duracion_meses: 36,
       activo: true,
     },
     {
       id: "ITI",
-      nombre: "Infraestructura de Tecnologías de la Información",
+      nombre: "Infraestructura en Tecnología de la información",
       duracion_meses: 36,
       activo: true,
     },
-  ]
+  ];
 
-  // Insertar carreras
-  return queryInterface.bulkInsert(
-    "carreras",
-    carreras.map((c) => ({
-      ...c,
-      activo: new Date(),
-    })),
-    {
-      updateOnDuplicate: ["nombre", "duracion_meses", "activo"],
-    }
-  )
+  return queryInterface.bulkInsert("carreras", carreras, {
+    updateOnDuplicate: ["nombre", "duracion_meses", "activo"],
+  });
 }
 
 export async function down(queryInterface, Sequelize) {
-  // Eliminar solo las carreras insertadas
-  return queryInterface.bulkDelete("carreras", { id: ["AF", "DS", "ITI"] }, {})
+  const ids = ["DS", "AF", "ITI"];
+  return queryInterface.bulkDelete("carreras", { id: ids });
 }
