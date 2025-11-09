@@ -179,8 +179,22 @@ Comunicado.init(
 
 Asistencia.init(
   {
-    clase_id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true },
-    alumno_id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true },
+    clase_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
+      references: {
+        model: "clases",
+        key: "id",
+      },
+      primaryKey: true,
+    },
+    alumno_id: {
+      type: DataTypes.UUID,
+      references: {
+        model: "usuario",
+        key: "id",
+      },
+      primaryKey: true,
+    },
     presente: { type: DataTypes.BOOLEAN, allowNull: false },
   },
   { sequelize, tableName: "asistencias" }
@@ -200,7 +214,7 @@ ComisionUC.init(
     id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true, autoIncrement: true },
     uc_id: { type: DataTypes.STRING, allowNull: false },
     comision_id: { type: DataTypes.BIGINT, allowNull: false },
-    link_meet: { type: DataTypes.STRING, allowNull: true },
+    link_meet: { type: DataTypes.STRING, allowNull: true }
   },
   {
     sequelize,
