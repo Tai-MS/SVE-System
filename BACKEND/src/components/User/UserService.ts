@@ -117,6 +117,7 @@ async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
 }
 
 async function incluirEnUC(datos: any): Promise<Usuario | string> {
+  
   if (typeof datos.token !== "string" || typeof datos.dni !== "string") {
     return "Campos incompatibles"
   }
@@ -132,14 +133,14 @@ async function incluirEnUC(datos: any): Promise<Usuario | string> {
   if (!usuario) {
     return "Alumno no encontrado"
   }
-
+  
   const lista_UC = datos.unidad_curricular_id_fk
   const uc_no_encontrada = []
   for (let i = 0; i < lista_UC.length; i++) {
     const uc = await UnidadCurricular.findByPk(lista_UC[i])
     const com = datos.comision_id
     const comision = await Comision.encontrarPorNro(com.toString())
-
+    
     if (uc && usuario.carrera_id_fk === uc?.carrera_id_fk) {
       await UsuarioUnidadCurricular.create({
         usuario_id: usuario.id,
@@ -164,19 +165,11 @@ async function actualizarUsuario(
   const actualizarCampos: Partial<InferCreationAttributes<Usuario>> = {}
 
   if (guardarToken) {
-    if (process.env.ENV === "dev") {
-      actualizarCampos.token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRjZmEyYzMyLWMxM2QtNGNmMi1hY2I1LTAxYmQ4YjU2ODBiMSIsImRuaSI6IjQ0MDYyODI4Iiwibm9tYnJlIjoiQ0FSTEEgVkVSw5NOSUNBIiwiYXBlbGxpZG8iOiJGRVJOw4FOREVaIiwicm9sIjoiQURNSU5JU1RSQURPUiIsImlhdCI6MTc1OTM1MTIzNSwiZXhwIjoxNzU5NDM3NjM1fQ.hZHbAZQgtuTs5pQACFiOu20YMDTf08DUkInoe6Nth5s"
-      await Usuario.update(actualizarCampos, {
-        where: { dni: datos.dni },
-      })
-    } else {
       actualizarCampos.token = datos.token
-
       await Usuario.update(actualizarCampos, {
         where: { dni: datos.dni },
       })
-    }
+    
     return "token guardado"
   }
 

@@ -177,13 +177,13 @@ export default function Usuarios() {
                   formData.append("file", file);
 
                   try {
-                    const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/public/importarAlumnos", {
+                    const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/importarAlumnos", {
                       method: "POST",
                       body: formData,
                     });
 
                     const text = await res.text();
-                    console.log("POST /usuarios/public/importarAlumnos status:", res.status, "body:", text);
+                    console.log("POST /usuarios/importarAlumnos status:", res.status, "body:", text);
 
                     if (res.ok) {
                       alert("Usuarios importados correctamente ✅");

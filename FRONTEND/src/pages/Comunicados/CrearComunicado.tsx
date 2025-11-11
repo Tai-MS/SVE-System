@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { Comunicado } from "../../types/ComunicadoTypes";
 import type { Usuario } from "../../types/UsuarioTypes";
 import type { Comision, Division, Carrera } from "../../types/ComisionesTypes";
+import { apiFetch } from "../../hooks/validarToken";
 
 const CrearComunicado: React.FC = () => {
   const [comunicado, setComunicado] = useState<Comunicado>({
@@ -22,20 +23,17 @@ const CrearComunicado: React.FC = () => {
 
   const id_usuario = localStorage.getItem("userId");
   const rol_usuario = localStorage.getItem("rol");
-
+  const token2 = localStorage.getItem("token");
+  console.log(token2);
+  
   useEffect(() => {
     const fetchFunction = async () => {
-      const fetchDataUsuario = await fetch(
-        `${
-          import.meta.env.VITE_BACKURL
-        }/usuarios/obtenerUsuario?id=${id_usuario}`
-      );
-      const jsonDataUsuario = await fetchDataUsuario.json();
-      setUsuario(jsonDataUsuario);
-
-      const fetchDataComisiones = await fetch(
-        `${import.meta.env.VITE_BACKURL}/comision/traerTodas`
-      );
+      const url = import.meta.env.VITE_BACKURL
+        const fetchDataUsuario = await apiFetch(url + `/usuarios/obtenerUsuario?id=${id_usuario}`)
+        
+        const jsonDataUsuario = await fetchDataUsuario.json();
+        setUsuario(jsonDataUsuario);
+      const fetchDataComisiones = await apiFetch(url + `/comision/traerTodas`)
       const jsonDataComisiones = await fetchDataComisiones.json();
       setComisiones(jsonDataComisiones);
       setUsuario(jsonDataComisiones);
@@ -92,15 +90,13 @@ const CrearComunicado: React.FC = () => {
     });
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKURL}/comunicados/crear`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
 
-      const dataJson = await res.json();
+      const url = `${import.meta.env.VITE_BACKURL}/comunicados/crear`;
+      console.log(localStorage.getItem("token"));
+      
+      const res = await apiFetch(url, formData) 
+
+      const dataJson = await res;
       console.log("Respuesta backend:", dataJson);
       navigate("/comunicados");
     } catch (err) {

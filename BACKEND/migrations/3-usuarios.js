@@ -2,7 +2,7 @@ export async function up(queryInterface, Sequelize) {
   const usuarios = [
     {
       id: "estudiante",
-      dni: "11111111",
+      dni: "estudiante",
       nombre: "ESTUDIANTE",
       apellido: "ESTUDIANTE",
       anioIngreso: 2025,
@@ -12,7 +12,7 @@ export async function up(queryInterface, Sequelize) {
     },
     {
       id: "profesor",
-      dni: "22222222",
+      dni: "profesor",
       nombre: "PROFESOR",
       apellido: "PROFESOR",
       anioIngreso: 2025,
@@ -22,7 +22,7 @@ export async function up(queryInterface, Sequelize) {
     },
     {
       id: "bedelia",
-      dni: "33333333",
+      dni: "bedelia",
       nombre: "BEDELIA",
       apellido: "BEDELIA",
       anioIngreso: 2025,
@@ -32,7 +32,7 @@ export async function up(queryInterface, Sequelize) {
     },
     {
       id: "directivo",
-      dni: "44444444",
+      dni: "directivo",
       nombre: "DIRECTIVO",
       apellido: "DIRECTIVO",
       anioIngreso: 2025,
@@ -42,7 +42,7 @@ export async function up(queryInterface, Sequelize) {
     },
     {
       id: "admin",
-      dni: "55555555",
+      dni: "admin",
       nombre: "ADMIN",
       apellido: "ADMIN",
       anioIngreso: 2025,

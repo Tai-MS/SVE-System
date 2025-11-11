@@ -299,7 +299,7 @@ Usuario.init(
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     creado: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     ultima_conexion: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
-    token: { type: DataTypes.STRING, allowNull: true },
+    token: { type: DataTypes.TEXT, allowNull: true },
     carrera_id_fk: { type: DataTypes.STRING, allowNull: true },
   },
   {

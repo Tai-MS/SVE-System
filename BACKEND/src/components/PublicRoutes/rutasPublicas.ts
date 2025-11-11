@@ -2,7 +2,6 @@ import express, { NextFunction, Request, Response } from "express"
 import userController from "../User/UserController"
 import passport from "#config/passport"
 import multer from "multer"
-import { verificarToken } from "#middlewares/auth"
 
 const router = express.Router()
 const upload = multer({ dest: "uploads/" })
@@ -29,8 +28,5 @@ router.post("/iniciarSesion", async (req: Request, res: Response, next: NextFunc
   await userController.inciarSesion(req, res, next)
 })
 
-if (process.env.ENV === "dev") {
-  router.post("/importarAlumnos", upload.single("file"), userController.ImportarAlumnos)
-}
 
 export default router

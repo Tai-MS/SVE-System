@@ -2,6 +2,7 @@ import { type JSX } from "react";
 import { Card } from "../../components/Card";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../../hooks/validarToken";
 
 type Profesor = {
   nombre: string;
@@ -30,7 +31,10 @@ function UC(): JSX.Element  {
   useEffect(() => {
     async function fetchMaterias() {
       try {
-        const response = await fetch(import.meta.env.VITE_BACKURL + "/unidadcurricular/todas")
+        const response = await apiFetch(import.meta.env.VITE_BACKURL + `/unidadcurricular/todas`)
+        
+        
+        // const response = await fetch(import.meta.env.VITE_BACKURL + "/unidadcurricular/todas")
         if (!response.ok) {
           throw new Error("Error al cargar las unidades curriculares")
         }
