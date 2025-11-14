@@ -33,19 +33,55 @@ export class ArchivoService {
     }
   }
 
-  elimiarArchivoDrive = async (id: number) => {
+  obtenerArchivos = async(material_id: number) => {
+    try {
+      const archivos = await Archivo.findAll({
+        where: {material_id: material_id}
+      })
+
+      if(archivos.length === 0){
+        return { status: 404, respuesta: "Este material no posee archivos." }
+      }
+
+      return { status: 200, respuesta: archivos }
+
+    } catch (error: any) {
+      return {
+        status: 500,
+        respuesta: error.message || "Ocurrió un error en el servidor al intentar traer los materiales",
+      }
+    }
+  }
+
+  elimiarArchivoDrive = async (lista_ids: Array<number>) => {
     const t = await Archivo.sequelize!.transaction()
     try {
-      const registro_archivo = await Archivo.findByPk(id)
+      const no_encontrados = []
+      for(let id of lista_ids){
+        const archivo = await Archivo.findOne({
+          where: {id: id},
+          transaction: t
+        })
 
-      if (!registro_archivo) {
-        return { status: 404, respuesta: "Archivo no encontrado" }
+        if(!archivo){
+          no_encontrados.push(id)
+        }else{
+          await drive.files.delete({ fileId: archivo.file_id })
+          await archivo.destroy({ transaction: t })
+        }
       }
-      
-      const response = await drive.files.delete({ fileId: registro_archivo.file_id })
 
-      return response
+      if(no_encontrados.length === lista_ids.length){
+        await t.rollback()
+        return { status: 404, respuesta: `No se encontraron los archivos` }
+      }
+      await t.commit()
+      if(no_encontrados.length > 0){
+        return { status: 207, respuesta: `Se eliminaron los archivos, pero no se encontraron: ${no_encontrados}` }
+      }
+      return { status: 200, respuesta: "Archivos eliminados" }
     } catch (error) {
+      await t.rollback() 
       return { status: 500, respuesta: "Ocurrio un error al momento de eliminar el archivo de la base de datos" }
     }
   }
