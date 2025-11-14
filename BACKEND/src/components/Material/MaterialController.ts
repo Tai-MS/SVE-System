@@ -47,7 +47,6 @@ export class MaterialControllers {
         return res.status(respuesta.status).json(respuesta.respuesta)
     }
 
-
     eliminarMaterial = async (req: Request, res: Response) => {
         const lista_ids = Number(req.params.id)
         const respuesta = await Material.eliminarMaterial(lista_ids)
@@ -59,19 +58,5 @@ export class MaterialControllers {
         
         const respuesta = await Material.traerTodosMateriales({com_uc: req.params.com_uc, token: token})
         return res.status(respuesta.status).json(respuesta.respuesta)
-    }
-
-
-    //Méotodos para estudiantes
-    subirTarea = async(req: Request, res: Response) => {
-
-    }
-
-    modificarTarea = async(req: Request, res: Response) => {
-
-    }
-
-    eliminarTarea = async(req: Request, res: Response) => {
-
     }
 }

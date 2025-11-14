@@ -20,6 +20,7 @@ import Archivo from "#components/Archivos/archivosModel"
 import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
 import { Division } from "#components/Division/divisionModel"
 import { AllowNull } from "sequelize-typescript"
+import { Tarea } from "#components/Tareas/TareaModel"
 
 const SequelizeStore = connectSessionSequelize(session.Store)
 export const sessionStore = new SequelizeStore({
@@ -28,6 +29,18 @@ export const sessionStore = new SequelizeStore({
   checkExpirationInterval: 15 * 60 * 1000,
   expiration: 24 * 60 * 60 * 1000,
 })
+
+Tarea.init(
+  {
+    id: {type: DataTypes.BIGINT.UNSIGNED, primaryKey: true, autoIncrement: true},
+    estudiante_id: {type: DataTypes.UUID, allowNull: false},
+    creado: {type: DataTypes.DATE, allowNull: false},
+    material_id: {type: DataTypes.BIGINT.UNSIGNED},
+    modificado: {type: DataTypes.DATE, allowNull: true}
+  },{
+    sequelize
+  }
+)
 
 UnidadCurricular.init(
   {

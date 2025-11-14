@@ -14,6 +14,7 @@ import Comunicado from "#components/Comunicados/comunicadosModel"
 import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
 import { Division } from "#components/Division/divisionModel"
 import Archivo from "#components/Archivos/archivosModel"
+import { Tarea } from "#components/Tareas/TareaModel"
 
 let associationsApplied = false
 
@@ -21,8 +22,13 @@ export function applyAssociations() {
   if (associationsApplied) return
   associationsApplied = true
 
-  Calificacion.belongsTo(Material, { foreignKey: "material_id_fk" })
-  Material.hasMany(Calificacion, { foreignKey: "material_id_fk" })
+  Calificacion.belongsTo(Tarea, { foreignKey: "tarea_id_fk" })
+  Tarea.hasOne(Calificacion, { foreignKey: "tarea_id_fk" })
+
+  Tarea.belongsTo(Material, {foreignKey: "material_id_fk"})
+  Material.hasMany(Tarea, {foreignKey: "material_id_fk"})
+
+
 
   Usuario.belongsToMany(UnidadCurricular, {
     through: UsuarioUnidadCurricular,

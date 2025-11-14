@@ -3,7 +3,7 @@ import Archivo from "#components/Archivos/archivosModel"
 import { ComisionUC } from "#components/ComisionUC/ComisionUCModel"
 import Usuario, { Rol } from "#components/User/UserModel"
 import { datosDelToken } from "#middlewares/auth"
-import { MaterialAttributes, TareaAttributes } from "./MaterialDTO"
+import { MaterialAttributes } from "./MaterialDTO"
 import { Material } from "./MaterialModel"
 
 export class MateriaServices {
@@ -244,46 +244,4 @@ export class MateriaServices {
     }
   }
 
-
-  //Métodos para estudiantes
-  subirTarea = async(datos: MaterialAttributes, file?: any) => {
-    const t = await Material.sequelize!.transaction()
-    try {
-      const rol = datosDelToken(datos.token)
-    } catch (error: any) {
-      await t.rollback()
-      return {
-        status: 500,
-        respuesta: error.message || "Ocurrió un error en el servidor al intentar crear un material.",
-      }
-    }
-  }
-
-  modificarTarea = async(id: number, datos: TareaAttributes, nuevo_archivo?: any, eliminar_archivo_ids?: Array<number>) => {
-    const t = await Material.sequelize!.transaction()
-    try {
-      const rol = datosDelToken(datos.token)
-      
-    } catch (error: any) {
-      await t.rollback()
-      return {
-        status: 500,
-        respuesta: error.message || "Ocurrió un error en el servidor al intentar crear un material.",
-      }
-    }
-  }
-
-  eliminarArchivoTarea = async(datos: TareaAttributes) => {
-    const t = await Material.sequelize!.transaction()
-    try {
-      const rol = datosDelToken(datos.token)
-      
-    } catch (error: any) {
-      await t.rollback()
-      return {
-        status: 500,
-        respuesta: error.message || "Ocurrió un error en el servidor al intentar crear un material.",
-      }
-    }
-  }
 }

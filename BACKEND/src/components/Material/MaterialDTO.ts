@@ -11,9 +11,3 @@ export type MaterialAttributes = {
     token: string
     material_id: string | null 
 }
-
-export type TareaAttributes = {
-    tipo_material: TipoMaterial
-    token: string
-    material_id: number
-}
