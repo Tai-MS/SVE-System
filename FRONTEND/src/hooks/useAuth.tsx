@@ -25,7 +25,7 @@ export function useAuth(): AuthReturn {
   const googleLogin = async () => {
     try {
       const res = await fetch(
-        import.meta.env.VITE_BACKURL + "/usuarios/auth/google/callback",
+        import.meta.env.VITE_BACKURL + "/public/auth/google/callback",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -56,7 +56,7 @@ export function useAuth(): AuthReturn {
   ): Promise<boolean> => {
     try {
       const res = await fetch(
-        import.meta.env.VITE_BACKURL + "/usuarios/public/iniciarsesion",
+        import.meta.env.VITE_BACKURL + "/public/iniciarSesion",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

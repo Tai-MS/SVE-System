@@ -18,6 +18,7 @@ import { ClaseSessionRouter } from "#components/ClassSession/ClassSessionRoutes"
 import { ClassRoomRouter } from "#components/Classroom/ClassRoomRoutes"
 import { MaterialRouter } from "#components/Material/MaterialRoutes"
 import { CalificacionRouter } from "#components/Calification/CalificacionRoutes"
+import AsistenciaRouter from "#components/ClassAttendance/AsistenciaRoutes"
 /**
  * Se encarga de levantar el servidor
  * y crear las funciones necesarias
@@ -46,7 +47,14 @@ export const create_server = async () => {
         saveUninitialized: false,
       })
     )
-    .use("/public", rutasPublicasRouter) //MODIFICAR ENDPOINTS PARA PRODUCCIÓN
+    .use(passport.initialize())
+    .use(passport.session())
+    .use("/public", rutasPublicasRouter)
+    .use((req, res, next) => {
+      console.log("Se ejecuta middleware general para:", req.path)
+      next()
+    })
+    .use(verificarToken)
     .use("/carreras", CarreraRouter)
     .use("/unidadcurricular", UnidadCurricularRouter)
     .use("/comision", ComisionRouter)
@@ -56,8 +64,7 @@ export const create_server = async () => {
     .use("/aula", ClassRoomRouter)
     .use("/material", MaterialRouter)
     .use("/calificacion", CalificacionRouter)
-    .use(passport.initialize())
-    .use(passport.session())
+    .use("/asistencia", AsistenciaRouter)
 
   await sessionStore.sync()
 

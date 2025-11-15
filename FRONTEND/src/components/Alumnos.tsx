@@ -67,7 +67,9 @@ export default function Usuarios() {
 
   const obtenerUsuarios = async () => {
     try {
-      const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/obtenerTodos");
+      const res = await fetch(
+        import.meta.env.VITE_BACKURL + "/usuarios/obtenerTodos"
+      );
       const data = await res.json();
       setUsuarios(data);
     } catch (error) {
@@ -84,28 +86,35 @@ export default function Usuarios() {
             ? form.carrera_id_fk.toUpperCase()
             : null,
         division_id: form.rol === "ESTUDIANTE" ? form.division_id : null,
-        numero_comision: form.rol === "ESTUDIANTE" ? form.numero_comision : null,
+        numero_comision:
+          form.rol === "ESTUDIANTE" ? form.numero_comision : null,
       };
 
       let res: Response;
       if (editing) {
-        res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/actualizar", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "auth-token": localStorage.getItem("token") || "",
-          },
-          body: JSON.stringify({
-            id: editing.id,
-            ...body,
-          }),
-        });
+        res = await fetch(
+          import.meta.env.VITE_BACKURL + "/usuarios/actualizar",
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "auth-token": localStorage.getItem("token") || "",
+            },
+            body: JSON.stringify({
+              id: editing.id,
+              ...body,
+            }),
+          }
+        );
       } else {
-        res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
+        res = await fetch(
+          import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          }
+        );
       }
 
       const text = await res.text();
@@ -167,8 +176,14 @@ export default function Usuarios() {
       >
         <Tab label="Estudiantes" value="ESTUDIANTE" />
         <Tab label="Profesores" value="PROFESOR" />
-        {(localStorage.getItem("rol") === "DIRECTIVO" || localStorage.getItem("rol") === "ADMINISTRADOR") && <Tab label="Bedelía" value="BEDELIA" />}
-        {(localStorage.getItem("rol") === "DIRECTIVO" || localStorage.getItem("rol") === "ADMINISTRADOR") && <Tab label="Directivos" value="DIRECTIVO" />}
+        {(localStorage.getItem("rol") === "DIRECTIVO" ||
+          localStorage.getItem("rol") === "ADMINISTRADOR") && (
+          <Tab label="Bedelía" value="BEDELIA" />
+        )}
+        {(localStorage.getItem("rol") === "DIRECTIVO" ||
+          localStorage.getItem("rol") === "ADMINISTRADOR") && (
+          <Tab label="Directivos" value="DIRECTIVO" />
+        )}
       </Tabs>
 
       {/* 🔹 Filtros y botones */}
@@ -198,13 +213,22 @@ export default function Usuarios() {
                   formData.append("file", file);
 
                   try {
-                    const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/public/importarAlumnos", {
-                      method: "POST",
-                      body: formData,
-                    });
+                    const res = await fetch(
+                      import.meta.env.VITE_BACKURL +
+                        "/usuarios/importarAlumnos",
+                      {
+                        method: "POST",
+                        body: formData,
+                      }
+                    );
 
                     const text = await res.text();
-                    console.log("Importar alumnos:", res.status, text);
+                    console.log(
+                      "POST /usuarios/importarAlumnos status:",
+                      res.status,
+                      "body:",
+                      text
+                    );
 
                     if (res.ok) {
                       alert("Usuarios importados correctamente ✅");
@@ -264,21 +288,43 @@ export default function Usuarios() {
         <Table>
           <TableHead className="bg-purple-200">
             <TableRow>
-              <TableCell><b>Nombre</b></TableCell>
-              <TableCell><b>Apellido</b></TableCell>
-              <TableCell><b>DNI</b></TableCell>
-              <TableCell><b>Teléfono</b></TableCell>
-              <TableCell><b>Email</b></TableCell>
-              <TableCell><b>Año de ingreso</b></TableCell>
-              <TableCell><b>Activo</b></TableCell>
+              <TableCell>
+                <b>Nombre</b>
+              </TableCell>
+              <TableCell>
+                <b>Apellido</b>
+              </TableCell>
+              <TableCell>
+                <b>DNI</b>
+              </TableCell>
+              <TableCell>
+                <b>Teléfono</b>
+              </TableCell>
+              <TableCell>
+                <b>Email</b>
+              </TableCell>
+              <TableCell>
+                <b>Año de ingreso</b>
+              </TableCell>
+              <TableCell>
+                <b>Activo</b>
+              </TableCell>
               {rolActivo === "ESTUDIANTE" && (
                 <>
-                  <TableCell><b>Carrera</b></TableCell>
-                  <TableCell><b>División</b></TableCell>
-                  <TableCell><b>Comisión</b></TableCell>
+                  <TableCell>
+                    <b>Carrera</b>
+                  </TableCell>
+                  <TableCell>
+                    <b>División</b>
+                  </TableCell>
+                  <TableCell>
+                    <b>Comisión</b>
+                  </TableCell>
                 </>
               )}
-              <TableCell><b>Acciones</b></TableCell>
+              <TableCell>
+                <b>Acciones</b>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -293,7 +339,9 @@ export default function Usuarios() {
                 <TableCell>{usuario.activo ? "Sí" : "No"}</TableCell>
                 {rolActivo === "ESTUDIANTE" && (
                   <>
-                    <TableCell>{usuario.carrera_id_fk?.toUpperCase() ?? "-"}</TableCell>
+                    <TableCell>
+                      {usuario.carrera_id_fk?.toUpperCase() ?? "-"}
+                    </TableCell>
                     <TableCell>{usuario.division_id ?? "-"}</TableCell>
                     <TableCell>{usuario.numero_comision ?? "-"}</TableCell>
                   </>
@@ -343,54 +391,83 @@ export default function Usuarios() {
           {editing ? "Editar Usuario" : "Agregar Nuevo Usuario"}
         </DialogTitle>
         <DialogContent className="flex flex-col gap-4 mt-2">
-          <TextField label="Nombre" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
-          <TextField label="Apellido" value={form.apellido} onChange={(e) => setForm({ ...form, apellido: e.target.value })} />
-          <TextField label="DNI" value={form.dni} onChange={(e) => setForm({ ...form, dni: e.target.value })} />
-          <TextField label="Teléfono" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
-          <TextField label="Email" type="email" value={form.email} disabled helperText="El email no puede ser modificado" />
-          <TextField label="Año de ingreso" value={form.anioIngreso} onChange={(e) => setForm({ ...form, anioIngreso: e.target.value })} />
+          <TextField
+            label="Nombre"
+            value={form.nombre}
+            onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+          />
+          <TextField
+            label="Apellido"
+            value={form.apellido}
+            onChange={(e) => setForm({ ...form, apellido: e.target.value })}
+          />
+          <TextField
+            label="DNI"
+            value={form.dni}
+            onChange={(e) => setForm({ ...form, dni: e.target.value })}
+          />
+          <TextField
+            label="Teléfono"
+            value={form.telefono}
+            onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+          />
+          <TextField
+            label="Email"
+            type="email"
+            value={form.email}
+            disabled
+            helperText="El email no puede ser modificado"
+          />
+          <TextField
+            label="Año de ingreso"
+            value={form.anioIngreso}
+            onChange={(e) => setForm({ ...form, anioIngreso: e.target.value })}
+          />
 
           {/* 🔹 Mostrar select de Carrera SOLO si es estudiante */}
           {form.rol === "ESTUDIANTE" && (
             <>
-            <TextField
-              select
-              label="Carrera"
-              value={form.carrera_id_fk}
-              onChange={(e) =>
-                setForm({ ...form, carrera_id_fk: e.target.value.toUpperCase() })
-              }
-            >
-              <MenuItem value="DS">DS</MenuItem>
-              <MenuItem value="ITI">ITI</MenuItem>
-              <MenuItem value="AF">AF</MenuItem>
-            </TextField>
+              <TextField
+                select
+                label="Carrera"
+                value={form.carrera_id_fk}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    carrera_id_fk: e.target.value.toUpperCase(),
+                  })
+                }
+              >
+                <MenuItem value="DS">DS</MenuItem>
+                <MenuItem value="ITI">ITI</MenuItem>
+                <MenuItem value="AF">AF</MenuItem>
+              </TextField>
 
-            <TextField
-              select
-              label="División"
-              value={form.division_id}
-              onChange={(e) =>
-                setForm({ ...form, division_id: e.target.value })
-              }
-            >
-              <MenuItem value="1">1</MenuItem>
-              <MenuItem value="2">2</MenuItem>
-              <MenuItem value="3">3</MenuItem>
-            </TextField>
+              <TextField
+                select
+                label="División"
+                value={form.division_id}
+                onChange={(e) =>
+                  setForm({ ...form, division_id: e.target.value })
+                }
+              >
+                <MenuItem value="1">1</MenuItem>
+                <MenuItem value="2">2</MenuItem>
+                <MenuItem value="3">3</MenuItem>
+              </TextField>
 
-            <TextField
-              select
-              label="Comisión"
-              value={form.numero_comision}
-              onChange={(e) =>
-                setForm({ ...form, numero_comision: e.target.value })
-              }
-            >
-              <MenuItem value="1ro">1ro</MenuItem>
-              <MenuItem value="2da">2da</MenuItem>
-              <MenuItem value="3ra">3ra</MenuItem>
-            </TextField>
+              <TextField
+                select
+                label="Comisión"
+                value={form.numero_comision}
+                onChange={(e) =>
+                  setForm({ ...form, numero_comision: e.target.value })
+                }
+              >
+                <MenuItem value="1ro">1ro</MenuItem>
+                <MenuItem value="2da">2da</MenuItem>
+                <MenuItem value="3ra">3ra</MenuItem>
+              </TextField>
             </>
           )}
 

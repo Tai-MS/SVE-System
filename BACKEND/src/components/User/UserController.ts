@@ -74,8 +74,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
         message: iniciar_sesion,
       })
     }
-    const token = await generarToken(iniciar_sesion)
-    console.log(token)
+    let token = await generarToken(iniciar_sesion)
     const dato = await datosDelToken(token)
   
     const usuarioParaActualizar = {
@@ -83,7 +82,6 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
       token: token,
     }
     await UserService.actualizarUsuario(usuarioParaActualizar, true)
-
     return res
       .cookie("auth-token", token, {
         maxAge: 360 * 100 * 24,
@@ -126,7 +124,8 @@ async function crearUsuario(req: Request, res: Response, next: NextFunction): Pr
 
 async function incluirEnUC(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const token = req.headers["auth-token"] as string | undefined
+      const token = req.headers["auth-token"] as string;
+      
     const datos = {
       dni: req.body.dni,
       token: token,
@@ -138,6 +137,8 @@ async function incluirEnUC(req: Request, res: Response, next: NextFunction): Pro
 
     return res.status(200).send(call)
   } catch (error) {
+    console.log("ERROR:"+error);
+    
     return res.status(500).json({
       error: "Internal server error",
       message: getErrorMessage(error),

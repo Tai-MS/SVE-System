@@ -9,15 +9,17 @@ function Carreras() {
   
   const carrera = async() => {
     try{
+      const token = localStorage.getItem("token");
+      console.log(token);
+      
       const res = await fetch(import.meta.env.VITE_BACKURL + "/carreras/traerTodas", {
         method: "GET",
-        headers: { "Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
       })
 
       const data = await res.json()
-      console.log("++++++++++++++")
-      console.log(data[0])
-      console.log("++++++++++++++")
       return data
     }catch(err){
       console.error("Error al traer CARRERAS: ", err)

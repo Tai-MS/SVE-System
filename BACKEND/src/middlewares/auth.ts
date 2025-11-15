@@ -8,8 +8,6 @@ export async function datosDelToken(token: string) {
   const dni = decodificado.dni
   const rol = decodificado.rol
   const id = decodificado.id
-  console.log(dni)
-  console.log(rol)
   return { dni: dni, rol: rol, id: id }
 }
 
@@ -28,19 +26,18 @@ export async function generarToken(data: Usuario) {
     clave,
     { expiresIn: "1d" }
   )
-
   return token
 }
 
 export async function verificarToken(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies["auth-token"]
+  const token = req.headers["auth-token"] as string;
+  
   if (!token) return res.status(401).send("Accesso denegado")
 
   try {
     const datosToken = await datosDelToken(token)
 
-    const usuario = await UserService.traerUsuario(datosToken.dni)
-
+    const usuario = await UserService.traerUsuario(datosToken.id)
     if (!usuario) {
       throw Error
     }
@@ -48,14 +45,16 @@ export async function verificarToken(req: Request, res: Response, next: NextFunc
     let verificado
 
     if (token && (usuario as Usuario)["token"] === token) {
-      console.log("autorizado")
       verificado = jwt.verify(token, clave)
       req.user = verificado
-      console.log("req", req.user)
       return next()
     }
+    console.log(token);
+    
     throw Error
   } catch (error) {
+    console.log("ERROR:" +error);
+    
     return res.status(400).send("Token no valido")
   }
 }

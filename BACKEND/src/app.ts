@@ -1,6 +1,5 @@
 import { clearDB, connectDB, updateDB } from "#db/connection"
 import { create_server } from "#Utils/createServer"
-import { crearUsuarios } from "#db/usuariosInsert"
 import "dotenv/config"
 
 const PORT = process.env.PORT || 3030

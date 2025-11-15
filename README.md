@@ -1,130 +1,89 @@
-# Convención de ramas y flujo de trabajo en Git
+# Guía de uso e instalación para SVE
 
-Este documento describe una convención clara y práctica para el uso de ramas en Git, orientada a equipos de desarrollo con integrantes de nivel **junior a mid**. También se detalla un flujo de trabajo organizado para el manejo de cambios, commits y Pull Requests.
-
----
-
-## ✨ Convención para nombres de ramas
-
-Usamos la siguiente estructura para nombrar ramas:
-
+## Descargar repositorio
 ```
-[tipo-de-rama]/[componente]-[accion]-[autor]
+git clone https://github.com/Tai-MS/SVE-System.git
 ```
 
-### Ejemplo
+## Instalación BACKEND
+Una vez clonado el repositorio debe entrar a la carpeta `SVE-System`
+
+El siguiente paso es entrar a la carpeta `BACKEND` e instalar las dependencias.
 
 ```
-feature/service-createUser-nico
+cd ./BACKEND
+
+npm install
+```
+Luego deberá crear el archivo `.env` el cual debe contener las siguientes variables (las variables también estan disponibles en el `.env.example`):
+
+```
+PORT=
+DB_USERNAME=
+DB_PASSWORD=
+DB_NAME=
+DB_HOST=
+DB_PORT=
+SECRET_KEY=
+ID_CLIENT_OAUTH=ID CLIENT DE GOOGLE=
+SECRET_CLIENT_OAUTH=SECRET CLIENT DE GOOGLE=
+SALT_HASH=
+EMAIL_PASS=contraseña de aplicacion google
+USER_MAILER=email del dueño de EMAIL_PASS
+ENV= dev
+CLOUD_NAME=
+GOOGLE_REFRESH_TOKEN=
+GOOGLE_REDIRECT_URI=
+ID_CARPETA=
 ```
 
-### Partes del nombre:
+**NOTA: las variables `ID_CLIENT_OAUTH, SECRET_CLIENT_OAUTH, EMAIL_PASS, USER_MAILER, GOOGLE_REFRESH_TOKEN, GOOGLE_REDIRECT_URI y ID_CARPETA` son obtenidas a traves de la consola de desarrollador de Google en la sección APIs y Servicios en el siguiente link: https://console.cloud.google.com/apis/dashboard.**
 
-- `feature`: indica el tipo de rama. Otros posibles valores:
-  - `bugfix`: para corregir errores.
-- `service`: parte del sistema donde se realiza el cambio (puede ser `controller`, `api`, `frontend`, etc.).
-- `createUser`: nombre de la funcionalidad o tarea.
-- `nico`: identificador del desarrollador que creó la rama.
-
-Esta convención permite que todos los miembros del equipo entiendan fácilmente **qué se está haciendo**, **dónde** y **quién lo hace**.
-
----
-
-## 🚀 Flujo de trabajo con ramas y commits
-
-### 1. Partimos desde la rama `developer`
-
-Antes de empezar cualquier funcionalidad nueva:
-
-```bash
-git checkout developer
-git pull origin developer
+Y luego crear la base de datos SQL con `npx sequelize-cli db:create`. Para que se cree correctamente se necesita tener levantado MySQL en XAMPP y que coincidan las siguientes variables del `.env` con la configuración `SQL`:
+```
+PORT
+DB_USERNAME
+DB_PASSWORD
+DB_HOST
+DB_PORT
 ```
 
-### 2. Creamos una nueva rama con la convención
+Con todo esto ya se puede levantar el backend con el comando `npm run dev`
 
-```bash
-git checkout -b feature/service-createUser-nico
+Si se desea se pueden comenzar a realizar pruebas del `backend` desde POSTMAN. Hay que tener en cuenta que para determinadas rutas y acciones se requiere el haber puesto los valores correspondientes en las variables del `.env`.
+
+### Ruta de ejemplo
+
+```
+http://localhost:{PORT}/public/iniciarSesion
 ```
 
-### 3. Trabajamos en la funcionalidad
+# 
+## Instalación FRONTEND
+Una vez clonado el repositorio debe entrar a la carpeta `SVE-System`
 
-Desarrollamos la tarea correspondiente dentro de esta nueva rama.
+El siguiente paso es entrar a la carpeta `FRONTEND` e instalar las dependencias.
 
-### 4. Subimos avances, ya esté completa o no
+```
+cd ./FRONTEND
 
-#### Si no terminamos de trabajar (por ejemplo: se nos hizo tarde)
-
-```bash
-git add .
-git commit -m "feat: service-createUser - inicia creación de funcionalidad"
-git push origin feature/service-createUser-nico
+npm install
 ```
 
-**Importante:** No se debe crear un Pull Request todavía.
+Luego deberá crear el archivo `.env` el cual debe contener las siguientes variables:
 
-#### Si terminamos de trabajar en la funcionalidad
-
-```bash
-git add .
-git commit -m "feat: service-createUser finalizada"
-git push origin feature/service-createUser-nico
 ```
+VITE_BACKURL = http://localhost:{PORT}
+```
+**Nota: `PORT` hace referencia a la variable `PORT` creada en el `.env` del `BACKEND`, por lo tanto deben coincidir.**
 
+Con esto el `FRONTEND` ya es funcional y solo resta levantarlo con:
 
-Otros prefijos comunes incluyen:
-- `fix:` para correcciones de errores.
-- `ref:` para reestructuraciones sin cambiar el comportamiento.
-- `docs:` para cambios en la documentación.
-- `test:` para pruebas.
-- `chore:` para tareas menores o de mantenimiento.
+```
+npm run dev
+```
+# Fin
+Si estos pasos se siguieron correctamente, el sistema ya se puede probar de forma **local** ya sea en POSTMAN o en un navegador.
 
-### 5. Creamos un Pull Request (PR)
-
-Un **Pull Request (PR)** es una solicitud para fusionar nuestra rama con la rama `developer`. Permite revisar el código antes de integrarlo.
-
-- Vamos a GitHub.
-- Elegimos nuestra rama (`feature/service-createUser-nico`).
-- Iniciamos un nuevo PR contra la rama `developer`.
-- Le damos un nombre claro y agregamos una descripción breve.
-- **NO realizamos el merge nosotros mismos.**
-
-> Un compañero debe aprobar y hacer el merge. No vamos a revisar en detalle, pero **seguimos esta práctica para acostumbrarnos a un flujo ordenado y profesional.**
-
----
-
-## 📅 Ejemplo de uso diario
-
-**Escenario:** Hoy trabajaste en la creación de un nuevo servicio para registrar usuarios.
-
-1. `git checkout developer && git pull`
-2. `git checkout -b feature/service-createUser-nico`
-3. Trabajás algunas horas, pero no terminás.
-4. Ejecutás:
-   ```bash
-   git add .
-   git commit -m "feat: service-createUser - lógica inicial de registro"
-   git push origin feature/service-createUser-nico
-   ```
-5. **NO creás Pull Request.**
-6. Al día siguiente, completás el código y hacés:
-   ```bash
-   git add .
-   git commit -m "feat: service-createUser finalizada"
-   git push origin feature/service-createUser-nico
-   ```
-7. Vas a GitHub y creás el Pull Request contra `developer`.
-8. Esperás a que un compañero lo apruebe y haga el merge.
-
----
-
-## ✅ Beneficios de este flujo
-
-- Claridad en el propósito de cada rama y commit.
-- Facilita la colaboración y seguimiento entre compañeros.
-- Establece una práctica profesional que escala bien con el tiempo.
-
----
-
-Ante cualquier duda, consultá con un compañero del equipo. Este documento busca unificar criterios para que el trabajo en equipo sea más fluido y profesional.
-
+# Extra
+Link a la documentación: [https://drive.google.com/drive/folders/1kg6Qb5iE8SqVrg6TYunZQGKpX46HyzNJ?usp=sharing](https://drive.google.com/drive/folders/11K31KfrpFAeDKkqNg7UQQ60wxvIAk8lB?usp=sharing)

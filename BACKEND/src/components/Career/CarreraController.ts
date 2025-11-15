@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express"
 import carreraService from './CarreraService'
 import getErrorMessage from "#Utils/errorHandling"
-import { cargar } from "#Utils/cargarCarreras"
 import { Career } from "./CareerModel"
 import { InferAttributes } from "sequelize"
 
