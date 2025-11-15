@@ -4,19 +4,11 @@ import { NextFunction, Request, Response } from "express"
 import CurricularUnitService from "./CurricularUnitService"
 import { InferCreationAttributes } from "sequelize"
 
-async function traerTodas(req: Request, res: Response, next: NextFunction): Promise<Response>{
-    try {
-        const token = req.headers["auth-token"] as string;
-        if(token === undefined){
-            return res.status(304).json("Acceso denegado")
-        }
-        const respuesta = await CurricularUnitService.traerTodas(token)
-        return res.status(200).json(respuesta)
-    } catch (error: unknown) {
-        return res.status(500).json({
-            error: "internal server error",
-            message: getErrorMessage(error)
-        })
+async function traerTodas(req: Request, res: Response, next: NextFunction): Promise<Response> {
+  try {
+    const token = req.headers["auth-token"] as string
+    if (token === undefined) {
+      return res.status(304).json("Acceso denegado")
     }
     const respuesta = await CurricularUnitService.traerTodas(token)
     return res.status(200).json(respuesta)
@@ -28,21 +20,12 @@ async function traerTodas(req: Request, res: Response, next: NextFunction): Prom
   }
 }
 
-async function traerUnaUC(req: Request, res: Response, next: NextFunction): Promise<Response>{
-    try {
-        const token = req.headers["auth-token"] as string
-        const datos = {
-            token: token,
-            id: req.params.id
-        }
-
-        const respuesta = await CurricularUnitService.traerUnaUC(datos) 
-        return res.status(200).json(respuesta)
-    } catch (error: unknown) {
-        return res.status(500).json({
-            error: "internal server error",
-            message: getErrorMessage(error)
-        })
+async function traerUnaUC(req: Request, res: Response, next: NextFunction): Promise<Response> {
+  try {
+    const token = req.headers["auth-token"] as string
+    const datos = {
+      token: token,
+      id: req.params.id,
     }
 
     const respuesta = await CurricularUnitService.traerUnaUC(datos)
