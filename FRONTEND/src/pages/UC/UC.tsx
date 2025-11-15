@@ -26,12 +26,20 @@ function UC(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     async function fetchMaterias() {
       try {
         const response = await fetch(
-          import.meta.env.VITE_BACKURL + "/unidadcurricular/todas"
+          import.meta.env.VITE_BACKURL + "/unidadcurricular/todas",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              token: token!,
+            },
+          }
         );
         if (!response.ok) {
           throw new Error("Error al cargar las unidades curriculares");
