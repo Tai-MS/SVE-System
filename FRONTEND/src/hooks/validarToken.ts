@@ -13,7 +13,7 @@ export const apiFetch = async (
       const esFormData = inputBody instanceof FormData;
       
       const headers: HeadersInit = {
-        "Authorization": `${token}`,
+        "auth-token": `${token}`,
       };
       
       if (!esFormData) {

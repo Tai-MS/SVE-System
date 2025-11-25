@@ -11,6 +11,8 @@ export class ComunicadoController {
     res.status(respuesta.status).json(respuesta.respuesta)
   }
   crear = async (req: Request, res: Response) => {
+    console.log("ola");
+    
     const archivos = req.files
     if (archivos) {
       req.body.archivos = archivos

@@ -41,7 +41,7 @@ export async function up(queryInterface, Sequelize) {
       contraseña: "$2b$12$EKDG0A6two2fdseYuVDWhO5NLr3mrsudMncosxOAJEDx3RBnS76Eu",
     },
     {
-      id: "admin",
+      id: "ad2312-da",
       dni: "admin",
       nombre: "ADMIN",
       apellido: "ADMIN",

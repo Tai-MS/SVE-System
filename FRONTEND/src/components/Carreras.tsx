@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, CardContent } from "@mui/material";
+import { apiFetch } from "../hooks/validarToken";
 
 function Carreras() {
   const [selected, setSelected] = useState("Carreras");
@@ -11,13 +12,14 @@ function Carreras() {
     try{
       const token = localStorage.getItem("token");
       console.log(token);
+      const res = await apiFetch(import.meta.env.VITE_BACKURL + "/carreras/traerTodas")
       
-      const res = await fetch(import.meta.env.VITE_BACKURL + "/carreras/traerTodas", {
-        method: "GET",
-        headers: { "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
-      })
+      // const res = await fetch(import.meta.env.VITE_BACKURL + "/carreras/traerTodas", {
+      //   method: "GET",
+      //   headers: { "Content-Type": "application/json",
+      //     Authorization: `${token}`
+      //   }
+      // })
 
       const data = await res.json()
       return data
