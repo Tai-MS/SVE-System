@@ -22,6 +22,7 @@ const CrearComunicado: React.FC = () => {
   const [selectTipoCarrera, setSelectTipoCarrera] = useState<string>("none");
   const [selectDivision, setSelectDivision] = useState<number>(0);
   const [selectComision, setSelectComision] = useState<number>(0);
+  const [mensajeError, setMensajeError] = useState<string>("");
 
   const rol_usuario = localStorage.getItem("rol");
   const token2 = localStorage.getItem("token");
@@ -126,7 +127,17 @@ const CrearComunicado: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
+      const comunicadoFinal = comunicado;
       const formData = new FormData();
+      if (
+        comunicadoFinal.titulo.length === 0 ||
+        comunicadoFinal.titulo.length > 255
+      ) {
+        setMensajeError(
+          "El título es obligatorio y puede tener un máximo de 255 caracteres"
+        );
+        return;
+      }
       formData.append("id_usuario", comunicado.id_usuario);
       formData.append("titulo", comunicado.titulo);
       formData.append("descripcion", comunicado.descripcion);
@@ -180,7 +191,9 @@ const CrearComunicado: React.FC = () => {
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           Crear Comunicado
         </h2>
-
+        <h3 className="text-red-500 font-bold mb-4 text-center">
+          {mensajeError}
+        </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Título */}
           <div>
@@ -193,7 +206,6 @@ const CrearComunicado: React.FC = () => {
               value={comunicado.titulo}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-300"
-              required
             />
           </div>
 

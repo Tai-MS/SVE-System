@@ -6,6 +6,7 @@ import Footer from "./Footer";
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Usuario } from "../types/UsuarioTypes";
+import { apiFetch } from "../hooks/validarToken";
 
 const Layout = ({ children, User, Logout }) => {
   // const [isMobile, setIsMobile] = useState(null);
@@ -13,14 +14,12 @@ const Layout = ({ children, User, Logout }) => {
   useEffect(() => {
     const fetchFunction = async () => {
       const id_usuario = localStorage.getItem("userId");
-      const data = await fetch(
-        `${
-          import.meta.env.VITE_BACKURL
-        }/usuarios/obtenerUsuario?id=${id_usuario}`
-      );
-      const dataJson = await data.json();
-      setUsuario(dataJson);
-      console.log(dataJson);
+      const url = `/usuarios/obtenerUsuario?id=${id_usuario}`;
+      const res = await apiFetch(url);
+      const data = await res.json();
+      console.log(data);
+      setUsuario(data);
+      console.log(data);
     };
 
     fetchFunction();
@@ -65,25 +64,48 @@ const Layout = ({ children, User, Logout }) => {
       { name: "Ver carreras", path: "/carreras", rol: ["ADMINISTRADOR"] },
     ],
     "/usuarios": [
-      { name: "Ver usuarios", path: "/usuarios", rol: ["ADMINISTRADOR", "BEDELIA", "DIRECTIVO"] },
+      {
+        name: "Ver usuarios",
+        path: "/usuarios",
+        rol: ["ADMINISTRADOR", "BEDELIA", "DIRECTIVO"],
+      },
     ],
     "/UC": [
-      { name: "Ver UCs", path: "/UC", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+      {
+        name: "Ver UCs",
+        path: "/UC",
+        rol: [
+          "PROFESOR",
+          "BEDELIA",
+          "DIRECTIVO",
+          "ADMINISTRADOR",
+          "ESTUDIANTE",
+        ],
+      },
       // { name: "Agregar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
       // { name: "Eliminar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
     ],
-    [`/UC/detalles/${id}`] : [
-      { name: "Ver Materia", path: [`/UC/detalles/${id}`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+    [`/UC/detalles/${id}`]: [
+      {
+        name: "Ver Materia",
+        path: [`/UC/detalles/${id}`],
+        rol: [
+          "PROFESOR",
+          "BEDELIA",
+          "DIRECTIVO",
+          "ADMINISTRADOR",
+          "ESTUDIANTE",
+        ],
+      },
       // { name: "Ver Trabajos", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
-    ]
+    ],
   };
 
-let currentBasePath = `/${location.pathname.split("/")[1]}`;
-if (location.pathname.startsWith("/UC/detalles/")) {
-  currentBasePath = `/UC/detalles/${id}`;
-}
-const links = routeLinks[currentBasePath] || [];
-
+  let currentBasePath = `/${location.pathname.split("/")[1]}`;
+  if (location.pathname.startsWith("/UC/detalles/")) {
+    currentBasePath = `/UC/detalles/${id}`;
+  }
+  const links = routeLinks[currentBasePath] || [];
 
   // useEffect(() => {
   //   const checkMobile = () => {

@@ -30,31 +30,31 @@ export async function generarToken(data: Usuario) {
 }
 
 export async function verificarToken(req: Request, res: Response, next: NextFunction) {
-  const token = req.headers["auth-token"] as string;
-  
+  const token = req.headers["auth-token"] as string
   if (!token) return res.status(401).send("Accesso denegado")
 
   try {
     const datosToken = await datosDelToken(token)
-
     const usuario = await UserService.traerUsuario(datosToken.id)
     if (!usuario) {
       throw Error
     }
 
     let verificado
-
+    console.log("TOKEN GUARDADO DEL USUARIO" + (usuario as Usuario)["token"])
+    console.log("TOKEN GENERADO" + token)
     if (token && (usuario as Usuario)["token"] === token) {
       verificado = jwt.verify(token, clave)
       req.user = verificado
       return next()
     }
-    console.log(token);
-    
+    // console.log(token)
+    console.log("No entra en la verificacion")
+
     throw Error
   } catch (error) {
-    console.log("ERROR:" +error);
-    
+    console.log("ERROR:" + error)
+
     return res.status(400).send("Token no valido")
   }
 }

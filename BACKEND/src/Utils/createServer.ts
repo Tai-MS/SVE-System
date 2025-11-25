@@ -36,6 +36,8 @@ export const create_server = async () => {
       cors({
         origin: true,
         credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization", "auth-token"],
+        exposedHeaders: ["Authorization", "auth-token"],
       })
     )
     .use(cookieParser())
