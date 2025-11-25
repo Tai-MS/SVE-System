@@ -17,7 +17,7 @@ function Carreras() {
       // const res = await fetch(import.meta.env.VITE_BACKURL + "/carreras/traerTodas", {
       //   method: "GET",
       //   headers: { "Content-Type": "application/json",
-      //     Authorization: `${token}`
+      //     "auth-token": `${localStorage.getItem("token")}`
       //   }
       // })
 

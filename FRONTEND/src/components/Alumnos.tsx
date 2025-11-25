@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import CheckBox from "@mui/material/Button";
 import { Add, Edit } from "@mui/icons-material";
+import { apiFetch } from "../hooks/validarToken";
 
 interface Usuario {
   id: number;
@@ -58,7 +59,7 @@ export default function Usuarios() {
 
   const obtenerUsuarios = async () => {
     try {
-      const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/obtenerTodos");
+      const res = await apiFetch(import.meta.env.VITE_BACKURL + "/usuarios/obtenerTodos")
       const data = await res.json();
       setUsuarios(data);
     } catch (error) {
@@ -69,6 +70,8 @@ export default function Usuarios() {
   const guardarUsuario = async () => {
     try {
       if (editing) {
+      // const res = await apiFetch(import.meta.env.VITE_BACKURL + "/usuarios/actualizar")
+        
         const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/actualizar", {
           method: "PUT",
           headers: {
@@ -85,11 +88,14 @@ export default function Usuarios() {
         console.log("PUT /usuarios/actualizar status:", res.status, "body:", text);
         if (!res.ok) throw new Error(`Error actualizar: ${res.status} ${text}`);
       } else {
-        const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...form }),
-        });
+        console.log(localStorage.getItem("token"));
+      const res = await apiFetch(import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario", form)
+
+        // const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario", {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({ ...form }),
+        // });
         const text = await res.text();
         console.log("POST /usuarios/crearUsuario status:", res.status, "body:", text);
         if (!res.ok) throw new Error(`Error crear: ${res.status} ${text}`);
@@ -177,10 +183,7 @@ export default function Usuarios() {
                   formData.append("file", file);
 
                   try {
-                    const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/importarAlumnos", {
-                      method: "POST",
-                      body: formData,
-                    });
+                    const res = await apiFetch(import.meta.env.VITE_BACKURL + "/usuarios/importarAlumnos", formData)
 
                     const text = await res.text();
                     console.log("POST /usuarios/importarAlumnos status:", res.status, "body:", text);
