@@ -11,7 +11,6 @@ function Carreras() {
   const carrera = async() => {
     try{
       const token = localStorage.getItem("token");
-      console.log(token);
       const res = await apiFetch(import.meta.env.VITE_BACKURL + "/carreras/traerTodas")
       
       // const res = await fetch(import.meta.env.VITE_BACKURL + "/carreras/traerTodas", {

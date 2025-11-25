@@ -11,6 +11,7 @@ async function traerTodas(req: Request, res: Response, next: NextFunction): Prom
             return res.status(304).json("Acceso denegado")
         }
         const respuesta = await CurricularUnitService.traerTodas(token)
+        
         return res.status(200).json(respuesta)
     } catch (error: unknown) {
         return res.status(500).json({

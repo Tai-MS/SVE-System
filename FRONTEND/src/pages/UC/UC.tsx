@@ -40,7 +40,6 @@ function UC(): JSX.Element  {
         }
         const data = await response.json()
         setMaterias(data)
-        console.log(data)
       } catch (err) {
         setError((err as Error).message)
       } finally {
@@ -72,31 +71,31 @@ function UC(): JSX.Element  {
         )}
 
         {!loading && !error && (
-            
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-
-            {materias != undefined && materias.map((materia) => (
-              <div
-              key={materia.id}
-              onClick={() =>
-                navigate(`/UC/detalles/${materia.id}`, {
-                  state: { id: materia.id, nombre: materia.nombre },
-                })
-              }
-              className="cursor-pointer"
-            >
-              <Card
-                key={materia.id}
-                nombre={materia.nombre}
-                codigoMateria={materia.id}
-                instructor={materia.comisionesUC[0].profesor.nombre + " " + materia.comisionesUC[0].profesor.apellido}
-                studentsCount={materia.studentsCount}
-                description={materia.description}
-                />
-              </div>
-            ))}
-          </div>
-        )}
+  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    {materias != undefined && materias.map((materia) => {
+      return (
+        <div
+          key={materia.id}
+          onClick={() =>
+            navigate(`/UC/detalles/${materia.id}`, {
+              state: { id: materia.id, nombre: materia.nombre },
+            })
+          }
+          className="cursor-pointer"
+        >
+          <Card
+            key={materia.id}
+            nombre={materia.nombre}
+            codigoMateria={materia.id}
+            instructor={materia.comisionesUC?.[0]?.profesor.nombre + " " + materia.comisionesUC?.[0]?.profesor.apellido}
+            studentsCount={materia.studentsCount}
+            description={materia.description}
+          />
+        </div>
+      );
+    })}
+  </div>
+)}
 
         {!loading && !error && materias === undefined && (
           <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
