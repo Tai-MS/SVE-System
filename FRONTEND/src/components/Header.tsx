@@ -33,7 +33,7 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
           >
             Comunicados
           </NavLink>
-          {localStorage.getItem("rol") === "ADMINISTRADOR" && (
+          {localStorage.getItem("rol") === "ADMINISTRADOR" || localStorage.getItem("rol") === "BEDELIA" || localStorage.getItem("rol") === "DIRECTIVO" && (
           <NavLink
             to="/usuarios"
             className="hover:text-blue-400 cursor-pointer"
