@@ -19,6 +19,7 @@ import { ClassRoomRouter } from "#components/Classroom/ClassRoomRoutes"
 import { MaterialRouter } from "#components/Material/MaterialRoutes"
 import { CalificacionRouter } from "#components/Calification/CalificacionRoutes"
 import AsistenciaRouter from "#components/ClassAttendance/AsistenciaRoutes"
+import { TareaRouter } from "#components/Tareas/TareaRoutes"
 /**
  * Se encarga de levantar el servidor
  * y crear las funciones necesarias
@@ -65,6 +66,7 @@ export const create_server = async () => {
     .use("/material", MaterialRouter)
     .use("/calificacion", CalificacionRouter)
     .use("/asistencia", AsistenciaRouter)
+    .use("/tarea", TareaRouter)
 
   await sessionStore.sync()
 

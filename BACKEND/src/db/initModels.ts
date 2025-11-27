@@ -35,7 +35,10 @@ Tarea.init(
     id: {type: DataTypes.BIGINT.UNSIGNED, primaryKey: true, autoIncrement: true},
     estudiante_id: {type: DataTypes.UUID, allowNull: false},
     creado: {type: DataTypes.DATE, allowNull: false},
-    material_id: {type: DataTypes.BIGINT.UNSIGNED},
+    material_id_fk: { 
+      type: DataTypes.BIGINT.UNSIGNED, 
+      allowNull: false 
+    },
     modificado: {type: DataTypes.DATE, allowNull: true}
   },{
     sequelize
@@ -149,7 +152,8 @@ Archivo.init(
     },
     moduloId: { type: DataTypes.INTEGER, allowNull: false },
     material_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: true},
-    file_id: { type: DataTypes.STRING, allowNull: true}
+    file_id: { type: DataTypes.STRING, allowNull: true},
+    tarea_id: {type: DataTypes.BIGINT.UNSIGNED, allowNull: true}
   },
   { sequelize, tableName: "archivos", timestamps: true, createdAt: "subido", updatedAt: "actulizado" }
 )
