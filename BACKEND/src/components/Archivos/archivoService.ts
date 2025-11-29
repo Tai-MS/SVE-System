@@ -15,12 +15,11 @@ export class ArchivoService {
         name: file.originalname,
         parents: [carpeta!],
       }
-
       const media = {
         mimeType: file.mimetype,
         body: Readable.from(file.buffer),
       }
-
+      
       const response = await drive.files.create({
         requestBody: fileMetadata,
         media,
