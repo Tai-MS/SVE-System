@@ -63,7 +63,7 @@ const Layout = ({ children, User, Logout }) => {
       { name: "Ver carreras", path: "/carreras", rol: ["ADMINISTRADOR"] },
     ],
     "/usuarios": [
-      { name: "Ver usuarios", path: "/usuarios", rol: ["ADMINISTRADOR"] },
+      { name: "Ver usuarios", path: "/usuarios", rol: ["ADMINISTRADOR", "BEDELIA", "DIRECTIVO"] },
     ],
     "/UC": [
       { name: "Ver UCs", path: "/UC", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
