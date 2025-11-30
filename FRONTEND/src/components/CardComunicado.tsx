@@ -1,11 +1,13 @@
 import { Avatar, Dialog, DialogContent, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Close as CloseIcon } from "@mui/icons-material";
-import ZonedDateTime from "ts-time/ZonedDateTime";
+import Instant from "ts-time/Instant";
+import * as Zone from "ts-time/Zone";
 import type { Comunicado } from "../types/ComunicadoTypes";
 import { PenBoxIcon, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Comision } from "../types/ComisionesTypes";
+import { apiFetch } from "../hooks/validarToken";
 
 const CardComunicado = ({
   Item,
@@ -16,15 +18,19 @@ const CardComunicado = ({
 }) => {
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
   const [comisionTexto, setComisionTexto] = useState<string>("");
-  const timeCreado = ZonedDateTime.parse(Item.creado as string);
-  const timeActualizado = ZonedDateTime.parse(Item.actualizado as string);
+  const zone = Zone.ZoneId.of("America/Argentina/Buenos_Aires");
+  const instantCreado = Instant.parse(Item.creado as string);
+  const instantActualizado = Instant.parse(Item.actualizado as string);
+
+  const timeCreado = instantCreado.atZone(zone);
+  const timeActualizado = instantActualizado.atZone(zone);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (Item.id_comision) {
       const fetchComision = async () => {
         try {
-          const data = await fetch(
+          const data = await apiFetch(
             `${import.meta.env.VITE_BACKURL}/comision/detalles/${
               Item.id_comision
             }`
@@ -48,7 +54,7 @@ const CardComunicado = ({
     );
     if (confirmDelete) {
       try {
-        await fetch(
+        await apiFetch(
           `${import.meta.env.VITE_BACKURL}/comunicados/eliminar/${Item.id}`,
           {
             method: "PATCH",

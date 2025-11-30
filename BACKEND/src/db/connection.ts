@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize"
 import "dotenv/config"
-import { exec } from "child_process";
-import util from "util";
+import { exec } from "child_process"
+import util from "util"
 export const sequelize = new Sequelize(
   process.env.DB_NAME || "svs",
   process.env.DB_USER || "root",
@@ -11,6 +11,7 @@ export const sequelize = new Sequelize(
     port: Number(process.env.DB_PORT),
     dialect: "mysql",
     logging: false,
+    timezone: "-03:00",
     define: {
       timestamps: false,
       freezeTableName: true,
@@ -48,8 +49,8 @@ export const clearDB = async () => {
     await sequelize.query("DROP TABLE IF EXISTS `SequelizeMeta`;")
     await sequelize.drop()
     await sequelize.sync({ force: true })
-    const execAsync = util.promisify(exec);
-    await execAsync("npx sequelize-cli db:migrate --env dev");
+    const execAsync = util.promisify(exec)
+    await execAsync("npx sequelize-cli db:migrate --env dev")
 
     process.env.PORT === "3030"
       ? console.log("DB local reiniciada correctamente!")

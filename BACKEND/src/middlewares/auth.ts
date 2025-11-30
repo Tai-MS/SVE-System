@@ -31,6 +31,7 @@ export async function generarToken(data: Usuario) {
 
 export async function verificarToken(req: Request, res: Response, next: NextFunction) {
   const token = req.headers["auth-token"] as string
+
   if (!token) return res.status(401).send("Accesso denegado")
 
   try {
@@ -41,15 +42,11 @@ export async function verificarToken(req: Request, res: Response, next: NextFunc
     }
 
     let verificado
-    console.log("TOKEN GUARDADO DEL USUARIO" + (usuario as Usuario)["token"])
-    console.log("TOKEN GENERADO" + token)
     if (token && (usuario as Usuario)["token"] === token) {
       verificado = jwt.verify(token, clave)
       req.user = verificado
       return next()
     }
-    // console.log(token)
-    console.log("No entra en la verificacion")
 
     throw Error
   } catch (error) {

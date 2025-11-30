@@ -14,12 +14,19 @@ const Layout = ({ children, User, Logout }) => {
   useEffect(() => {
     const fetchFunction = async () => {
       const id_usuario = localStorage.getItem("userId");
-      const url = `/usuarios/obtenerUsuario?id=${id_usuario}`;
-      const res = await apiFetch(url);
-      const data = await res.json();
-      console.log(data);
-      setUsuario(data);
-      console.log(data);
+      const data = await apiFetch(
+        import.meta.env.VITE_BACKURL +
+          `/usuarios/obtenerUsuario?id=${id_usuario}`
+      );
+
+      // const data = await fetch(
+      //   `${
+      //     import.meta.env.VITE_BACKURL
+      //   }/usuarios/obtenerUsuario?id=${id_usuario}`
+      // );
+      const dataJson = await data.json();
+      setUsuario(dataJson);
+      // console.log(dataJson);
     };
 
     fetchFunction();

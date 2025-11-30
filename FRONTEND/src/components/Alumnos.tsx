@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import CheckBox from "@mui/material/Button";
 import { Add, Edit } from "@mui/icons-material";
+import { apiFetch } from "../hooks/validarToken";
 
 interface Usuario {
   id: number;
@@ -67,7 +68,7 @@ export default function Usuarios() {
 
   const obtenerUsuarios = async () => {
     try {
-      const res = await fetch(
+      const res = await apiFetch(
         import.meta.env.VITE_BACKURL + "/usuarios/obtenerTodos"
       );
       const data = await res.json();
@@ -79,7 +80,7 @@ export default function Usuarios() {
 
   const guardarUsuario = async () => {
     try {
-      const body = {
+      const payload = {
         ...form,
         carrera_id_fk:
           form.rol === "ESTUDIANTE" && form.carrera_id_fk
@@ -91,9 +92,10 @@ export default function Usuarios() {
       };
 
       let res: Response;
+
       if (editing) {
         res = await fetch(
-          import.meta.env.VITE_BACKURL + "/usuarios/actualizar",
+          `${import.meta.env.VITE_BACKURL}/usuarios/actualizar`,
           {
             method: "PUT",
             headers: {
@@ -102,23 +104,34 @@ export default function Usuarios() {
             },
             body: JSON.stringify({
               id: editing.id,
-              ...body,
+              ...payload,
+              activo: form.activo,
             }),
           }
         );
       } else {
         res = await fetch(
-          import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario",
+          `${import.meta.env.VITE_BACKURL}/usuarios/crearUsuario`,
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
+            headers: {
+              "Content-Type": "application/json",
+              "auth-token": localStorage.getItem("token") || "",
+            },
+            body: JSON.stringify(payload),
           }
         );
       }
 
       const text = await res.text();
-      console.log("Guardar usuario status:", res.status, "body:", text);
+      console.log(
+        `${
+          editing ? "PUT /usuarios/actualizar" : "POST /usuarios/crearUsuario"
+        } status:`,
+        res.status,
+        "body:",
+        text
+      );
       if (!res.ok) throw new Error(`Error guardar: ${res.status} ${text}`);
 
       setOpen(false);
@@ -213,13 +226,10 @@ export default function Usuarios() {
                   formData.append("file", file);
 
                   try {
-                    const res = await fetch(
+                    const res = await apiFetch(
                       import.meta.env.VITE_BACKURL +
                         "/usuarios/importarAlumnos",
-                      {
-                        method: "POST",
-                        body: formData,
-                      }
+                      formData
                     );
 
                     const text = await res.text();

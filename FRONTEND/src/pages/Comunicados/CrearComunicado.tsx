@@ -2,7 +2,6 @@ import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil } from "lucide-react";
 // import type { Comunicado } from "../../types/ComunicadoTypes";
-import type { Usuario } from "../../types/UsuarioTypes";
 import type { Comision } from "../../types/ComisionesTypes";
 import { apiFetch } from "../../hooks/validarToken";
 
@@ -16,7 +15,6 @@ const CrearComunicado: React.FC = () => {
   const [imagenes, setImagenes] = useState<string[]>([]);
   const [imagenesFiles, setImagenesFiles] = useState<File[]>([]);
   const [comisiones, setComisiones] = useState<Comision[]>([]);
-  const [usuario, setUsuario] = useState<Usuario>();
   const [selectTipoComunicado, setSelectTipoComunicado] =
     useState<string>("none");
   const [selectTipoCarrera, setSelectTipoCarrera] = useState<string>("none");
@@ -25,23 +23,13 @@ const CrearComunicado: React.FC = () => {
   const [mensajeError, setMensajeError] = useState<string>("");
 
   const rol_usuario = localStorage.getItem("rol");
-  const token2 = localStorage.getItem("token");
-  const id_usuario = localStorage.getItem("userId");
-  console.log(token2);
 
   useEffect(() => {
     const fetchFunction = async () => {
       const url = import.meta.env.VITE_BACKURL;
-      const fetchDataUsuario = await apiFetch(
-        url + `/usuarios/obtenerUsuario?id=${id_usuario}`
-      );
-
-      const jsonDataUsuario = await fetchDataUsuario.json();
-      setUsuario(jsonDataUsuario);
       const fetchDataComisiones = await apiFetch(url + `/comision/traerTodas`);
       const jsonDataComisiones = await fetchDataComisiones.json();
       setComisiones(jsonDataComisiones);
-      setUsuario(jsonDataComisiones);
     };
     fetchFunction();
   }, []);
@@ -85,6 +73,7 @@ const CrearComunicado: React.FC = () => {
     } else if (e.target.name === "tipo_comision") {
       setSelectComision(Number(e.target.value));
     } else {
+      setSelectTipoCarrera("ALL");
       setSelectDivision(Number(e.target.value));
     }
   };
@@ -129,6 +118,7 @@ const CrearComunicado: React.FC = () => {
     try {
       const comunicadoFinal = comunicado;
       const formData = new FormData();
+
       if (
         comunicadoFinal.titulo.length === 0 ||
         comunicadoFinal.titulo.length > 255
@@ -138,9 +128,35 @@ const CrearComunicado: React.FC = () => {
         );
         return;
       }
+      if (comunicadoFinal.descripcion.length === 0) {
+        setMensajeError("La descripción es obligatoria");
+        return;
+      }
+
       formData.append("id_usuario", comunicado.id_usuario);
       formData.append("titulo", comunicado.titulo);
       formData.append("descripcion", comunicado.descripcion);
+
+      if (selectTipoComunicado === "none") {
+        setMensajeError(
+          "Es obligatorio seleccionar a quien está dirigido el comunicado"
+        );
+        return;
+      }
+
+      if (selectTipoComunicado === "division" && selectDivision === 0) {
+        setMensajeError(
+          "Si el comunicado es a nivel División, es obligatorio seleccionar una división en concreto"
+        );
+        return;
+      }
+
+      if (selectTipoComunicado === "comision" && selectComision === 0) {
+        setMensajeError(
+          "Si el comunicado es a nivel Comisión, es obligatorio seleccionar una comisión en concreto"
+        );
+        return;
+      }
 
       if (selectTipoComunicado === "general") {
         formData.append("general", "true");
@@ -156,18 +172,10 @@ const CrearComunicado: React.FC = () => {
         formData.append("img", file);
       });
 
-      await fetch(`${import.meta.env.VITE_BACKURL}/comunicados/crear`, {
-        method: "POST",
-        body: formData,
-      });
-
       const url = `${import.meta.env.VITE_BACKURL}/comunicados/crear`;
-      console.log(localStorage.getItem("token"));
 
-      const res = await apiFetch(url, formData);
+      await apiFetch(url, { method: "POST", body: formData });
 
-      const dataJson = await res;
-      console.log("Respuesta backend:", dataJson);
       navigate("/comunicados");
     } catch (err) {
       console.error("Error al crear comunicado:", err);
@@ -206,6 +214,7 @@ const CrearComunicado: React.FC = () => {
               value={comunicado.titulo}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-300"
+              required
             />
           </div>
 

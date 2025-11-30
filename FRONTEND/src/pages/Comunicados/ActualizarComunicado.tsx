@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import type { Comunicado } from "../../types/ComunicadoTypes";
 import type { Comision } from "../../types/ComisionesTypes";
 import { Pencil } from "lucide-react";
+import { apiFetch } from "../../hooks/validarToken";
 
 const ActualizarComunicado: React.FC = () => {
   const [comunicado, setComunicado] = useState<Comunicado>({
@@ -16,11 +17,11 @@ const ActualizarComunicado: React.FC = () => {
   const [imagenes, setImagenes] = useState<string[]>([]);
   const [imagenesFiles, setImagenesFiles] = useState<File[]>([]);
   const [comisiones, setComisiones] = useState<Comision[]>([]);
-  const [selectTipoComunicado, setSelectTipoComunicado] =
-    useState<string>("none");
-  const [selectTipoCarrera, setSelectTipoCarrera] = useState<string>("none");
-  const [selectDivision, setSelectDivision] = useState<number | null>(0);
-  const [selectComision, setSelectComision] = useState<number | null>(0);
+  const [selectTipoComunicado, setSelectTipoComunicado] = useState("none");
+  const [selectTipoCarrera, setSelectTipoCarrera] = useState("none");
+  const [selectDivision, setSelectDivision] = useState(0);
+  const [selectComision, setSelectComision] = useState(0);
+  const [mensajeError, setMensajeError] = useState("");
 
   const { id_comunicado } = useParams();
   const rol_usuario = localStorage.getItem("rol");
@@ -29,7 +30,7 @@ const ActualizarComunicado: React.FC = () => {
   // 🧩 Cargar comunicado y comisiones
   useEffect(() => {
     const fetchFunction = async () => {
-      const dataComunicado = await fetch(
+      const dataComunicado = await apiFetch(
         `${
           import.meta.env.VITE_BACKURL
         }/comunicados/obtenerUno/${id_comunicado}`
@@ -42,7 +43,7 @@ const ActualizarComunicado: React.FC = () => {
         setImagenes(jsonDataComunicado.img);
       }
 
-      const dataComisiones = await fetch(
+      const dataComisiones = await apiFetch(
         `${import.meta.env.VITE_BACKURL}/comision/traerTodas`
       );
       const jsonDataComisiones = await dataComisiones.json();
@@ -59,6 +60,7 @@ const ActualizarComunicado: React.FC = () => {
         setSelectTipoComunicado("comision");
         setSelectComision(jsonDataComunicado.id_comision);
       }
+      console.log(jsonDataComunicado);
     };
     fetchFunction();
   }, [id_comunicado]);
@@ -81,35 +83,15 @@ const ActualizarComunicado: React.FC = () => {
   };
 
   const handleSelect = (e: ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-
-    if (name === "tipo_comunicado") {
-      setSelectTipoComunicado(value);
-
-      // Reset centralizado según el tipo
-      const resetStates = {
-        general: () => {
-          setSelectDivision(null);
-          setSelectTipoCarrera("none");
-          setSelectComision(null);
-        },
-        division: () => {
-          setSelectComision(null);
-        },
-        comision: () => {
-          setSelectDivision(null);
-          setSelectTipoCarrera("none");
-        },
-      };
-
-      // Ejecutar el reset correspondiente
-      resetStates[value as keyof typeof resetStates]?.();
-    } else if (name === "tipo_carrera") {
-      setSelectTipoCarrera(value);
-    } else if (name === "tipo_comision") {
-      setSelectComision(Number(value));
-    } else if (name === "tipo_division") {
-      setSelectDivision(Number(value));
+    if (e.target.name === "tipo_comunicado") {
+      setSelectTipoComunicado(e.target.value);
+    } else if (e.target.name === "tipo_carrera") {
+      setSelectTipoCarrera(e.target.value);
+    } else if (e.target.name === "tipo_comision") {
+      setSelectComision(Number(e.target.value));
+    } else {
+      setSelectTipoCarrera("ALL");
+      setSelectDivision(Number(e.target.value));
     }
   };
 
@@ -151,30 +133,58 @@ const ActualizarComunicado: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
+      const comunicadoFinal = comunicado;
       const formData = new FormData();
+
+      if (
+        comunicadoFinal.titulo.length === 0 ||
+        comunicadoFinal.titulo.length > 255
+      ) {
+        setMensajeError(
+          "El título es obligatorio y puede tener un máximo de 255 caracteres"
+        );
+        return;
+      }
+      if (comunicadoFinal.descripcion.length === 0) {
+        setMensajeError("La descripción es obligatoria");
+        return;
+      }
+
       formData.append("id_usuario", comunicado.id_usuario);
       formData.append("titulo", comunicado.titulo);
       formData.append("descripcion", comunicado.descripcion);
+      formData.append("tipoComunicado", selectTipoComunicado);
+
+      if (selectTipoComunicado === "none") {
+        setMensajeError(
+          "Es obligatorio seleccionar a quien está dirigido el comunicado"
+        );
+        return;
+      }
+
+      if (selectTipoComunicado === "division" && selectDivision === 0) {
+        setMensajeError(
+          "Si el comunicado es a nivel División, es obligatorio seleccionar una división en concreto"
+        );
+        return;
+      }
+
+      if (selectTipoComunicado === "comision" && selectComision === 0) {
+        setMensajeError(
+          "Si el comunicado es a nivel Comisión, es obligatorio seleccionar una comisión en concreto"
+        );
+        return;
+      }
 
       if (selectTipoComunicado === "general") {
         formData.append("general", "true");
-        formData.append("division", "");
-        formData.append("carrera", "");
-        formData.append("id_comision", "null");
       } else if (selectTipoComunicado === "division") {
-        formData.append("general", "false");
-        formData.append("division", (selectDivision as number).toString());
+        formData.append("division", selectDivision.toString());
         formData.append("carrera", selectTipoCarrera);
-        formData.append("id_comision", "null");
       } else if (selectTipoComunicado === "comision") {
-        formData.append("general", "false");
-        formData.append("division", "");
-        formData.append("carrera", "");
-        formData.append(
-          "id_comision",
-          selectComision ? String(selectComision) : "null"
-        );
+        formData.append("id_comision", String(selectComision));
       }
+
       // Solo enviar archivos nuevos
       imagenesFiles.forEach((file) => {
         formData.append("img", file);
@@ -186,7 +196,7 @@ const ActualizarComunicado: React.FC = () => {
       );
       formData.append("imagenesExistentes", JSON.stringify(imagenesExistentes));
 
-      await fetch(
+      await apiFetch(
         `${
           import.meta.env.VITE_BACKURL
         }/comunicados/actualizar/${id_comunicado}`,
@@ -220,7 +230,9 @@ const ActualizarComunicado: React.FC = () => {
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           Actualizar Comunicado
         </h2>
-
+        <h3 className="text-red-500 font-bold mb-4 text-center">
+          {mensajeError}
+        </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Título */}
           <div>

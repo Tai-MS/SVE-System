@@ -5,20 +5,19 @@ export const apiFetch = async (url: string, inputBody: any = null) => {
     let response;
 
     if (inputBody) {
-      const esFormData = inputBody instanceof FormData;
+      const esFormData = inputBody.body instanceof FormData;
 
       const headers: HeadersInit = {
-        Authorization: `${token}`,
+        "auth-token": `${token}`,
       };
 
       if (!esFormData) {
         headers["Content-Type"] = "application/json";
       }
-
       response = await fetch(url, {
-        method: "POST",
+        method: inputBody.method || "POST",
         headers: headers,
-        body: esFormData ? inputBody : JSON.stringify(inputBody),
+        body: esFormData ? inputBody.body : JSON.stringify(inputBody.body),
       });
     } else {
       response = await fetch(url, {
