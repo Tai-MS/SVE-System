@@ -14,6 +14,7 @@ import CrearComunicado from "./pages/Comunicados/CrearComunicado";
 import MisComunicados from "./pages/Comunicados/MisComunicados";
 import ActualizarComunicado from "./pages/Comunicados/ActualizarComunicado";
 import UCdetalle from "./pages/UC/UCdetalle";
+import Materiales from "./pages/UC/Materiales";
 
 function App() {
   const { user, logout, login } = useAuth();
@@ -53,8 +54,18 @@ function App() {
                     path="/unidadcurricular/:materiaId/:materiaNombre/:materiaProfe"
                     element={<UnidadCurricular />}
                   />
-                  <Route path="/UC" element={<UC />} />
-                  <Route path="UC/detalles/:id" element={<UCdetalle />} />
+                  <Route 
+                    path="/UC" 
+                    element={<UC />}
+                  />
+                  <Route 
+                    path="UC/detalles/:id" 
+                    element={<UCdetalle />}
+                  />
+                  <Route 
+                    path="/UC/detalles/:id/materiales"
+                    element={<Materiales />} 
+                  />
                 </Routes>
               </Layout>
             </ProtectedRoute>

@@ -20,13 +20,14 @@ async function traerTodas(req: Request, res: Response, next: NextFunction): Prom
   }
 }
 
-async function traerUnaUC(req: Request, res: Response, next: NextFunction): Promise<Response> {
-  try {
-    const token = req.headers["token"] as string
-    const datos = {
-      token: token,
-      id: req.params.id,
-    }
+async function traerUnaUC(req: Request, res: Response, next: NextFunction): Promise<Response>{
+    try {
+        const token = req.headers["token"] as string
+        const datos = {
+            token: token,
+            id: req.params.id
+        }
+        console.log(token);
 
     const respuesta = await CurricularUnitService.traerUnaUC(datos)
     return res.status(200).json(respuesta)

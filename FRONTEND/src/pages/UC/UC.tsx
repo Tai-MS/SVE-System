@@ -30,9 +30,15 @@ function UC(): JSX.Element {
   useEffect(() => {
     async function fetchMaterias() {
       try {
-        const response = await fetch(
-          import.meta.env.VITE_BACKURL + "/unidadcurricular/todas"
-        );
+        const response = await fetch(import.meta.env.VITE_BACKURL + "/unidadcurricular/todas",
+        {
+            method: "GET",
+            headers: {
+            "Content-Type": "application/json",
+            token: localStorage.getItem("token") || "",
+						}
+        });
+
         if (!response.ok) {
           throw new Error("Error al cargar las unidades curriculares");
         }
@@ -46,8 +52,8 @@ function UC(): JSX.Element {
       }
     }
 
-    fetchMaterias();
-  }, []);
+    fetchMaterias()
+  }, [])
 
   return (
     <>
@@ -72,31 +78,61 @@ function UC(): JSX.Element {
 
           {!loading && !error && (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {materias != undefined &&
-                materias.map((materia) => (
-                  <div
-                    key={materia.id}
-                    onClick={() =>
-                      navigate(`/UC/detalles/${materia.id}`, {
-                        state: { id: materia.id, nombre: materia.nombre },
-                      })
-                    }
-                    className="cursor-pointer"
-                  >
-                    <Card
+              {localStorage.getItem("rol") != "ADMINISTRADOR" ? (<>
+                {materias.UnidadCurriculars != undefined &&
+                  materias.UnidadCurriculars.map((materia) => (
+                    <div
                       key={materia.id}
-                      nombre={materia.nombre}
-                      codigoMateria={materia.id}
-                      instructor={
-                        materia.comisionesUC[0].profesor.nombre +
-                        " " +
-                        materia.comisionesUC[0].profesor.apellido
+                      onClick={() =>
+                        navigate(`/UC/detalles/${materia.id}`, {
+                          state: { id: materia.id, nombre: materia.nombre },
+                        })
                       }
-                      studentsCount={materia.studentsCount}
-                      description={materia.description}
-                    />
-                  </div>
-                ))}
+                      className="cursor-pointer"
+                    >
+                      <Card
+                        key={materia.id}
+                        nombre={materia.nombre}
+                        codigoMateria={materia.id}
+                        instructor={
+                          materia.comisionesUC[0].profesor.nombre +
+                          " " +
+                          materia.comisionesUC[0].profesor.apellido
+                        }
+                        studentsCount={materia.studentsCount}
+                        description={materia.description}
+                      />
+                    </div>
+                  ))}
+              </>):(
+                <>
+                {materias != undefined &&
+                  materias.map((materia) => (
+                    <div
+                      key={materia.id}
+                      onClick={() =>
+                        navigate(`/UC/detalles/${materia.id}`, {
+                          state: { id: materia.id, nombre: materia.nombre },
+                        })
+                      }
+                      className="cursor-pointer"
+                    >
+                      <Card
+                        key={materia.id}
+                        nombre={materia.nombre}
+                        codigoMateria={materia.id}
+                        instructor={
+                          materia.comisionesUC[0].profesor.nombre +
+                          " " +
+                          materia.comisionesUC[0].profesor.apellido
+                        }
+                        studentsCount={materia.studentsCount}
+                        description={materia.description}
+                      />
+                    </div>
+                  ))}
+                </>
+              )} 
             </div>
           )}
 

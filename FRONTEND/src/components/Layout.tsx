@@ -20,7 +20,6 @@ const Layout = ({ children, User, Logout }) => {
       );
       const dataJson = await data.json();
       setUsuario(dataJson);
-      console.log(dataJson);
     };
 
     fetchFunction();
@@ -62,10 +61,16 @@ const Layout = ({ children, User, Logout }) => {
       },
     ],
     "/carreras": [
-      { name: "Ver carreras", path: "/carreras", rol: ["ADMINISTRADOR"] },
+      { 
+        name: "Ver carreras", 
+        path: "/carreras", 
+        rol: ["ADMINISTRADOR"] },
     ],
     "/usuarios": [
-      { name: "Ver usuarios", path: "/usuarios", rol: ["ADMINISTRADOR", "BEDELIA", "DIRECTIVO"] },
+      { 
+        name: "Ver usuarios", 
+        path: "/usuarios", 
+        rol: ["ADMINISTRADOR", "BEDELIA", "DIRECTIVO"] },
     ],
     "/UC": [
       { name: "Ver UCs", path: "/UC", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
@@ -73,7 +78,9 @@ const Layout = ({ children, User, Logout }) => {
       // { name: "Eliminar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
     ],
     [`/UC/detalles/${id}`] : [
-      { name: "Ver Materia", path: [`/UC/detalles/${id}`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+      { name: "Ver Unidad Curricular", path: [`/UC/detalles/${id}`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+      { name: "Ver Materiales", path: [`/UC/detalles/${id}/materiales`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+      // { name: "Subir Materiales", path: [`/UC/detalles/${id}/subir`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
       // { name: "Ver Trabajos", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
     ]
   };
