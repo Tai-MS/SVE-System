@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, BookOpen, FileText, LinkIcon, File } from "lucide-react";
+import UCdetalle from "./UCdetalle";
 
 type Material = {
   id: string;
@@ -20,6 +21,8 @@ export default function Materiales() {
 
   const { nombre: materiaNombre } =
     (location.state as { id: string; nombre: string }) || {};
+  const { id: materiaId } = (location.state as { id: string | number }) || {};
+	console.log("Materia ID:", materiaId);
 
   const [materiales, setMateriales ] = useState<Material[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,31 +123,39 @@ export default function Materiales() {
       </div>
     )
   }
-
+  console.log(id, materiaNombre);
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-6xl px-8 py-6">
-          <button
-            onClick={() => navigate(`/UC/detalles/${id}`)}
-            className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            Volver a detalles
-          </button>
+      <div
+				className="rounded-2xl relative h-64 bg-cover bg-center"
+				style={{
+					//   backgroundImage: undefined,
+					backgroundColor: "#4F46E5",
+				}}>
+				<div className="shadow rounded-2xl absolute inset-0 bg-gradient-to-b from-black/40 to-black/60" />
+        <div className="relative mx-auto max-w-4xl px-8 py-8">
+					<button
+						onClick={() =>
+                navigate(`/UC/detalles/${materiaId}`, {
+                  state: { id: materiaId, nombre: materiaNombre },
+              })
+            }       
+						className="cursor-pointer mb-6 flex items-center gap-2 text-white/90 hover:text-white transition-colors">
+						<ArrowLeft className="h-5 w-5" />
+						Volver a detalles
+					</button>
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-blue-100 p-3">
-              <BookOpen className="h-6 w-6 text-blue-600" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Materiales y Libros</h1>
-              <p className="text-gray-600">{classroomTitle}</p>
-            </div>
+            <div className="mt-8">
+						<h1 className="text-4xl font-bold text-white">Materiales y Libros</h1>
+						<p className="mt-2 text-xl text-white/90 align-middle">{classroomTitle}</p>
+					</div>
           </div>
         </div>
       </div>
 
+
+      
       {/* Contenido */}
       <div className="mx-auto max-w-6xl px-8 py-8">
         {materiales.length === 0 ? (

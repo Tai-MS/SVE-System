@@ -66,7 +66,6 @@ export default function UCdetalle() {
 
 				const data = await response.json();
 				setMateria(data);
-				console.log(data);
 				const proximaClaseData = await fetch(
 					import.meta.env.VITE_BACKURL +
 						`/clase/todas/${data.comisionesUC[0].id}`,
@@ -78,7 +77,6 @@ export default function UCdetalle() {
 					}
 				);
 				const proximaClaseJson = await proximaClaseData.json();
-				console.log(proximaClaseJson);
 				setClase(proximaClaseJson);
 			} catch (err) {
 				setError((err as Error).message);
@@ -86,7 +84,6 @@ export default function UCdetalle() {
 				setLoading(false);
 			}
 		}
-
 		fetchDetalle();
 	}, [materiaId, token]);
 	if (loading)
