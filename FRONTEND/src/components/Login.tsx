@@ -10,7 +10,20 @@ function Login({ login }: LoginProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
+  const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("token");
+    const username2 = urlParams.get("username")
+    const userid = urlParams.get("userid")
+    const rol = urlParams.get("rol")
+      if (token) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("username", username2!);
+        localStorage.setItem("userId", userid!);
+        localStorage.setItem("rol", rol!);
+        console.log("hola");
+        
+        navigate("/comunicados");
+      }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const success = await login(username, password);
@@ -83,7 +96,7 @@ function Login({ login }: LoginProps) {
                 type="button"
                 onClick={async () => {
                   window.location.href =
-                    import.meta.env.VITE_BACKURL + "/usuarios/google";
+                    import.meta.env.VITE_BACKURL + "/public/google";
                 }}
               >
                 Iniciar Sesión con Google

@@ -25,21 +25,31 @@ export function useAuth(): AuthReturn {
   const googleLogin = async () => {
     try {
       const res = await fetch(
-        import.meta.env.VITE_BACKURL + "/public/auth/google/callback",
+        import.meta.env.VITE_BACKURL + "/public/google",
         {
-          method: "POST",
+          method: "GET",
           headers: { "Content-Type": "application/json" },
         }
       );
-
+      console.log(res);
+      
       const data = await res.json();
       console.log(data);
-      
+      localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.nombre);
+        localStorage.setItem("userId", data.id);
+        localStorage.setItem("rol", data.rol);
       if (data.success && data.token) {
         localStorage.setItem("token", data.token);
-        console.log(data);
-        setUser(data.nombre)
+        localStorage.setItem("username", data.nombre);
+        localStorage.setItem("userId", data.id);
+        localStorage.setItem("rol", data.rol);
         setToken(data.token);
+        setUser(data.nombre);
+        // localStorage.setItem("token", data.token);
+        // console.log(data);
+        // setUser(data.nombre)
+        // setToken(data.token);
         return true;
       } else {
         return false;

@@ -28,5 +28,4 @@ router.post("/iniciarSesion", async (req: Request, res: Response, next: NextFunc
   await userController.inciarSesion(req, res, next)
 })
 
-
 export default router
