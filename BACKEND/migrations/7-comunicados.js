@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid"
+const { v4: uuidv4 } = require("uuid")
 
 // IDs de comisiones (3 por división)
 const COMISIONES = {
@@ -254,7 +254,8 @@ const COMUNICADOS_POR_COMISION = [
   },
 ]
 
-export async function up(queryInterface, Sequelize) {
+module.exports = {
+  async up(queryInterface, Sequelize) {
   await queryInterface.createTable("comunicados", {
     id: {
       type: Sequelize.UUID,
@@ -311,8 +312,8 @@ export async function up(queryInterface, Sequelize) {
   await queryInterface.bulkInsert("comunicados", COMUNICADOS_GENERALES)
   await queryInterface.bulkInsert("comunicados", COMUNICADOS_POR_DIVISION)
   await queryInterface.bulkInsert("comunicados", COMUNICADOS_POR_COMISION)
-}
-export async function down(queryInterface, Sequelize) {
+},
+  async down(queryInterface, Sequelize) {
   const idsGenerales = COMUNICADOS_GENERALES.map((c) => c.id)
   const idsDivision = COMUNICADOS_POR_DIVISION.map((c) => c.id)
   const idsComision = COMUNICADOS_POR_COMISION.map((c) => c.id)
@@ -324,4 +325,4 @@ export async function down(queryInterface, Sequelize) {
   })
 
   await queryInterface.dropTable("comunicados")
-}
+},}
