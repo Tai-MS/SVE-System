@@ -52,6 +52,6 @@ router.post("/public/iniciarSesion", async (req: Request, res: Response, next: N
   await userController.inciarSesion(req, res, next)
 })
 
-router.post("/importarAlumnos", upload.single("file"), userController.ImportarAlumnos)
+router.post("/public/importarAlumnos", upload.single("file"), userController.ImportarAlumnos)
 
 export default router

@@ -19,7 +19,7 @@ export type DatosBasicos = {
   apellido: string
   contraseña: string
   nombre: string
-  telefono: string | null
+  telefono: string
 }
 
 export type ActualizarUsuarioDTO = {
@@ -32,7 +32,7 @@ export type ActualizarUsuarioDTO = {
   creado?: Date
   email?: string
   token?: string
-  telefono?: string | null
+  telefono?: string
   anioIngreso?: number
   activo?: boolean
   ultima_conexion?: Date
@@ -50,7 +50,7 @@ export type usuarioI = {
   nombre: string
   apellido: string
   email: string
-  telefono?: string | null
+  telefono?: string
   anioIngreso: number
   rol: string
   contraseña: string

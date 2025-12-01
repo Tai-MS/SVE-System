@@ -25,31 +25,21 @@ export function useAuth(): AuthReturn {
   const googleLogin = async () => {
     try {
       const res = await fetch(
-        import.meta.env.VITE_BACKURL + "/public/google",
+        import.meta.env.VITE_BACKURL + "/usuarios/auth/google/callback",
         {
-          method: "GET",
+          method: "POST",
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(res);
-      
+
       const data = await res.json();
       console.log(data);
-      localStorage.setItem("token", data.token);
-        localStorage.setItem("username", data.nombre);
-        localStorage.setItem("userId", data.id);
-        localStorage.setItem("rol", data.rol);
+      
       if (data.success && data.token) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("username", data.nombre);
-        localStorage.setItem("userId", data.id);
-        localStorage.setItem("rol", data.rol);
+        console.log(data);
+        setUser(data.nombre)
         setToken(data.token);
-        setUser(data.nombre);
-        // localStorage.setItem("token", data.token);
-        // console.log(data);
-        // setUser(data.nombre)
-        // setToken(data.token);
         return true;
       } else {
         return false;
@@ -66,7 +56,7 @@ export function useAuth(): AuthReturn {
   ): Promise<boolean> => {
     try {
       const res = await fetch(
-        import.meta.env.VITE_BACKURL + "/public/iniciarSesion",
+        import.meta.env.VITE_BACKURL + "/usuarios/public/iniciarsesion",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -7,7 +7,6 @@ export type archivoAttributes = {
   actualizado?: Date
   material_id?: number
   file_id?: string
-  tarea_id?: number
 }
 
 export type archivo = {

@@ -2,7 +2,6 @@ import { type JSX } from "react";
 import { Card } from "../../components/Card";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiFetch } from "../../hooks/validarToken";
 
 type Profesor = {
   nombre: string;
@@ -31,15 +30,21 @@ function UC(): JSX.Element {
   useEffect(() => {
     async function fetchMaterias() {
       try {
-        const response = await apiFetch(import.meta.env.VITE_BACKURL + `/unidadcurricular/todas`)
-        
-        
-        // const response = await fetch(import.meta.env.VITE_BACKURL + "/unidadcurricular/todas")
+        const response = await fetch(import.meta.env.VITE_BACKURL + "/unidadcurricular/todas",
+        {
+            method: "GET",
+            headers: {
+            "Content-Type": "application/json",
+            token: localStorage.getItem("token") || "",
+						}
+        });
+
         if (!response.ok) {
           throw new Error("Error al cargar las unidades curriculares");
         }
-        const data = await response.json()
-        setMaterias(data)
+        const data = await response.json();
+        setMaterias(data);
+        console.log(data);
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -71,38 +76,74 @@ function UC(): JSX.Element {
             </div>
           )}
 
-        {!loading && !error && (
-  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-    {materias != undefined && materias.map((materia) => {
-      return (
-        <div
-          key={materia.id}
-          onClick={() =>
-            navigate(`/UC/detalles/${materia.id}`, {
-              state: { id: materia.id, nombre: materia.nombre },
-            })
-          }
-          className="cursor-pointer"
-        >
-          <Card
-            key={materia.id}
-            nombre={materia.nombre}
-            codigoMateria={materia.id}
-            instructor={materia.comisionesUC?.[0]?.profesor.nombre + " " + materia.comisionesUC?.[0]?.profesor.apellido}
-            studentsCount={materia.studentsCount}
-            description={materia.description}
-          />
-        </div>
-      );
-    })}
-  </div>
-)}
+          {!loading && !error && (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {localStorage.getItem("rol") != "ADMINISTRADOR" ? (<>
+                {materias.UnidadCurriculars != undefined &&
+                  materias.UnidadCurriculars.map((materia) => (
+                    <div
+                      key={materia.id}
+                      onClick={() =>
+                        navigate(`/UC/detalles/${materia.id}`, {
+                          state: { id: materia.id, nombre: materia.nombre },
+                        })
+                      }
+                      className="cursor-pointer"
+                    >
+                      <Card
+                        key={materia.id}
+                        nombre={materia.nombre}
+                        codigoMateria={materia.id}
+                        instructor={
+                          materia.comisionesUC[0].profesor.nombre +
+                          " " +
+                          materia.comisionesUC[0].profesor.apellido
+                        }
+                        studentsCount={materia.studentsCount}
+                        description={materia.description}
+                      />
+                    </div>
+                  ))}
+              </>):(
+                <>
+                {materias != undefined &&
+                  materias.map((materia) => (
+                    <div
+                      key={materia.id}
+                      onClick={() =>
+                        navigate(`/UC/detalles/${materia.id}`, {
+                          state: { id: materia.id, nombre: materia.nombre },
+                        })
+                      }
+                      className="cursor-pointer"
+                    >
+                      <Card
+                        key={materia.id}
+                        nombre={materia.nombre}
+                        codigoMateria={materia.id}
+                        instructor={
+                          materia.comisionesUC[0].profesor.nombre +
+                          " " +
+                          materia.comisionesUC[0].profesor.apellido
+                        }
+                        studentsCount={materia.studentsCount}
+                        description={materia.description}
+                      />
+                    </div>
+                  ))}
+                </>
+              )} 
+            </div>
+          )}
 
-        {!loading && !error && materias === undefined && (
-          <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-            <p className="text-gray-600">No hay unidades curriculares disponibles</p>
-          </div>
-        )}
+          {!loading && !error && materias === undefined && (
+            <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
+              <p className="text-gray-600">
+                No hay unidades curriculares disponibles
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

@@ -6,7 +6,7 @@ import { drive } from "#Utils/DriveConfig"
 import fs from "fs"
 import { Readable } from "stream"
 import { drive_v3 } from "googleapis"
-import {  GaxiosResponseWithHTTP2 } from "googleapis-common"
+import { GaxiosResponse, GaxiosResponseWithHTTP2 } from "googleapis-common"
 export class ArchivoService {
   subirArchivos = async (file: any): Promise<GaxiosResponseWithHTTP2<drive_v3.Schema$File> | string> => {
     const t = await Archivo.sequelize!.transaction()
@@ -16,11 +16,12 @@ export class ArchivoService {
         name: file.originalname,
         parents: [carpeta!],
       }
+
       const media = {
         mimeType: file.mimetype,
         body: Readable.from(file.buffer),
       }
-      
+
       const response = await drive.files.create({
         requestBody: fileMetadata,
         media,
@@ -33,55 +34,19 @@ export class ArchivoService {
     }
   }
 
-  obtenerArchivos = async(material_id: number) => {
-    try {
-      const archivos = await Archivo.findAll({
-        where: {material_id: material_id}
-      })
-
-      if(archivos.length === 0){
-        return { status: 404, respuesta: "Este material no posee archivos." }
-      }
-
-      return { status: 200, respuesta: archivos }
-
-    } catch (error: any) {
-      return {
-        status: 500,
-        respuesta: error.message || "Ocurrió un error en el servidor al intentar traer los materiales",
-      }
-    }
-  }
-
-  elimiarArchivoDrive = async (lista_ids: Array<number>) => {
+  elimiarArchivoDrive = async (id: number) => {
     const t = await Archivo.sequelize!.transaction()
     try {
-      const no_encontrados = []
-      for(let id of lista_ids){
-        const archivo = await Archivo.findOne({
-          where: {id: id},
-          transaction: t
-        })
+      const registro_archivo = await Archivo.findByPk(id)
 
-        if(!archivo){
-          no_encontrados.push(id)
-        }else{
-          await drive.files.delete({ fileId: archivo.file_id })
-          await archivo.destroy({ transaction: t })
-        }
+      if (!registro_archivo) {
+        return { status: 404, respuesta: "Archivo no encontrado" }
       }
 
-      if(no_encontrados.length === lista_ids.length){
-        await t.rollback()
-        return { status: 404, respuesta: `No se encontraron los archivos` }
-      }
-      await t.commit()
-      if(no_encontrados.length > 0){
-        return { status: 207, respuesta: `Se eliminaron los archivos, pero no se encontraron: ${no_encontrados}` }
-      }
-      return { status: 200, respuesta: "Archivos eliminados" }
+      const response = await drive.files.delete({ fileId: registro_archivo.file_id })
+
+      return response
     } catch (error) {
-      await t.rollback() 
       return { status: 500, respuesta: "Ocurrio un error al momento de eliminar el archivo de la base de datos" }
     }
   }

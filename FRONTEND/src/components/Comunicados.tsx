@@ -1,4 +1,3 @@
-'use client'
 import { useState, useEffect } from "react";
 import type { ChangeEvent } from "react";
 import {
@@ -28,19 +27,14 @@ export default function Comunicados() {
   const [open, setOpen] = useState(false);
   const [comunicados, setComunicados] = useState<Comunicado[]>([]);
   const [nuevoComunicado, setNuevoComunicado] = useState<string>("");
-  
+
+  // Obtener comunicados de la API
   useEffect(() => {
-  fetch(import.meta.env.VITE_BACKURL + "/comunicados/", {
-    method: "GET",
-    headers: { 
-      "Content-Type": "application/json",
-      "auth-token": `${localStorage.getItem("token")}`
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => setComunicados(data))
-    .catch((err) => console.error("Error cargando comunicados:", err));
-}, []);
+    fetch("http://localhost:3030/comunicados/")
+      .then((res) => res.json())
+      .then((data) => setComunicados(data))
+      .catch((err) => console.error("Error cargando comunicados:", err));
+  }, []);
 
   // Publicar un nuevo comunicado
   const publicarComunicado = () => {
@@ -52,11 +46,10 @@ export default function Comunicados() {
         contenido: nuevoComunicado,
       };
 
-      fetch(import.meta.env.VITE_BACKURL + "/comunicados/crearComunicado", {
+      fetch("http://localhost:3030/comunicados/crearComunicado", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "auth-token": `${localStorage.getItem("token")}`
         },
         body: JSON.stringify(nuevo),
       })

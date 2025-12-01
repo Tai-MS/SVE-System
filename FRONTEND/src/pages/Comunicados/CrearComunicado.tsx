@@ -1,9 +1,7 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Comunicado } from "../../types/ComunicadoTypes";
-import type { Usuario } from "../../types/UsuarioTypes";
-import type { Comision, Division, Carrera } from "../../types/ComisionesTypes";
-import { apiFetch } from "../../hooks/validarToken";
+import type { Comision } from "../../types/ComisionesTypes";
+import { Pencil } from "lucide-react";
 
 const CrearComunicado: React.FC = () => {
   const [comunicado, setComunicado] = useState({
@@ -22,18 +20,24 @@ const CrearComunicado: React.FC = () => {
   const [selectComision, setSelectComision] = useState<number>(0);
 
   const rol_usuario = localStorage.getItem("rol");
-  const token2 = localStorage.getItem("token");
-  console.log(token2);
-  
+  const navigate = useNavigate();
+
+  const limpiarEstadoImagenes = () => {
+    // Revocar URLs de memoria
+    imagenes.forEach((url) => {
+      if (url.startsWith("blob:")) URL.revokeObjectURL(url);
+    });
+    setImagenes([]);
+    setImagenesFiles([]);
+  };
+  // 🧩 Cargar comisiones
   useEffect(() => {
-    const fetchFunction = async () => {
-      const url = import.meta.env.VITE_BACKURL
-        const fetchDataUsuario = await apiFetch(url + `/usuarios/obtenerUsuario?id=${id_usuario}`)
-        
-        const jsonDataUsuario = await fetchDataUsuario.json();
-        setUsuario(jsonDataUsuario);
-      const fetchDataComisiones = await apiFetch(url + `/comision/traerTodas`)
-      const jsonDataComisiones = await fetchDataComisiones.json();
+    limpiarEstadoImagenes();
+    const fetchComisiones = async () => {
+      const dataComisiones = await fetch(
+        `${import.meta.env.VITE_BACKURL}/comision/traerTodas`
+      );
+      const jsonDataComisiones = await dataComisiones.json();
       setComisiones(jsonDataComisiones);
     };
     fetchComisiones();
@@ -116,15 +120,11 @@ const CrearComunicado: React.FC = () => {
         formData.append("img", file);
       });
 
-    try {
+      await fetch(`${import.meta.env.VITE_BACKURL}/comunicados/crear`, {
+        method: "POST",
+        body: formData,
+      });
 
-      const url = `${import.meta.env.VITE_BACKURL}/comunicados/crear`;
-      console.log(localStorage.getItem("token"));
-      
-      const res = await apiFetch(url, formData) 
-
-      const dataJson = await res;
-      console.log("Respuesta backend:", dataJson);
       navigate("/comunicados");
     } catch (err) {
       console.error("Error al crear comunicado:", err);

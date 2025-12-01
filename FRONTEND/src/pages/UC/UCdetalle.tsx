@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Users, Calendar, BookOpen, Clock} from "lucide-react";
-import { apiFetch } from "../../hooks/validarToken";
-
+import { ArrowLeft, Users, Calendar, BookOpen, Clock } from "lucide-react";
 
 type Profesor = {
 	nombre: string;
@@ -44,52 +42,27 @@ export default function UCdetalle() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-  
-  useEffect(() => {
-    async function fetchDetalle() {
-      try {
-        const url = import.meta.env.VITE_BACKURL
-        if (!materiaId) {
-          throw new Error("Faltan datos de la materia");
-        }
-        const response = await apiFetch( url + "/unidadcurricular/uc/" + materiaId)
-        
-        // const response = await fetch(
-        //   import.meta.env.VITE_BACKURL + "/unidadcurricular/uc/" + materiaId,
-        //   {
-        //     method: "GET",
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //       token: token!,
-        //     }
-        //   }
-        // );
+	useEffect(() => {
+		async function fetchDetalle() {
+			try {
+				if (!materiaId) {
+					throw new Error("Faltan datos de la materia");
+				}
 
-        if (!response.ok) {
-          throw new Error("Error al cargar el detalle de la materia");
-        }
-        
-        const data = await response.json();
-        setMateria(data);
-        console.log(data);
-        const proximaClaseData = await apiFetch( url + `/clase/todas/${data.comisionesUC[0].id}`)
+				const response = await fetch(
+					import.meta.env.VITE_BACKURL + "/unidadcurricular/uc/" + materiaId,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+							token: token!,
+						},
+					}
+				);
 
-        // const proximaClaseData = await fetch(
-        //   import.meta.env.VITE_BACKURL + `/clase/todas/${data.comisionesUC[0].id}`,
-        //   {
-        //     method: "GET",
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //   }});
-        const proximaClaseJson = await proximaClaseData.json();
-        console.log(proximaClaseJson);
-        setClase(proximaClaseJson);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    }
+				if (!response.ok) {
+					throw new Error("Error al cargar el detalle de la materia");
+				}
 
 				const data = await response.json();
 				setMateria(data);

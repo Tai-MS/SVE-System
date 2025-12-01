@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import type { Comunicado } from "../../types/ComunicadoTypes";
 import CardComunicado from "../../components/CardComunicado";
 import { useLocation } from "react-router-dom";
-import { apiFetch } from "../../hooks/validarToken";
 
 export default function Comunicados() {
   const [comunicados, setComunicados] = useState<Comunicado[]>([]);
@@ -19,10 +18,10 @@ export default function Comunicados() {
         if (userId && type) {
           url += `/comunicadosfiltro?idUser=${userId}&type=${type}&career=${career}`;
         }
-      
-        
-        const res = await apiFetch(url) 
-          const data = await res.json();
+
+        const res = await fetch(url);
+        const data = await res.json();
+
         setComunicados(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error al obtener comunicados:", err);
