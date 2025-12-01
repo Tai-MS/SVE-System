@@ -36,7 +36,9 @@ export default function Comunicados() {
   return (
     <main className="flex flex-col max-h-full mt-1 text-center items-center content-center">
       {comunicados.length > 0 ? (
-        comunicados.map((item) => <CardComunicado key={item.id} Item={item} />)
+        comunicados.map((item) => (
+          <CardComunicado key={item.id} Item={item} misComunicados={false} />
+        ))
       ) : (
         <h1 className="font-bold text-black">
           No se encontró ningún comunicado

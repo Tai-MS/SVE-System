@@ -10,6 +10,8 @@ import UnidadCurricular from "./components/UnidadCurricular";
 import Layout from "./components/Layout";
 import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
+import MisComunicados from "./pages/Comunicados/MisComunicados";
+import ActualizarComunicado from "./pages/Comunicados/ActualizarComunicado";
 import UCdetalle from "./pages/UC/UCdetalle";
 import CareerSelection from "./pages/Career/Career";
 import { ClassroomList } from "./pages/Career/ClassList";
@@ -20,11 +22,7 @@ function App() {
   return (
     <Router>
       <Routes>
-
-        <Route 
-          path="/login" 
-          element={<Login login={login} />}  
-          />
+        <Route path="/login" element={<Login login={login} />} />
 
         <Route
           path="/*"
@@ -33,6 +31,10 @@ function App() {
               <Layout User={user} Logout={logout}>
                 <Routes>
                   <Route path="/comunicados" element={<Comunicados />} />
+                  <Route
+                    path="/comunicados/misComunicados/:idUser"
+                    element={<MisComunicados />}
+                  />
                   <Route
                     path="/comunicados/crear"
                     element={<CrearComunicado />}
@@ -56,6 +58,10 @@ function App() {
                   <Route 
                     path="UC/detalles/:id" 
                     element={<UCdetalle />}
+                  />
+                  <Route 
+                    path="/UC/detalles/:id/materiales"
+                    element={<Materiales />} 
                   />
                 </Routes>
               </Layout>
