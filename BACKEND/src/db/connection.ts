@@ -1,7 +1,7 @@
-import { cargar } from "#Utils/cargarCarreras"
-import getErrorMessage, { ErrorResponse } from "#Utils/errorHandling"
 import { Sequelize } from "sequelize"
 import "dotenv/config"
+import { exec } from "child_process";
+import util from "util";
 export const sequelize = new Sequelize(
   process.env.DB_NAME || "svs",
   process.env.DB_USER || "root",
@@ -34,7 +34,6 @@ export const connectDB = async () => {
   try {
     import("#db/initModels")
     await sequelize.sync()
-    // cargar()
     process.env.PORT === "8080"
       ? console.log("Conectado correctamente a la DB local!")
       : console.log("Conectado correctamente a la DB remota!")
@@ -46,10 +45,12 @@ export const connectDB = async () => {
 export const clearDB = async () => {
   try {
     import("#db/initModels")
+    await sequelize.query("DROP TABLE IF EXISTS `SequelizeMeta`;")
     await sequelize.drop()
     await sequelize.sync({ force: true })
+    const execAsync = util.promisify(exec);
+    await execAsync("npx sequelize-cli db:migrate --env dev");
 
-    cargar()
     process.env.PORT === "3030"
       ? console.log("DB local reiniciada correctamente!")
       : console.log("DB remota reiniciada correctamente!")

@@ -10,15 +10,17 @@ import { hashContraseña } from "#Utils/hashContraseña"
  * Establece la estrategia de passport
  * para tomar los datos necesarios de la cuenta de Google
  */
+console.log(process.env.PORT)
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.ID_CLIENT_OAUTH || "",
       clientSecret: process.env.SECRET_CLIENT_OAUTH || "",
-      callbackURL: `http://localhost:${process.env.PORT}/usuarios/auth/google/callback`,
+      callbackURL: `http://localhost:${process.env.PORT}/public/auth/google/callback`,
     },
     async function (token: string, tokenSecret: string, profile: passport.Profile, done) {
       console.log(passport)
+      console.log(process.env.PORT)
       try {
         //Verifica si el email está en la base de datos
         //Si no esta, verifica si es perteneciente a la institucion
@@ -34,13 +36,13 @@ passport.use(
             const contraseña_generada = generarContraseña()
             const hashear_contraseña = await hashContraseña(contraseña_generada)
             const datos = {
-              nombre: perfil["family_name"],
-              apellido: perfil["given_name"],
+              nombre: perfil["given_name"], 
+              apellido: perfil["family_name"], 
               dni: perfil["email"].split("@")[0],
               contraseña: hashear_contraseña,
-              telefono: "12526474",
-              email: "awdawdaw@gawd.com",
-              anioIngreso: 2023,
+              telefono: null, 
+              email: email, 
+              anioIngreso: new Date().getFullYear(), 
               rol: Rol.ESTUDIANTE,
             }
             const crearUsuario = await UserService.crearUsuario(datos)
@@ -57,24 +59,22 @@ passport.use(
   )
 )
 
-//Serializa el usuario (guarda ciertos datos de la sesión)
+// CORREGIR en passport config:
 passport.serializeUser((user: any, done) => {
   console.log(user);
-  
-  done(null, user?.dataValues)
-})
+  // ✅ Guardar solo el email para la sesión
+  done(null, user.email);
+});
 
-//Deserializa el usuario
 passport.deserializeUser(async (email: string, done) => {
   console.log(email);
-
   try {
-    const user = await User.encontrarPorEmail(email)
-    done(null, user)
+    const user = await User.encontrarPorEmail(email);
+    done(null, user);
   } catch (error: unknown) {
-    const err = getErrorMessage(error)
-    done(err)
+    const err = getErrorMessage(error);
+    done(err);
   }
-})
+});
 
 export default passport

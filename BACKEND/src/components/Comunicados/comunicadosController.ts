@@ -12,6 +12,8 @@ export class ComunicadoController {
     res.status(respuesta.status).json(respuesta.respuesta)
   }
   crear = async (req: Request, res: Response) => {
+    console.log("ola");
+    
     const archivos = req.files
     if (archivos) {
       req.body.archivos = archivos
@@ -23,7 +25,14 @@ export class ComunicadoController {
     // VERIFICA SI EL COMUNICADO ES PARA UNA DIVISION
     if (req.body.division && req.body.carrera)
       req.body = { ...req.body, carrera: req.body.carrera, division: Number(req.body.division) }
+    console.log("//////////////////////////////");
+    
+    console.log(req.body);
+    console.log("//////////////////////////////");
+    
     const verificacion = await comunicadoSchema.safeParseAsync(req.body)
+    console.log(verificacion);
+
     if (!verificacion.success) {
       res.status(400).json({
         respuesta: "Los datos ingresados para crear un comunicado son incorrectos: " + verificacion.error.message,

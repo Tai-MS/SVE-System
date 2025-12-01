@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, CardContent } from "@mui/material";
+import { apiFetch } from "../hooks/validarToken";
 
 function Carreras() {
   const [selected, setSelected] = useState("Carreras");
@@ -9,15 +10,17 @@ function Carreras() {
   
   const carrera = async() => {
     try{
-      const res = await fetch(import.meta.env.VITE_BACKURL + "/carreras/traerTodas", {
-        method: "GET",
-        headers: { "Content-Type": "application/json"}
-      })
+      const token = localStorage.getItem("token");
+      const res = await apiFetch(import.meta.env.VITE_BACKURL + "/carreras/traerTodas")
+      
+      // const res = await fetch(import.meta.env.VITE_BACKURL + "/carreras/traerTodas", {
+      //   method: "GET",
+      //   headers: { "Content-Type": "application/json",
+      //     "auth-token": `${localStorage.getItem("token")}`
+      //   }
+      // })
 
       const data = await res.json()
-      console.log("++++++++++++++")
-      console.log(data[0])
-      console.log("++++++++++++++")
       return data
     }catch(err){
       console.error("Error al traer CARRERAS: ", err)

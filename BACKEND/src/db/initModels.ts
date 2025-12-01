@@ -20,6 +20,7 @@ import Archivo from "#components/Archivos/archivosModel"
 import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
 import { Division } from "#components/Division/divisionModel"
 import { AllowNull } from "sequelize-typescript"
+import { Tarea } from "#components/Tareas/TareaModel"
 
 const SequelizeStore = connectSessionSequelize(session.Store)
 export const sessionStore = new SequelizeStore({
@@ -28,6 +29,21 @@ export const sessionStore = new SequelizeStore({
   checkExpirationInterval: 15 * 60 * 1000,
   expiration: 24 * 60 * 60 * 1000,
 })
+
+Tarea.init(
+  {
+    id: {type: DataTypes.BIGINT.UNSIGNED, primaryKey: true, autoIncrement: true},
+    estudiante_id: {type: DataTypes.UUID, allowNull: false},
+    creado: {type: DataTypes.DATE, allowNull: false},
+    material_id_fk: { 
+      type: DataTypes.BIGINT.UNSIGNED, 
+      allowNull: false 
+    },
+    modificado: {type: DataTypes.DATE, allowNull: true}
+  },{
+    sequelize
+  }
+)
 
 UnidadCurricular.init(
   {
@@ -136,7 +152,8 @@ Archivo.init(
     },
     moduloId: { type: DataTypes.INTEGER, allowNull: false },
     material_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: true},
-    file_id: { type: DataTypes.STRING, allowNull: true}
+    file_id: { type: DataTypes.STRING, allowNull: true},
+    tarea_id: {type: DataTypes.BIGINT.UNSIGNED, allowNull: true}
   },
   { sequelize, tableName: "archivos", timestamps: true, createdAt: "subido", updatedAt: "actulizado" }
 )
@@ -179,8 +196,22 @@ Comunicado.init(
 
 Asistencia.init(
   {
-    clase_id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true },
-    alumno_id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true },
+    clase_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
+      references: {
+        model: "clases",
+        key: "id",
+      },
+      primaryKey: true,
+    },
+    alumno_id: {
+      type: DataTypes.UUID,
+      references: {
+        model: "usuario",
+        key: "id",
+      },
+      primaryKey: true,
+    },
     presente: { type: DataTypes.BOOLEAN, allowNull: false },
   },
   { sequelize, tableName: "asistencias" }
@@ -200,7 +231,7 @@ ComisionUC.init(
     id: { type: DataTypes.BIGINT.UNSIGNED, primaryKey: true, autoIncrement: true },
     uc_id: { type: DataTypes.STRING, allowNull: false },
     comision_id: { type: DataTypes.BIGINT, allowNull: false },
-    link_meet: { type: DataTypes.STRING, allowNull: true },
+    link_meet: { type: DataTypes.STRING, allowNull: true }
   },
   {
     sequelize,
@@ -285,7 +316,7 @@ Usuario.init(
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     creado: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     ultima_conexion: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
-    token: { type: DataTypes.STRING, allowNull: true },
+    token: { type: DataTypes.TEXT, allowNull: true },
     carrera_id_fk: { type: DataTypes.STRING, allowNull: true },
   },
   {

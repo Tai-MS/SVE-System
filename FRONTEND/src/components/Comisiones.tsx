@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { apiFetch } from "../hooks/validarToken";
 
 function Comisiones() {
   const [selected, setSelected] = useState("Comisiones");
@@ -19,15 +20,16 @@ function Comisiones() {
 
   const comision = async () => {
     try {
-      const res = await fetch(
-        import.meta.env.VITE_BACKURL + `/comision/traerTodas/${carreraId}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const res = await apiFetch(import.meta.env.VITE_BACKURL + `/comision/traerTodas/${carreraId}`)
+
+      // const res = await fetch(
+      //   import.meta.env.VITE_BACKURL + `/comision/traerTodas/${carreraId}`,
+      //   {
+      //     method: "GET",
+      //     headers: { "Content-Type": "application/json" },
+      //   }
+      // );
       const data = await res.json();
-      console.log(data);
       return data;
     } catch (error) {
       console.error("Error al traer COMISIONES: ", error);
