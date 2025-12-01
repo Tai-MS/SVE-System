@@ -94,12 +94,12 @@ function UC(): JSX.Element {
                       <Card
                         key={materia.id}
                         nombre={materia.nombre}
-                        codigoMateria={materia.id}
-                        instructor={
-                          materia.comisionesUC[0].profesor.nombre +
-                          " " +
-                          materia.comisionesUC[0].profesor.apellido
-                        }
+                        // codigoMateria={materia.id}
+                        // instructor={
+                        //   materia.comisionesUC[0].profesor.nombre +
+                        //   " " +
+                        //   materia.comisionesUC[0].profesor.apellido || "Marcelo Marquez"
+                        // }
                         studentsCount={materia.studentsCount}
                         description={materia.description}
                       />
@@ -121,12 +121,12 @@ function UC(): JSX.Element {
                       <Card
                         key={materia.id}
                         nombre={materia.nombre}
-                        codigoMateria={materia.id}
-                        instructor={
-                          materia.comisionesUC[0].profesor.nombre +
-                          " " +
-                          materia.comisionesUC[0].profesor.apellido
-                        }
+                        // codigoMateria={materia.id}
+                        // instructor={
+                        //   materia.comisionesUC[0].profesor.nombre +
+                        //   " " +
+                        //   materia.comisionesUC[0].profesor.apellido || "Marcelo Marquez"
+                        // }
                         studentsCount={materia.studentsCount}
                         description={materia.description}
                       />
@@ -137,7 +137,7 @@ function UC(): JSX.Element {
             </div>
           )}
 
-          {!loading && !error && (
+          {!loading && !error && materias === undefined && (
             <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
               <p className="text-gray-600">
                 No hay unidades curriculares disponibles
