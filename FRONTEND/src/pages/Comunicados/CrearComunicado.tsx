@@ -35,6 +35,30 @@ const CrearComunicado: React.FC = () => {
       const fetchDataComisiones = await apiFetch(url + `/comision/traerTodas`)
       const jsonDataComisiones = await fetchDataComisiones.json();
       setComisiones(jsonDataComisiones);
+      setUsuario(jsonDataComisiones);
+    };
+    fetchFunction();
+  }, []);
+
+  const navigate = useNavigate();
+
+  const limpiarEstadoImagenes = () => {
+    // Revocar URLs de memoria
+    imagenes.forEach((url) => {
+      if (url.startsWith("blob:")) URL.revokeObjectURL(url);
+    });
+    setImagenes([]);
+    setImagenesFiles([]);
+  };
+  // 🧩 Cargar comisiones
+  useEffect(() => {
+    limpiarEstadoImagenes();
+    const fetchComisiones = async () => {
+      const dataComisiones = await fetch(
+        `${import.meta.env.VITE_BACKURL}/comision/traerTodas`
+      );
+      const jsonDataComisiones = await dataComisiones.json();
+      setComisiones(jsonDataComisiones);
     };
     fetchComisiones();
   }, []);
@@ -96,26 +120,6 @@ const CrearComunicado: React.FC = () => {
   // 📤 Enviar al backend
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append("id_usuario", comunicado.id_usuario);
-      formData.append("titulo", comunicado.titulo);
-      formData.append("descripcion", comunicado.descripcion);
-
-      if (selectTipoComunicado === "general") {
-        formData.append("general", "true");
-      } else if (selectTipoComunicado === "division") {
-        formData.append("division", selectDivision.toString());
-        formData.append("carrera", selectTipoCarrera);
-      } else if (selectTipoComunicado === "comision") {
-        formData.append("id_comision", String(selectComision));
-      }
-
-      // Adjuntar imágenes
-      imagenesFiles.forEach((file) => {
-        formData.append("img", file);
-      });
-
     try {
 
       const url = `${import.meta.env.VITE_BACKURL}/comunicados/crear`;

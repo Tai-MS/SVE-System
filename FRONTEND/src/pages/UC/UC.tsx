@@ -2,7 +2,6 @@ import { type JSX } from "react";
 import { Card } from "../../components/Card";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiFetch } from "../../hooks/validarToken";
 
 type Profesor = {
   nombre: string;
@@ -31,21 +30,22 @@ function UC(): JSX.Element {
   useEffect(() => {
     async function fetchMaterias() {
       try {
+        console.log(localStorage.getItem("token"));
         const response = await fetch(import.meta.env.VITE_BACKURL + "/unidadcurricular/todas",
         {
             method: "GET",
             headers: {
-            "Content-Type": "application/json",
-            token: localStorage.getItem("token") || "",
+            "Content-Type" : "application/json",
+            token : localStorage.getItem("token") || "",
 						}
         });
-
         if (!response.ok) {
+          console.log(await response.json());
           throw new Error("Error al cargar las unidades curriculares");
         }
         const data = await response.json();
-        setMaterias(data);
         console.log(data);
+        setMaterias(data);
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -137,7 +137,7 @@ function UC(): JSX.Element {
             </div>
           )}
 
-          {!loading && !error && materias === undefined && (
+          {!loading && !error && (
             <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
               <p className="text-gray-600">
                 No hay unidades curriculares disponibles

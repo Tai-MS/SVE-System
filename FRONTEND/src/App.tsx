@@ -15,6 +15,7 @@ import ActualizarComunicado from "./pages/Comunicados/ActualizarComunicado";
 import UCdetalle from "./pages/UC/UCdetalle";
 import CareerSelection from "./pages/Career/Career";
 import { ClassroomList } from "./pages/Career/ClassList";
+import Materiales from "./pages/UC/Materiales";
 
 function App() {
   const { user, logout, login } = useAuth();

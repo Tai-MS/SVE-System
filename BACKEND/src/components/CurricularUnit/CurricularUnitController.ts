@@ -6,7 +6,9 @@ import { InferCreationAttributes } from "sequelize"
 
 async function traerTodas(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
+    console.log("sssssssssssssssssssssssssssssssssss")
     const token = (req.headers["token"] as string) || undefined
+    console.log(token);
     if (token === undefined) {
       return res.status(304).json("Acceso denegado")
     }

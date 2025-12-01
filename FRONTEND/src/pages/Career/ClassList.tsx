@@ -61,20 +61,20 @@ if (!careerId) {
 
   const getCareerName = (id: string | undefined) => {
     const careers: Record<string, string> = {
-      af: "Analista Funcional",
-      ds: "Desarrollo de Software",
-      iti: "Infraestructura de TI",
+      af: "💼 Analista Funcional",
+      ds: "💻Desarrollo de Software",
+      iti: "🔧Infraestructura de TI",
     }
     return careers[id || ""] || "Carrera"
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-white p-8">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8">
+        <div className="mb-8 bg-gray-600 p-6 rounded-lg text-white shadow">
           <button
             onClick={() => navigate("/carreras")}
-            className="mb-4 flex items-center text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+            className="mb-4 flex items-center text-sm font-medium text-white transition-colors hover:text-gray-900"
           >
             <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -84,8 +84,8 @@ if (!careerId) {
 
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Unidades Curriculares</h1>
-              <p className="mt-1 text-gray-600">{getCareerName(careerId)}</p>
+              <h1 className="text-3xl font-bold text-white">{getCareerName(careerId)}</h1>
+              <p className="mt-1 text-white/80">Unidades Curriculares</p>
             </div>
           </div>
         </div>
