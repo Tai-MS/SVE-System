@@ -61,36 +61,57 @@ const Layout = ({ children, User, Logout }) => {
       },
     ],
     "/carreras": [
-      { 
-        name: "Ver carreras", 
-        path: "/carreras", 
-        rol: ["ADMINISTRADOR"] },
+      {
+        name: "Ver carreras",
+        path: "/carreras",
+        rol: ["ADMINISTRADOR"],
+      },
     ],
     "/usuarios": [
-      { 
-        name: "Ver usuarios", 
-        path: "/usuarios", 
-        rol: ["ADMINISTRADOR", "BEDELIA", "DIRECTIVO"] },
+      {
+        name: "Ver usuarios",
+        path: "/usuarios",
+        rol: ["ADMINISTRADOR", "BEDELIA", "DIRECTIVO"],
+      },
     ],
     "/UC": [
       { name: "Ver UCs", path: "/UC", rol: ["ESTUDIANTE"] },
       // { name: "Agregar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
       // { name: "Eliminar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
     ],
-    [`/UC/detalles/${id}`] : [
-      { name: "Ver Unidad Curricular", path: [`/UC/detalles/${id}`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
-      { name: "Ver Materiales", path: [`/UC/detalles/${id}/materiales`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+    [`/UC/detalles/${id}`]: [
+      {
+        name: "Ver Unidad Curricular",
+        path: [`/UC/detalles/${id}`],
+        rol: [
+          "PROFESOR",
+          "BEDELIA",
+          "DIRECTIVO",
+          "ADMINISTRADOR",
+          "ESTUDIANTE",
+        ],
+      },
+      {
+        name: "Ver Materiales",
+        path: [`/UC/detalles/${id}/materiales`],
+        rol: [
+          "PROFESOR",
+          "BEDELIA",
+          "DIRECTIVO",
+          "ADMINISTRADOR",
+          "ESTUDIANTE",
+        ],
+      },
       // { name: "Subir Materiales", path: [`/UC/detalles/${id}/subir`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
       // { name: "Ver Trabajos", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
-    ]
+    ],
   };
 
-let currentBasePath = `/${location.pathname.split("/")[1]}`;
-if (location.pathname.startsWith("/UC/detalles/")) {
-  currentBasePath = `/UC/detalles/${id}`;
-}
-const links = routeLinks[currentBasePath] || [];
-
+  let currentBasePath = `/${location.pathname.split("/")[1]}`;
+  if (location.pathname.startsWith("/UC/detalles/")) {
+    currentBasePath = `/UC/detalles/${id}`;
+  }
+  const links = routeLinks[currentBasePath] || [];
 
   // useEffect(() => {
   //   const checkMobile = () => {

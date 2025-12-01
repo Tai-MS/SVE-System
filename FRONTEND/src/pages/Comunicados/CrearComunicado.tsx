@@ -1,8 +1,8 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Comunicado } from "../../types/ComunicadoTypes";
-import type { Usuario } from "../../types/UsuarioTypes";
-import type { Comision, Division, Carrera } from "../../types/ComisionesTypes";
+import { Pencil } from "lucide-react";
+// import type { Comunicado } from "../../types/ComunicadoTypes";
+import type { Comision } from "../../types/ComisionesTypes";
 import { apiFetch } from "../../hooks/validarToken";
 
 const CrearComunicado: React.FC = () => {
@@ -20,22 +20,15 @@ const CrearComunicado: React.FC = () => {
   const [selectTipoCarrera, setSelectTipoCarrera] = useState<string>("none");
   const [selectDivision, setSelectDivision] = useState<number>(0);
   const [selectComision, setSelectComision] = useState<number>(0);
+  const [mensajeError, setMensajeError] = useState<string>("");
 
   const rol_usuario = localStorage.getItem("rol");
-  const token2 = localStorage.getItem("token");
-  console.log(token2);
-  
   useEffect(() => {
     const fetchFunction = async () => {
-      const url = import.meta.env.VITE_BACKURL
-        const fetchDataUsuario = await apiFetch(url + `/usuarios/obtenerUsuario?id=${id_usuario}`)
-        
-        const jsonDataUsuario = await fetchDataUsuario.json();
-        setUsuario(jsonDataUsuario);
-      const fetchDataComisiones = await apiFetch(url + `/comision/traerTodas`)
+      const url = import.meta.env.VITE_BACKURL;
+      const fetchDataComisiones = await apiFetch(url + `/comision/traerTodas`);
       const jsonDataComisiones = await fetchDataComisiones.json();
       setComisiones(jsonDataComisiones);
-      setUsuario(jsonDataComisiones);
     };
     fetchFunction();
   }, []);
@@ -79,6 +72,7 @@ const CrearComunicado: React.FC = () => {
     } else if (e.target.name === "tipo_comision") {
       setSelectComision(Number(e.target.value));
     } else {
+      setSelectTipoCarrera("ALL");
       setSelectDivision(Number(e.target.value));
     }
   };
@@ -121,14 +115,66 @@ const CrearComunicado: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
+      const comunicadoFinal = comunicado;
+      const formData = new FormData();
+
+      if (
+        comunicadoFinal.titulo.length === 0 ||
+        comunicadoFinal.titulo.length > 255
+      ) {
+        setMensajeError(
+          "El título es obligatorio y puede tener un máximo de 255 caracteres"
+        );
+        return;
+      }
+      if (comunicadoFinal.descripcion.length === 0) {
+        setMensajeError("La descripción es obligatoria");
+        return;
+      }
+
+      formData.append("id_usuario", comunicado.id_usuario);
+      formData.append("titulo", comunicado.titulo);
+      formData.append("descripcion", comunicado.descripcion);
+
+      if (selectTipoComunicado === "none") {
+        setMensajeError(
+          "Es obligatorio seleccionar a quien está dirigido el comunicado"
+        );
+        return;
+      }
+
+      if (selectTipoComunicado === "division" && selectDivision === 0) {
+        setMensajeError(
+          "Si el comunicado es a nivel División, es obligatorio seleccionar una división en concreto"
+        );
+        return;
+      }
+
+      if (selectTipoComunicado === "comision" && selectComision === 0) {
+        setMensajeError(
+          "Si el comunicado es a nivel Comisión, es obligatorio seleccionar una comisión en concreto"
+        );
+        return;
+      }
+
+      if (selectTipoComunicado === "general") {
+        formData.append("general", "true");
+      } else if (selectTipoComunicado === "division") {
+        formData.append("division", selectDivision.toString());
+        formData.append("carrera", selectTipoCarrera);
+      } else if (selectTipoComunicado === "comision") {
+        formData.append("id_comision", String(selectComision));
+      }
+
+      // Adjuntar imágenes
+      imagenesFiles.forEach((file) => {
+        formData.append("img", file);
+      });
 
       const url = `${import.meta.env.VITE_BACKURL}/comunicados/crear`;
-      console.log(localStorage.getItem("token"));
-      
-      const res = await apiFetch(url, formData) 
 
-      const dataJson = await res;
-      console.log("Respuesta backend:", dataJson);
+      await apiFetch(url, { method: "POST", body: formData });
+
       navigate("/comunicados");
     } catch (err) {
       console.error("Error al crear comunicado:", err);
@@ -152,7 +198,9 @@ const CrearComunicado: React.FC = () => {
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           Crear Comunicado
         </h2>
-
+        <h3 className="text-red-500 font-bold mb-4 text-center">
+          {mensajeError}
+        </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Título */}
           <div>

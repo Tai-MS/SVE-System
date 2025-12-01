@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { Comunicado } from "../../types/ComunicadoTypes";
 import CardComunicado from "../../components/CardComunicado";
+import { apiFetch } from "../../hooks/validarToken";
 
 export default function MisComunicados() {
   const [comunicados, setComunicados] = useState<Comunicado[]>([]);
@@ -12,7 +13,7 @@ export default function MisComunicados() {
           import.meta.env.VITE_BACKURL
         }/comunicados/comunicadosUsuario/${idUser}`;
 
-        const res = await fetch(url);
+        const res = await apiFetch(url);
         const data = await res.json();
 
         setComunicados(Array.isArray(data) ? data : []);

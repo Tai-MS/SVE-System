@@ -18,14 +18,14 @@ export async function up(queryInterface, Sequelize) {
       duracion_meses: 36,
       activo: true,
     },
-  ];
+  ]
 
   return queryInterface.bulkInsert("carreras", carreras, {
     updateOnDuplicate: ["nombre", "duracion_meses", "activo"],
-  });
+  })
 }
 
 export async function down(queryInterface, Sequelize) {
-  const ids = ["DS", "AF", "ITI"];
-  return queryInterface.bulkDelete("carreras", { id: ids });
+  const ids = ["DS", "AF", "ITI"]
+  return queryInterface.bulkDelete("carreras", { id: ids })
 }

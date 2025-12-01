@@ -12,8 +12,6 @@ export class ComunicadoController {
     res.status(respuesta.status).json(respuesta.respuesta)
   }
   crear = async (req: Request, res: Response) => {
-    console.log("ola");
-    
     const archivos = req.files
     if (archivos) {
       req.body.archivos = archivos
@@ -25,13 +23,13 @@ export class ComunicadoController {
     // VERIFICA SI EL COMUNICADO ES PARA UNA DIVISION
     if (req.body.division && req.body.carrera)
       req.body = { ...req.body, carrera: req.body.carrera, division: Number(req.body.division) }
-    console.log("//////////////////////////////");
-    
-    console.log(req.body);
-    console.log("//////////////////////////////");
-    
+    // console.log("//////////////////////////////")
+
+    // console.log(req.body)
+    // console.log("//////////////////////////////")
+
     const verificacion = await comunicadoSchema.safeParseAsync(req.body)
-    console.log(verificacion);
+    console.log(verificacion)
 
     if (!verificacion.success) {
       res.status(400).json({
@@ -83,20 +81,23 @@ export class ComunicadoController {
     req.body.imagenesExistentes
       ? (req.body = { ...req.body, imagenesExistentes: JSON.parse(req.body.imagenesExistentes) })
       : (req.body = { ...req.body, imagenesExistentes: [] })
-    // Asegurar boolean
-    req.body.general = Boolean(req.body.general)
 
-    // Manejar id_comision
-    req.body.id_comision = req.body.id_comision && req.body.id_comision !== "null" ? Number(req.body.id_comision) : null
-
-    // Manejar división y carrera
-    if (req.body.division && req.body.carrera && req.body.carrera !== "none") {
-      req.body.division = Number(req.body.division)
-      req.body.carrera = req.body.carrera
-    } else {
-      req.body.division = null
-      req.body.carrera = null
-    }
+    // VERIFICA SI EL COMUNICADO ES GENERAL
+    req.body.tipoComunicado === "general"
+      ? (req.body = { ...req.body, general: true, division: null, carrera: "ALL", id_comision: null })
+      : (req.body = { ...req.body, general: false })
+    // VERIFICA SI EL COMUNICADO ES PARA UNA COMISION
+    if (req.body.tipoComunicado === "comision")
+      req.body = { ...req.body, comision: Number(req.body.comision), general: false, division: null, carrera: "ALL" }
+    // VERIFICA SI EL COMUNICADO ES PARA UNA DIVISION
+    if (req.body.tipoComunicado === "division")
+      req.body = {
+        ...req.body,
+        carrera: req.body.carrera,
+        division: Number(req.body.division),
+        general: false,
+        id_comision: null,
+      }
 
     const verificacion = await comunicadoUpdateSchema.safeParseAsync(req.body)
     if (!verificacion.success) {

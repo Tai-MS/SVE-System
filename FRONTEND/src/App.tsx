@@ -11,7 +11,7 @@ import Layout from "./components/Layout";
 import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
 import MisComunicados from "./pages/Comunicados/MisComunicados";
-import ActualizarComunicado from "./pages/Comunicados/ActualizarComunicado";
+// import ActualizarComunicado from "./pages/Comunicados/ActualizarComunicado";
 import UCdetalle from "./pages/UC/UCdetalle";
 import CareerSelection from "./pages/Career/Career";
 import { ClassroomList } from "./pages/Career/ClassList";
@@ -41,7 +41,10 @@ function App() {
                     element={<CrearComunicado />}
                   />
                   <Route path="/carreras" element={<CareerSelection />} />
-                  <Route path="/career/:careerId/classrooms" element={<ClassroomList />} />
+                  <Route
+                    path="/career/:careerId/classrooms"
+                    element={<ClassroomList />}
+                  />
                   <Route path="/usuarios" element={<Alumnos />} />
                   <Route
                     path="/comisiones/:carreraId"
@@ -52,17 +55,11 @@ function App() {
                     path="/unidadcurricular/:materiaId/:materiaNombre/:materiaProfe"
                     element={<UnidadCurricular />}
                   />
-                  <Route 
-                    path="/UC" 
-                    element={<UC />}
-                  />
-                  <Route 
-                    path="UC/detalles/:id" 
-                    element={<UCdetalle />}
-                  />
-                  <Route 
+                  <Route path="/UC" element={<UC />} />
+                  <Route path="UC/detalles/:id" element={<UCdetalle />} />
+                  <Route
                     path="/UC/detalles/:id/materiales"
-                    element={<Materiales />} 
+                    element={<Materiales />}
                   />
                 </Routes>
               </Layout>

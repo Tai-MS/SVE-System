@@ -19,7 +19,7 @@ export class ComunicadoService {
         model: Usuario,
         attributes: ["nombre", "apellido", "rol"],
       },
-      order: [["creado", "DESC"]],
+      order: [["actualizado", "DESC"]],
     })
 
     if (!respuestaDB) {
@@ -182,7 +182,7 @@ export class ComunicadoService {
     try {
       const respuestaDB = await Comunicado.findAll({
         where: { eliminado: false, id_usuario: id },
-        order: [["creado", "DESC"]],
+        order: [["actualizado", "DESC"]],
         include: {
           model: Usuario,
           attributes: ["nombre", "apellido", "rol"],

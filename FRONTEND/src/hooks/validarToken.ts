@@ -1,44 +1,36 @@
-export const apiFetch = async (
-  url: string, 
-  inputBody: any = null
-) => {
+export const apiFetch = async (url: string, inputBody: any = null) => {
   const token = localStorage.getItem("token");
-  
-  
+
   try {
-    
     let response;
-    
+
     if (inputBody) {
-      const esFormData = inputBody instanceof FormData;
-      
+      const esFormData = inputBody.body instanceof FormData;
+
       const headers: HeadersInit = {
-        "token": `${token}`,
+        token: `${token}`,
       };
-      
+
       if (!esFormData) {
         headers["Content-Type"] = "application/json";
       }
-      
       response = await fetch(url, {
-        method: "POST",
+        method: inputBody.method || "POST",
         headers: headers,
-        body: esFormData ? inputBody : JSON.stringify(inputBody)
+        body: esFormData ? inputBody.body : JSON.stringify(inputBody.body),
       });
-      
-      
     } else {
       response = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "token": `${token}`
-        }
+          token: `${token}`,
+        },
       });
     }
-    
-    console.log("Status:", response.status);
-    console.log(token);
+
+    // console.log("Status:", response.status);
+    // console.log(token);
 
     if (response.status === 401) {
       console.error("ERROR: Token inválido o expirado");
