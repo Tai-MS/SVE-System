@@ -1,15 +1,16 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { Comunicado } from "../../types/ComunicadoTypes";
-import type { Usuario } from "../../types/UsuarioTypes";
-import type { Comision, Division, Carrera } from "../../types/ComisionesTypes";
-import { apiFetch } from "../../hooks/validarToken";
+import type { Comision } from "../../types/ComisionesTypes";
+import { Pencil } from "lucide-react";
 
-const CrearComunicado: React.FC = () => {
-  const [comunicado, setComunicado] = useState({
+const ActualizarComunicado: React.FC = () => {
+  const [comunicado, setComunicado] = useState<Comunicado>({
     id_usuario: localStorage.getItem("userId") || "",
     titulo: "",
     descripcion: "",
+    img: [],
+    eliminado: false,
   });
 
   const [imagenes, setImagenes] = useState<string[]>([]);
@@ -18,29 +19,49 @@ const CrearComunicado: React.FC = () => {
   const [selectTipoComunicado, setSelectTipoComunicado] =
     useState<string>("none");
   const [selectTipoCarrera, setSelectTipoCarrera] = useState<string>("none");
-  const [selectDivision, setSelectDivision] = useState<number>(0);
-  const [selectComision, setSelectComision] = useState<number>(0);
+  const [selectDivision, setSelectDivision] = useState<number | null>(0);
+  const [selectComision, setSelectComision] = useState<number | null>(0);
 
+  const { id_comunicado } = useParams();
   const rol_usuario = localStorage.getItem("rol");
-  const token2 = localStorage.getItem("token");
-  console.log(token2);
-  
+  const navigate = useNavigate();
+
+  // 🧩 Cargar comunicado y comisiones
   useEffect(() => {
     const fetchFunction = async () => {
-      const url = import.meta.env.VITE_BACKURL
-        const fetchDataUsuario = await apiFetch(url + `/usuarios/obtenerUsuario?id=${id_usuario}`)
-        
-        const jsonDataUsuario = await fetchDataUsuario.json();
-        setUsuario(jsonDataUsuario);
-      const fetchDataComisiones = await apiFetch(url + `/comision/traerTodas`)
-      const jsonDataComisiones = await fetchDataComisiones.json();
+      const dataComunicado = await fetch(
+        `${
+          import.meta.env.VITE_BACKURL
+        }/comunicados/obtenerUno/${id_comunicado}`
+      );
+      const jsonDataComunicado: Comunicado = await dataComunicado.json();
+      setComunicado(jsonDataComunicado);
+
+      // Mostrar imágenes existentes
+      if (jsonDataComunicado.img) {
+        setImagenes(jsonDataComunicado.img);
+      }
+
+      const dataComisiones = await fetch(
+        `${import.meta.env.VITE_BACKURL}/comision/traerTodas`
+      );
+      const jsonDataComisiones = await dataComisiones.json();
       setComisiones(jsonDataComisiones);
-      setUsuario(jsonDataComisiones);
+
+      // Setear tipo de comunicado
+      if (jsonDataComunicado.general) {
+        setSelectTipoComunicado("general");
+      } else if (jsonDataComunicado.division && jsonDataComunicado.carrera) {
+        setSelectTipoComunicado("division");
+        setSelectDivision(jsonDataComunicado.division);
+        setSelectTipoCarrera(jsonDataComunicado.carrera);
+      } else if (jsonDataComunicado.id_comision) {
+        setSelectTipoComunicado("comision");
+        setSelectComision(jsonDataComunicado.id_comision);
+      }
     };
     fetchFunction();
-  }, []);
-
-  const navigate = useNavigate();
+  }, [id_comunicado]);
 
   const limpiarEstadoImagenes = () => {
     // Revocar URLs de memoria
@@ -50,18 +71,6 @@ const CrearComunicado: React.FC = () => {
     setImagenes([]);
     setImagenesFiles([]);
   };
-  // 🧩 Cargar comisiones
-  useEffect(() => {
-    limpiarEstadoImagenes();
-    const fetchComisiones = async () => {
-      const dataComisiones = await fetch(
-        `${import.meta.env.VITE_BACKURL}/comision/traerTodas`
-      );
-      const jsonDataComisiones = await dataComisiones.json();
-      setComisiones(jsonDataComisiones);
-    };
-    fetchComisiones();
-  }, []);
 
   // 🖊️ Handlers
   const handleChange = (
@@ -72,18 +81,39 @@ const CrearComunicado: React.FC = () => {
   };
 
   const handleSelect = (e: ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.name === "tipo_comunicado") {
-      setSelectTipoComunicado(e.target.value);
-    } else if (e.target.name === "tipo_carrera") {
-      setSelectTipoCarrera(e.target.value);
-    } else if (e.target.name === "tipo_comision") {
-      setSelectComision(Number(e.target.value));
-    } else {
-      setSelectDivision(Number(e.target.value));
+    const { name, value } = e.target;
+
+    if (name === "tipo_comunicado") {
+      setSelectTipoComunicado(value);
+
+      // Reset centralizado según el tipo
+      const resetStates = {
+        general: () => {
+          setSelectDivision(null);
+          setSelectTipoCarrera("none");
+          setSelectComision(null);
+        },
+        division: () => {
+          setSelectComision(null);
+        },
+        comision: () => {
+          setSelectDivision(null);
+          setSelectTipoCarrera("none");
+        },
+      };
+
+      // Ejecutar el reset correspondiente
+      resetStates[value as keyof typeof resetStates]?.();
+    } else if (name === "tipo_carrera") {
+      setSelectTipoCarrera(value);
+    } else if (name === "tipo_comision") {
+      setSelectComision(Number(value));
+    } else if (name === "tipo_division") {
+      setSelectDivision(Number(value));
     }
   };
 
-  // 📸 Agregar imágenes
+  // 📸 Agregar nuevas imágenes
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const newURLs = files.map((file) => URL.createObjectURL(file));
@@ -121,17 +151,55 @@ const CrearComunicado: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
+      const formData = new FormData();
+      formData.append("id_usuario", comunicado.id_usuario);
+      formData.append("titulo", comunicado.titulo);
+      formData.append("descripcion", comunicado.descripcion);
 
-      const url = `${import.meta.env.VITE_BACKURL}/comunicados/crear`;
-      console.log(localStorage.getItem("token"));
-      
-      const res = await apiFetch(url, formData) 
+      if (selectTipoComunicado === "general") {
+        formData.append("general", "true");
+        formData.append("division", "");
+        formData.append("carrera", "");
+        formData.append("id_comision", "null");
+      } else if (selectTipoComunicado === "division") {
+        formData.append("general", "false");
+        formData.append("division", (selectDivision as number).toString());
+        formData.append("carrera", selectTipoCarrera);
+        formData.append("id_comision", "null");
+      } else if (selectTipoComunicado === "comision") {
+        formData.append("general", "false");
+        formData.append("division", "");
+        formData.append("carrera", "");
+        formData.append(
+          "id_comision",
+          selectComision ? String(selectComision) : "null"
+        );
+      }
+      // Solo enviar archivos nuevos
+      imagenesFiles.forEach((file) => {
+        formData.append("img", file);
+      });
 
-      const dataJson = await res;
-      console.log("Respuesta backend:", dataJson);
+      // Enviar imágenes existentes para conservarlas
+      const imagenesExistentes = imagenes.filter(
+        (img) => !img.startsWith("blob:")
+      );
+      formData.append("imagenesExistentes", JSON.stringify(imagenesExistentes));
+
+      await fetch(
+        `${
+          import.meta.env.VITE_BACKURL
+        }/comunicados/actualizar/${id_comunicado}`,
+        {
+          method: "PATCH",
+          body: formData,
+        }
+      );
+
+      limpiarEstadoImagenes();
       navigate("/comunicados");
     } catch (err) {
-      console.error("Error al crear comunicado:", err);
+      console.error("Error al enviar comunicado:", err);
     }
   };
 
@@ -150,7 +218,7 @@ const CrearComunicado: React.FC = () => {
     <section className="flex flex-col items-center w-full h-full text-black justify-center">
       <div className="bg-white rounded-lg shadow-2xl shadow-gray-700 w-[40%] h-auto items-center justify-center p-6">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          Crear Comunicado
+          Actualizar Comunicado
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -286,7 +354,13 @@ const CrearComunicado: React.FC = () => {
                     className="relative group cursor-pointer rounded-xl overflow-hidden"
                   >
                     <img
-                      src={imagen}
+                      src={
+                        imagen.startsWith("blob:")
+                          ? imagen
+                          : imagen.startsWith("http")
+                          ? imagen
+                          : `${import.meta.env.VITE_BACKURL}/uploads/${imagen}`
+                      }
                       alt={`imagen-${index}`}
                       className="w-full h-40 object-cover rounded-xl transition-all duration-300 group-hover:opacity-40"
                     />
@@ -330,7 +404,7 @@ const CrearComunicado: React.FC = () => {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
           >
-            Crear Comunicado
+            Actualizar Comunicado
           </button>
         </form>
       </div>
@@ -338,4 +412,4 @@ const CrearComunicado: React.FC = () => {
   );
 };
 
-export default CrearComunicado;
+export default ActualizarComunicado;

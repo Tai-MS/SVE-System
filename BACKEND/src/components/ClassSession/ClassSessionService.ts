@@ -185,5 +185,4 @@ export class ClassSessionServices {
       return { status: 500, respuesta: error.msg || "Ocurrio un error en el servidor al intentar modificar una clase" }
     }
   }
-  
 }

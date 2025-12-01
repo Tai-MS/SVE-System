@@ -13,7 +13,7 @@ export const apiFetch = async (
       const esFormData = inputBody instanceof FormData;
       
       const headers: HeadersInit = {
-        "auth-token": `${token}`,
+        "token": `${token}`,
       };
       
       if (!esFormData) {
@@ -32,7 +32,7 @@ export const apiFetch = async (
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "auth-token": `${token}`
+          "token": `${token}`
         }
       });
     }

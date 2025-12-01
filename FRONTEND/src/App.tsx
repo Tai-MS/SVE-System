@@ -3,7 +3,6 @@ import { useAuth } from "./hooks/useAuth";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UC from "./pages/UC/UC";
-import Carreras from "./components/Carreras";
 import Alumnos from "./components/Alumnos";
 import Comisiones from "./components/Comisiones";
 import Materias from "./components/Materias";
@@ -11,7 +10,12 @@ import UnidadCurricular from "./components/UnidadCurricular";
 import Layout from "./components/Layout";
 import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
+import MisComunicados from "./pages/Comunicados/MisComunicados";
+import ActualizarComunicado from "./pages/Comunicados/ActualizarComunicado";
 import UCdetalle from "./pages/UC/UCdetalle";
+import CareerSelection from "./pages/Career/Career";
+import { ClassroomList } from "./pages/Career/ClassList";
+import Materiales from "./pages/UC/Materiales";
 
 function App() {
   const { user, logout, login } = useAuth();
@@ -19,11 +23,7 @@ function App() {
   return (
     <Router>
       <Routes>
-
-        <Route 
-          path="/login" 
-          element={<Login login={login} />}  
-          />
+        <Route path="/login" element={<Login login={login} />} />
 
         <Route
           path="/*"
@@ -33,10 +33,15 @@ function App() {
                 <Routes>
                   <Route path="/comunicados" element={<Comunicados />} />
                   <Route
+                    path="/comunicados/misComunicados/:idUser"
+                    element={<MisComunicados />}
+                  />
+                  <Route
                     path="/comunicados/crear"
                     element={<CrearComunicado />}
                   />
-                  <Route path="/carreras" element={<Carreras />} />
+                  <Route path="/carreras" element={<CareerSelection />} />
+                  <Route path="/career/:careerId/classrooms" element={<ClassroomList />} />
                   <Route path="/usuarios" element={<Alumnos />} />
                   <Route
                     path="/comisiones/:carreraId"
@@ -54,6 +59,10 @@ function App() {
                   <Route 
                     path="UC/detalles/:id" 
                     element={<UCdetalle />}
+                  />
+                  <Route 
+                    path="/UC/detalles/:id/materiales"
+                    element={<Materiales />} 
                   />
                 </Routes>
               </Layout>

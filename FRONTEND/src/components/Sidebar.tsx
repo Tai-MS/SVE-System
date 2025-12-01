@@ -19,8 +19,8 @@ const Sidebar = ({ links }) => {
 
   return (
     <>
-      <div className="fixed min-w-72 mt-8 h-full bg-white shadow-md py-10 px-6 transition-all duration-500 z-40 shadow-gray-400">
-        <nav className="space-y-10">
+      <div className="fixed mt-8 h-full w-60 bg-white shadow-md pt-10 transition-all duration-500 z-40 shadow-gray-400">
+        <nav className="flex flex-col space-y-10 p-6">
           {links != undefined &&
             links.map((link: Link, index: number) => {
               if (link.rol.includes(usuarioRol as string)) {
@@ -28,7 +28,7 @@ const Sidebar = ({ links }) => {
                   <NavLink
                     key={index}
                     to={link.path}
-                    className="block text-gray-700 hover:text-blue-400"
+                    className="block text-gray-700 hover:text-blue-400 max-w-40"
                   >
                     {link.name}
                   </NavLink>

@@ -138,65 +138,70 @@ const COMUNICADOS_POR_COMISION = [
   {
     id: uuidv4(),
     id_usuario: "profesor",
-    titulo: "Trabajo Práctico de Matemática - 1° Comisión A",
+    titulo: "Práctica Profesionalizante - DS 3° Comisión 1",
     descripcion:
       "Se asignó un nuevo trabajo práctico de Matemática para la Comisión A. Fecha de entrega: 15 de abril. Consultar material en el aula virtual.",
     eliminado: false,
     general: false,
-    division: 1,
-    id_comision: COMISIONES.division1[0],
+    division: null,
+    carrera: "ALL",
+    id_comision: 16,
     creado: now,
     actualizado: now,
   },
   {
     id: uuidv4(),
     id_usuario: "profesor",
-    titulo: "Recuperatorio de Física - 1° Comisión B",
+    titulo: "Recuperatorio de Física - AF 1° Comisión 2",
     descripcion:
       "Se ha programado un recuperatorio de Física para la Comisión B el día viernes 22 a las 14hs en el laboratorio.",
     eliminado: false,
     general: false,
-    division: 1,
-    id_comision: COMISIONES.division1[1],
+    division: 0,
+    carrera: "ALL",
+    id_comision: 2,
     creado: now,
     actualizado: now,
   },
   {
     id: uuidv4(),
     id_usuario: "profesor",
-    titulo: "Clase Especial de Programación - 1° Comisión C",
+    titulo: "Clase Especial de Programación - DS 1° Comisión 3",
     descripcion:
       "La Comisión C tendrá una clase especial de Programación con un invitado externo el próximo miércoles. Asistencia obligatoria.",
     eliminado: false,
     general: false,
-    division: 1,
-    id_comision: COMISIONES.division1[2],
+    division: 0,
+    carrera: "ALL",
+    id_comision: 12,
     creado: now,
     actualizado: now,
   },
   {
     id: uuidv4(),
     id_usuario: "profesor",
-    titulo: "Presentación de Proyectos - 2° Comisión A",
+    titulo: "Presentación de Proyectos - AF 2° Comisión 1",
     descripcion:
       "La Comisión A deberá presentar sus proyectos finales el día lunes 28 de abril. Cada grupo dispondrá de 15 minutos para su exposición.",
     eliminado: false,
     general: false,
-    division: 2,
-    id_comision: COMISIONES.division2[0],
+    division: 0,
+    carrera: "ALL",
+    id_comision: 4,
     creado: now,
     actualizado: now,
   },
   {
     id: uuidv4(),
     id_usuario: "profesor",
-    titulo: "Cambio de Aula - 2° Comisión B",
+    titulo: "Cambio de Aula - AF 1° Comisión 2",
     descripcion:
       "A partir del martes, las clases de la Comisión B se dictarán en el aula 305 por refacciones en el aula habitual.",
     eliminado: false,
     general: false,
-    division: 2,
-    id_comision: COMISIONES.division2[1],
+    division: 0,
+    carrera: "ALL",
+    id_comision: 2,
     creado: now,
     actualizado: now,
   },
@@ -208,21 +213,6 @@ const COMUNICADOS_POR_COMISION = [
       "La Comisión C participará de un taller intensivo de testing de software los días 10 y 11 de mayo en el laboratorio de informática.",
     eliminado: false,
     general: false,
-    division: 2,
-    id_comision: COMISIONES.division2[2],
-    creado: now,
-    actualizado: now,
-  },
-  {
-    id: uuidv4(),
-    id_usuario: "profesor",
-    titulo: "Práctica Profesionalizante - 3° Comisión A",
-    descripcion:
-      "Los estudiantes de la Comisión A deberán confirmar su lugar de práctica profesionalizante antes del 5 de mayo en secretaría académica.",
-    eliminado: false,
-    general: false,
-    division: 3,
-    id_comision: COMISIONES.division3[0],
     creado: now,
     actualizado: now,
   },
@@ -234,21 +224,9 @@ const COMUNICADOS_POR_COMISION = [
       "Se abre el calendario de defensas de tesis para la Comisión B. Los interesados deben inscribirse en el SIU Guaraní antes del 30 de abril.",
     eliminado: false,
     general: false,
-    division: 3,
-    id_comision: COMISIONES.division3[1],
-    creado: now,
-    actualizado: now,
-  },
-  {
-    id: uuidv4(),
-    id_usuario: "profesor",
-    titulo: "Visita Técnica a Empresa - 3° Comisión C",
-    descripcion:
-      "La Comisión C realizará una visita técnica a una empresa del sector tecnológico el día 15 de mayo. Salida: 9hs desde la institución.",
-    eliminado: false,
-    general: false,
-    division: 3,
-    id_comision: COMISIONES.division3[2],
+    division: 0,
+    carrera: "ALL",
+    id_comision: 8,
     creado: now,
     actualizado: now,
   },
@@ -256,73 +234,79 @@ const COMUNICADOS_POR_COMISION = [
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-  await queryInterface.createTable("comunicados", {
-    id: {
-      type: Sequelize.UUID,
-      primaryKey: true,
-      defaultValue: Sequelize.UUIDV4,
-    },
-    id_usuario: {
-      type: Sequelize.UUID,
-      allowNull: false,
-      references: { model: "usuarios", key: "id" },
-      onDelete: "CASCADE",
-      onUpdate: "CASCADE",
-    },
-    titulo: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    descripcion: {
-      type: Sequelize.TEXT,
-      allowNull: false,
-    },
-    eliminado: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    general: {
-      type: Sequelize.BOOLEAN,
-      allowNull: true,
-      defaultValue: false,
-    },
-    division: {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-      defaultValue: null,
-    },
-    id_comision: {
-      type: Sequelize.UUID,
-      allowNull: true,
-      defaultValue: null,
-    },
-    creado: {
-      type: Sequelize.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.NOW,
-    },
-    actualizado: {
-      type: Sequelize.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.NOW,
-    },
-  })
+    await queryInterface.createTable("comunicados", {
+      id: {
+        type: Sequelize.UUID,
+        primaryKey: true,
+        defaultValue: Sequelize.UUIDV4,
+      },
+      id_usuario: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: { model: "usuarios", key: "id" },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      },
+      titulo: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      descripcion: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
+      eliminado: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      general: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+      },
+      division: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+      },
+      carrera: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: "ALL",
+      },
+      id_comision: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        defaultValue: null,
+      },
+      creado: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
+      actualizado: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
+    })
 
-  await queryInterface.bulkInsert("comunicados", COMUNICADOS_GENERALES)
-  await queryInterface.bulkInsert("comunicados", COMUNICADOS_POR_DIVISION)
-  await queryInterface.bulkInsert("comunicados", COMUNICADOS_POR_COMISION)
-},
+    await queryInterface.bulkInsert("comunicados", COMUNICADOS_GENERALES)
+    await queryInterface.bulkInsert("comunicados", COMUNICADOS_POR_DIVISION)
+    await queryInterface.bulkInsert("comunicados", COMUNICADOS_POR_COMISION)
+  },
   async down(queryInterface, Sequelize) {
-  const idsGenerales = COMUNICADOS_GENERALES.map((c) => c.id)
-  const idsDivision = COMUNICADOS_POR_DIVISION.map((c) => c.id)
-  const idsComision = COMUNICADOS_POR_COMISION.map((c) => c.id)
+    const idsGenerales = COMUNICADOS_GENERALES.map((c) => c.id)
+    const idsDivision = COMUNICADOS_POR_DIVISION.map((c) => c.id)
+    const idsComision = COMUNICADOS_POR_COMISION.map((c) => c.id)
 
-  await queryInterface.bulkDelete("comunicados", {
-    id: {
-      [Sequelize.Op.in]: [...idsGenerales, ...idsDivision, ...idsComision],
-    },
-  })
+    await queryInterface.bulkDelete("comunicados", {
+      id: {
+        [Sequelize.Op.in]: [...idsGenerales, ...idsDivision, ...idsComision],
+      },
+    })
 
-  await queryInterface.dropTable("comunicados")
-},}
+    await queryInterface.dropTable("comunicados")
+  },
+}

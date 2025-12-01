@@ -29,7 +29,7 @@ function Login({ login }: LoginProps) {
     const success = await login(username, password);
 
     if (success) {
-      navigate("/comunicados"); // Redirigir al home
+      navigate("/comunicados");
     } else {
       setError("Credenciales inválidas");
     }
@@ -47,7 +47,7 @@ function Login({ login }: LoginProps) {
             <img
               src="/logo.svg"
               alt="Logo terciario urquiza"
-              className="object-contain h-30 w-30 mx-auto bg-white rounded-full"
+              className="object-contain h-50 w-50 mx-auto bg-white rounded-full"
             />
           </a>
           <h1 className="font-bold text-gray-white text-white text-shadow-md text-shadow-black ">

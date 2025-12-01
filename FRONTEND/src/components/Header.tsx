@@ -7,12 +7,7 @@ interface HeaderProps {
 }
 
 export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
-  console.log(localStorage.getItem("rol"));
-  console.log("Admin: " + (localStorage.getItem("rol") === "ADMINISTRADOR"));
-  console.log("Bedelia: " + (localStorage.getItem("rol") === "BEDELIA"));
-  console.log("Directivo: " + (localStorage.getItem("rol") === "DIRECTIVO"));
-  console.log("Todo: " + (localStorage.getItem("rol") === "ADMINISTRADOR" || localStorage.getItem("rol") === "BEDELIA" || localStorage.getItem("rol") === "DIRECTIVO"));
-  
+  const rol = localStorage.getItem("rol");
   return (
     <header className="fixed top-0 left-0 w-full bg-white shadow-md px-6 py-4 z-50 ">
       <div className="flex justify-between items-center px-10">
@@ -39,19 +34,35 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
           >
             Comunicados
           </NavLink>
-          {localStorage.getItem("rol") === "ADMINISTRADOR" && (
-          <NavLink
-            to="/usuarios"
-            className="hover:text-blue-400 cursor-pointer"
-          >
-            Usuarios
-          </NavLink>)}
-          <NavLink
-            to="/UC"
-            className="hover:text-blue-400 cursor-pointer"
-          >
-            Carreras
-          </NavLink>
+          {(rol === "ADMINISTRADOR" ||
+            rol === "BEDELIA" ||
+            rol === "DIRECTIVO") && (
+            <NavLink
+              to="/usuarios"
+              className="hover:text-blue-400 cursor-pointer"
+            >
+              Usuarios
+            </NavLink>
+          )}
+          {rol === "ESTUDIANTE" && (
+            <NavLink
+              to="/UC"
+              className="hover:text-blue-400 cursor-pointer"
+            >
+              Mis UCs
+            </NavLink>
+          )}
+           {(rol === "ADMINISTRADOR" ||
+            rol === "BEDELIA" ||
+            rol === "DIRECTIVO") && (
+            <NavLink
+              to="/carreras"
+              className="hover:text-blue-400 cursor-pointer"
+            >
+              Carreras
+            </NavLink>
+          )}
+          
           {user && onLogout && (
             <button
               onClick={onLogout}
