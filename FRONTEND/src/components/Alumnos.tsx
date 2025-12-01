@@ -192,7 +192,14 @@ export default function Usuarios() {
           [editing.id]: form.materias as { id: string; division: number }[],
         }));
       } else {
-        const res = await apiFetch(import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario", body);
+        const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": localStorage.getItem("token") || "",
+          },
+          body: JSON.stringify(body),
+        });
 
         const text = await res.text();
         if (!res.ok) throw new Error(`Error crear: ${res.status} ${text}`);
