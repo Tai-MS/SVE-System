@@ -650,7 +650,7 @@ export default function Usuarios() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "auth-token": localStorage.getItem("token") || "",
+            token: localStorage.getItem("token") || "",
           },
           body: JSON.stringify({
             id: editing.id,
@@ -658,13 +658,31 @@ export default function Usuarios() {
           }),
         });
       } else {
-        const res = await apiFetch(
+        const res = await fetch(
           import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario",
-          form
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              token: localStorage.getItem("token") || "",
+            },
+            body: JSON.stringify(body),
+          }
         );
 
         const text = await res.text();
         if (!res.ok) throw new Error(`Error crear: ${res.status} ${text}`);
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (error) {
+          data = text;
+        }
+        setUsuarios((prev) => [...prev, data]);
+        setMateriasUsuarios((prev) => ({
+          ...prev,
+          [data.id]: form.materias,
+        }));
       }
 
       setOpen(false);
@@ -776,6 +794,7 @@ export default function Usuarios() {
                 onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
+                  console.log(file);
 
                   setCargando(true);
 
@@ -783,10 +802,17 @@ export default function Usuarios() {
                   formData.append("file", file);
 
                   try {
-                    const res = await apiFetch(
+                    const res = await fetch(
                       import.meta.env.VITE_BACKURL +
                         "/usuarios/importarAlumnos",
-                      formData
+                      {
+                        method: "POST",
+                        headers: {
+                          token: localStorage.getItem("token") || "",
+                          // NO incluyas Content-Type aquí, el navegador lo configura automáticamente
+                        },
+                        body: formData,
+                      }
                     );
 
                     const text = await res.text();
@@ -981,8 +1007,10 @@ export default function Usuarios() {
             onChange={(e) => setForm({ ...form, apellido: e.target.value })}
           />
           <TextField
+            type="number"
             label="DNI"
             value={form.dni}
+            inputProps={{ min: 0 }}
             onChange={(e) => setForm({ ...form, dni: e.target.value })}
           />
           <TextField

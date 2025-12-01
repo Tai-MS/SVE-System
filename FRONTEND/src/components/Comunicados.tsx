@@ -34,7 +34,7 @@ export default function Comunicados() {
     method: "GET",
     headers: { 
       "Content-Type": "application/json",
-      "auth-token": `${localStorage.getItem("token")}`
+      "token": `${localStorage.getItem("token")}`
     },
   })
     .then((res) => res.json())
@@ -56,7 +56,7 @@ export default function Comunicados() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "auth-token": `${localStorage.getItem("token")}`
+          "token": `${localStorage.getItem("token")}`
         },
         body: JSON.stringify(nuevo),
       })

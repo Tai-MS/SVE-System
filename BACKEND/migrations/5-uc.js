@@ -26,7 +26,7 @@ const MATERIAsDS = [
   { id: uuidv4(), nombre: "Programación 2", carga_horaria: 128, tipo_uc: "MATERIA" },
   {
     id: uuidv4(),
-    nombre: "Gestión de PRACTICA PROFESIONALIZANTEs de Software",
+    nombre: "Gestión de Software",
     carga_horaria: 128,
     tipo_uc: "MATERIA",
   },

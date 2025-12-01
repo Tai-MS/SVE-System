@@ -130,7 +130,7 @@ if (!careerId) {
 
 
 
-const DS_CLASSROOMS: Materias[] = [
+const DS_CLASSROOMS = [
   { "id": "a1f7c1a1-4f2b-4a22-9c0e-517eac12a101", "nombre": "Comunicación", "carga_horaria": 48, "tipo_uc": "TALLER", "profesor": "Mariana López" },
   { "id": "b2d4f3e2-183b-497d-94fa-71ee92c9c202", "nombre": "UDI 1", "carga_horaria": 48, "tipo_uc": "TALLER", "profesor": "Ricardo Fernández" },
   { "id": "c3e8a3f3-29d5-4fa1-aa2b-51de92ac3103", "nombre": "Matemática", "carga_horaria": 128, "tipo_uc": "MATERIA", "profesor": "Laura Benítez" },
@@ -158,7 +158,7 @@ const DS_CLASSROOMS: Materias[] = [
   { "id": "a5c0e5d5-22cc-4fa1-d4dd-59o410s05525", "nombre": "Práctica Profesionalizante 2", "carga_horaria": 192, "tipo_uc": "PRACTICA PROFESIONALIZANTE", "profesor": "Federico Villalba" }
   ]
 
-const AF_CLASSROOMS: Materias[] = [
+const AF_CLASSROOMS = [
     { "id": "b4bcf036-b910-415b-9810-4b3c1631ed45", "nombre": "Comunicación", "carga_horaria": 48, "tipo_uc": "TALLER" },
     { "id": "cf5f6bfd-0edf-4d43-bbb8-64b3800bd85e", "nombre": "UDI 1", "carga_horaria": 48, "tipo_uc": "MATERIA" },
     { "id": "b0b36fc9-3671-4be1-9d14-43fda9e90227", "nombre": "Matemática", "carga_horaria": 96, "tipo_uc": "MATERIA" },
@@ -187,7 +187,7 @@ const AF_CLASSROOMS: Materias[] = [
     { "id": "fb0f9fa7-b166-4ef2-ab97-61a92052f60e", "nombre": "Práctica Profesionalizante 2", "carga_horaria": 192, "tipo_uc": "PRACTICA PROFESIONALIZANTE" }
   ]
 
-const ITI_CLASSROOMS: Materias[] = [
+const ITI_CLASSROOMS = [
     { "id": "65172fb0-d932-4bc4-8fe0-bc682f92cbea", "nombre": "Comunicación", "carga_horaria": 48, "tipo_uc": "MATERIA" },
     { "id": "bb13d80a-63d2-4ff3-96ba-0f1a87a2935c", "nombre": "UDI 1", "carga_horaria": 48, "tipo_uc": "TALLER" },
     { "id": "d98d8530-e714-44d1-9b5b-00dd7c6d9b42", "nombre": "Matemática", "carga_horaria": 128, "tipo_uc": "MATERIA" },

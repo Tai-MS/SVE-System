@@ -8,7 +8,7 @@ import { Usuarios } from "#components/User/userSchemas"
 import transport from "#Utils/mailer"
 import { usuarioI } from "./UserDTO"
 import { InferCreationAttributes, Sequelize } from "sequelize"
-import { datosDelToken } from "#middlewares/auth"
+import { datosDeltoken } from "#middlewares/auth"
 import { UnidadCurricular } from "#components/CurricularUnit/CurricularUnitModel"
 import UsuarioUnidadCurricular from "#components/UsuarioUC/UsuarioUC"
 import sequelize from "#db/connection"
@@ -55,7 +55,6 @@ async function traerUsuario(id: string): Promise<Usuario | string> {
 
 async function iniciarSesion(data: IniciarSesionDTO): Promise<Usuario | string> {
   const usuario = await Usuario.encontrarPorEmail(data.email)
-
   if (!usuario) {
     return "Email no encontrado"
   }
@@ -122,7 +121,7 @@ async function incluirEnUC(datos: any): Promise<Usuario | string> {
     return "Campos incompatibles"
   }
   //Hace referencia al usuario que realiza la accion
-  const verificarUsuario = await datosDelToken(datos.token)
+  const verificarUsuario = await datosDeltoken(datos.token)
   if (verificarUsuario.rol === "ESTUDIANTE" || verificarUsuario.rol === "PROFESOR") {
     return "Acceso denegado"
   }
@@ -159,12 +158,12 @@ async function incluirEnUC(datos: any): Promise<Usuario | string> {
 
 async function actualizarUsuario(
   datos: Partial<InferCreationAttributes<Usuario>>,
-  guardarToken: boolean = false
+  guardartoken: boolean = false
 ): Promise<Usuario | string> {
   const dni = datos.dni
   const actualizarCampos: Partial<InferCreationAttributes<Usuario>> = {}
 
-  if (guardarToken) {
+  if (guardartoken) {
       actualizarCampos.token = datos.token
       await Usuario.update(actualizarCampos, {
         where: { dni: datos.dni },
@@ -178,7 +177,7 @@ async function actualizarUsuario(
   } else {
     return "DNI requerido"
   }
-  const confirmarUsuario = await datosDelToken(datos.token)
+  const confirmarUsuario = await datosDeltoken(datos.token)
 
   if (
     confirmarUsuario.rol !== Rol.ADMINISTRADOR &&

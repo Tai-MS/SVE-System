@@ -2,7 +2,7 @@ import { ArchivoService } from "#components/Archivos/archivoService"
 import Archivo from "#components/Archivos/archivosModel"
 import { ComisionUC } from "#components/ComisionUC/ComisionUCModel"
 import Usuario, { Rol } from "#components/User/UserModel"
-import { datosDelToken } from "#middlewares/auth"
+import { datosDeltoken } from "#middlewares/auth"
 import { MaterialAttributes } from "./MaterialDTO"
 import { Material } from "./MaterialModel"
 
@@ -12,7 +12,7 @@ export class MateriaServices {
   crearMaterial = async (datos: MaterialAttributes, file?: any) => {
     const t = await Material.sequelize!.transaction()
     try {
-      const token = await datosDelToken(datos.token)
+      const token = await datosDeltoken(datos.token)
 
       if (token.rol !== Rol.ESTUDIANTE) {
         const uc = await ComisionUC.findByPk(datos.comision_uc_id)
@@ -77,7 +77,7 @@ export class MateriaServices {
   ) => {
     const t = await Material.sequelize!.transaction()
     try {
-      const token = await datosDelToken(datos.token!)
+      const token = await datosDeltoken(datos.token!)
 
       if (token.rol !== Rol.ESTUDIANTE) {
         const material = await Material.findByPk(id)
@@ -213,12 +213,12 @@ export class MateriaServices {
     try {
       const { com_uc, token } = datos
 
-      const datos_token = await datosDelToken(token)
+      const datos_token = await datosDeltoken(token)
 
       const usuario = await Usuario.findByPk(datos_token.id)
 
       if (!usuario) {
-        return { status: 404, respuesta: "Token error" }
+        return { status: 404, respuesta: "token error" }
       }
 
       const comision_uc = await ComisionUC.findByPk(com_uc)

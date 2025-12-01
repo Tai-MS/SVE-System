@@ -4,7 +4,7 @@ import UserService from "./UserService"
 import passport from "passport"
 import User from "./UserModel"
 import { generarContraseña } from "#Utils/generarContraseña"
-import { datosDelToken, generarToken } from "#middlewares/auth"
+import { datosDeltoken, generartoken } from "#middlewares/auth"
 import { excelSchema, Usuarios } from "#components/User/userSchemas"
 import dotenv from "dotenv"
 import XLSX from "xlsx"
@@ -74,8 +74,8 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
         message: iniciar_sesion,
       })
     }
-    let token = await generarToken(iniciar_sesion)
-    const dato = await datosDelToken(token)
+    let token = await generartoken(iniciar_sesion)
+    const dato = await datosDeltoken(token)
 
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],
@@ -83,7 +83,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
     }
     await UserService.actualizarUsuario(usuarioParaActualizar, true)
     return res
-      .cookie("auth-token", token, {
+      .cookie("token", token, {
         maxAge: 360 * 100 * 24,
       })
       .status(200)
@@ -125,7 +125,7 @@ async function crearUsuario(req: Request, res: Response, next: NextFunction): Pr
 
 async function incluirEnUC(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const token = req.headers["auth-token"] as string
+    const token = req.headers["token"] as string
 
     const datos = {
       dni: req.body.dni,
@@ -149,7 +149,7 @@ async function incluirEnUC(req: Request, res: Response, next: NextFunction): Pro
 
 async function actualizarUsuario(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const token = req.headers["auth-token"] as string | undefined
+    const token = req.headers["token"] as string | undefined
 
     const datos: Partial<InferCreationAttributes<Usuario>> = {
       id: req.body.id,
@@ -201,8 +201,8 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
       return res.send("error")
     }
 
-    const token = await generarToken(user)
-    const dato = await datosDelToken(token)
+    const token = await generartoken(user)
+    const dato = await datosDeltoken(token)
     req.logIn(user, function (error) {
       if (error) {
         return next(error)

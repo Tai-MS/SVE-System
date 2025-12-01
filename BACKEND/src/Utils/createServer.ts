@@ -8,7 +8,7 @@ import archivoRouter from "#components/Archivos/archivoRouter"
 import passport from "passport"
 import session from "express-session"
 import cookieParser from "cookie-parser"
-import { verificarToken } from "#middlewares/auth"
+import { verificartoken } from "#middlewares/auth"
 import rutasPublicasRouter from "#components/PublicRoutes/rutasPublicas"
 import UnidadCurricularRouter from "#components/CurricularUnit/CurricularUnitRoutes"
 import CarreraRouter from "#components/Career/CarreraRoutes"
@@ -39,7 +39,7 @@ export const create_server = async () => {
         origin: true,
         credentials: true,
         allowedHeaders: ["Content-Type", "Authorization", "auth-token", "token"],
-        exposedHeaders: ["Authorization", "auth-token", "token"],
+        exposedHeaders: ["Authorization", "token", "token"],
       })
     )
     .use(cookieParser())
@@ -68,14 +68,14 @@ export const create_server = async () => {
       return next()
     }
 
-    return verificarToken(req, res, next)
+    return verificartoken(req, res, next)
   })
   app
     .use((req, res, next) => {
       console.log("Se ejecuta middleware general para:", req.path)
       next()
     })
-    .use(verificarToken)
+    .use(verificartoken)
     .use("/carreras", CarreraRouter)
     .use("/unidadcurricular", UnidadCurricularRouter)
     .use("/comision", ComisionRouter)

@@ -1,7 +1,7 @@
 import { ArchivoService } from "#components/Archivos/archivoService"
 import Archivo from "#components/Archivos/archivosModel"
 import Usuario, { Rol } from "#components/User/UserModel"
-import { datosDelToken } from "#middlewares/auth"
+import { datosDeltoken } from "#middlewares/auth"
 import { Tarea } from "./TareaModel"
 import { TareaAttributes } from "./TareaDTO"
 import { Material } from "#components/Material/MaterialModel"
@@ -11,7 +11,7 @@ export class TareaServices {
 
   traerTarea = async (tarea_id: number, token: string, material_id?: number) => {
     try {
-      const solicitante = await datosDelToken(token)
+      const solicitante = await datosDeltoken(token)
       console.log(tarea_id)
       console.log(typeof tarea_id)
       console.log(token)
@@ -69,7 +69,7 @@ export class TareaServices {
   subirTarea = async (datos: TareaAttributes, file: any) => {
     const t = await Tarea.sequelize!.transaction()
     try {
-      const datos_token = await datosDelToken(datos.token)
+      const datos_token = await datosDeltoken(datos.token)
       if (datos_token.rol !== Rol.ESTUDIANTE) {
         return { status: 403, respuesta: "Está acción sólo puede ser realizada por un estudiante." }
       }
@@ -113,7 +113,7 @@ export class TareaServices {
   modificarTarea = async (datos: TareaAttributes, nuevo_archivo?: any, eliminar_archivo_ids?: Array<number>) => {
     const t = await Tarea.sequelize!.transaction()
     try {
-      const datos_token = await datosDelToken(datos.token)
+      const datos_token = await datosDeltoken(datos.token)
       if (datos_token.rol !== Rol.ESTUDIANTE) {
         await t.rollback()
         return { status: 403, respuesta: "Está acción sólo puede ser realizada por un estudiante." }
@@ -180,7 +180,7 @@ export class TareaServices {
   eliminarArchivoTarea = async (datos: TareaAttributes) => {
     const t = await Tarea.sequelize!.transaction()
     try {
-      const datos_token = await datosDelToken(datos.token)
+      const datos_token = await datosDeltoken(datos.token)
       if (datos_token.rol !== Rol.ESTUDIANTE) {
         return { status: 403, respuesta: "Está acción sólo puede ser realizada por un estudiante." }
       }

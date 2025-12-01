@@ -11,7 +11,7 @@ import Layout from "./components/Layout";
 import Comunicados from "./pages/Comunicados/Comunicados";
 import CrearComunicado from "./pages/Comunicados/CrearComunicado";
 import MisComunicados from "./pages/Comunicados/MisComunicados";
-// import ActualizarComunicado from "./pages/Comunicados/ActualizarComunicado";
+import ActualizarComunicado from "./pages/Comunicados/ActualizarComunicado";
 import UCdetalle from "./pages/UC/UCdetalle";
 import CareerSelection from "./pages/Career/Career";
 import { ClassroomList } from "./pages/Career/ClassList";
@@ -39,6 +39,10 @@ function App() {
                   <Route
                     path="/comunicados/crear"
                     element={<CrearComunicado />}
+                  />
+                  <Route
+                    path="/comunicados/actualizar/:id_comunicado"
+                    element={<ActualizarComunicado />}
                   />
                   <Route path="/carreras" element={<CareerSelection />} />
                   <Route

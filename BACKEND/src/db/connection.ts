@@ -4,8 +4,8 @@ import { exec } from "child_process"
 import util from "util"
 export const sequelize = new Sequelize(
   process.env.DB_NAME || "svs",
-  process.env.DB_USER || "root",
-  process.env.DB_PASS || "",
+  process.env.DB_USERNAME || "root",
+  process.env.DB_PASSWORD || "",
   {
     host: process.env.DB_HOST || "127.0.0.1",
     port: Number(process.env.DB_PORT),

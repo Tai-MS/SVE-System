@@ -4,10 +4,10 @@ import { InferCreationAttributes, Op } from "sequelize"
 import { ComisionUC } from "#components/ComisionUC/ComisionUCModel"
 import { Comision } from "#components/Comision/ComisionModel"
 import Usuario, { Rol } from "#components/User/UserModel"
-import { datosDelToken, verificarToken } from "#middlewares/auth"
+import { datosDeltoken, verificartoken } from "#middlewares/auth"
 
 async function traerTodas(token: string): Promise<any> {
-  const usuario = await datosDelToken(token)
+  const usuario = await datosDeltoken(token)
 
   if (usuario.rol !== Rol.ADMINISTRADOR && usuario.rol !== Rol.BEDELIA && usuario.rol !== Rol.DIRECTIVO) {
     const id = usuario.id
@@ -70,7 +70,7 @@ async function traerTodas(token: string): Promise<any> {
 async function traerUnaUC(datos: any): Promise<UnidadCurricular | string | null> {
   const { token, id } = datos
 
-  const datos_token = await datosDelToken(token)
+  const datos_token = await datosDeltoken(token)
 
   const usuario = await Usuario.findByPk(datos_token.id)
 

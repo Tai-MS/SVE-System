@@ -24,7 +24,7 @@ async function traerTodas(req: Request, res: Response, next: NextFunction): Prom
 
 async function traerUnaUC(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const token = req.headers["auth-token"] as string
+    const token = req.headers["token"] as string
     const datos = {
       token: token,
       id: req.params.id,

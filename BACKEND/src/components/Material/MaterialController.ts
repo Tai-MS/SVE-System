@@ -24,7 +24,7 @@ export class MaterialControllers {
 
     modificarMaterial = async (req: Request, res: Response) => {
         const verificacion = await MaterialSchema.partial().safeParseAsync(req.body)
-        const token = req.headers["auth-token"] as string || undefined
+        const token = req.headers["token"] as string || undefined
         
         if(!verificacion.success){
             return res.status(400).json({ respuesta: "Los datos ingresados para modificar un material son incorrectos" })

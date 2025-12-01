@@ -3,7 +3,7 @@ import UserService from "#components/User/UserService"
 import { Request, Response, NextFunction } from "express"
 import jwt from "jsonwebtoken"
 
-export async function datosDelToken(token: string) {
+export async function datosDeltoken(token: string) {
   const decodificado = jwt.verify(token, clave) as jwt.JwtPayload
   const dni = decodificado.dni
   const rol = decodificado.rol
@@ -12,7 +12,7 @@ export async function datosDelToken(token: string) {
 }
 
 const clave = process.env.SECRET_KEY || "secreto"
-export async function generarToken(data: Usuario) {
+export async function generartoken(data: Usuario) {
   const { dni, nombre, apellido, rol, id } = data
 
   const token = jwt.sign(
@@ -29,14 +29,16 @@ export async function generarToken(data: Usuario) {
   return token
 }
 
-export async function verificarToken(req: Request, res: Response, next: NextFunction) {
+export async function verificartoken(req: Request, res: Response, next: NextFunction) {
   const token = req.headers["token"] as string
+  console.log(token);
+  
 
   if (!token) return res.status(401).send("Accesso denegado")
 
   try {
-    const datosToken = await datosDelToken(token)
-    const usuario = await UserService.traerUsuario(datosToken.id)
+    const datostoken = await datosDeltoken(token)
+    const usuario = await UserService.traerUsuario(datostoken.id)
     if (!usuario) {
       throw Error
     }
@@ -52,6 +54,6 @@ export async function verificarToken(req: Request, res: Response, next: NextFunc
   } catch (error) {
     console.log("ERROR:" + error)
 
-    return res.status(400).send("Token no valido")
+    return res.status(400).send("token no valido")
   }
 }

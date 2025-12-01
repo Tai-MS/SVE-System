@@ -46,7 +46,8 @@ function UC(): JSX.Element {
         }
 
         const data = await response.json();
-        setMaterias(data);
+
+        setMaterias(data.UnidadCurriculars);
       } catch (err) {
         setError((err as Error).message);
       } finally {

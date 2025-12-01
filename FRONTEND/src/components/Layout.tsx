@@ -10,13 +10,19 @@ import type { Usuario } from "../types/UsuarioTypes";
 const Layout = ({ children, User, Logout }) => {
   // const [isMobile, setIsMobile] = useState(null);
   const [usuario, setUsuario] = useState<Usuario>();
+  const id_usuario = localStorage.getItem("userId");
   useEffect(() => {
     const fetchFunction = async () => {
-      const id_usuario = localStorage.getItem("userId");
       const data = await fetch(
         `${
           import.meta.env.VITE_BACKURL
-        }/usuarios/obtenerUsuario?id=${id_usuario}`
+        }/usuarios/obtenerUsuario?id=${id_usuario}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            token: localStorage.getItem("token") || "",
+          },
+        }
       );
       const dataJson = await data.json();
       setUsuario(dataJson);
@@ -46,17 +52,17 @@ const Layout = ({ children, User, Logout }) => {
       },
       {
         name: "Ver comunicados de tu divison",
-        path: `/comunicados?idUser=${usuario?.id}&type=division&career=${usuario?.carrera_id_fk}`,
+        path: `/comunicados?idUser=${id_usuario}&type=division&career=${usuario?.carrera_id_fk}`,
         rol: ["ESTUDIANTE", "ADMINISTRADOR"],
       },
       {
         name: "Ver comunicados de tu comision",
-        path: `/comunicados?idUser=${usuario?.id}&type=comision`,
+        path: `/comunicados?idUser=${id_usuario}&type=comision`,
         rol: ["ESTUDIANTE", "ADMINISTRADOR"],
       },
       {
         name: "Ver mis comunicados",
-        path: `/comunicados/misComunicados/${usuario?.id}`,
+        path: `/comunicados/misComunicados/${id_usuario}`,
         rol: ["BEDELIA", "ADMINISTRADOR", "DIRECTIVO", "PROFESOR"],
       },
     ],
@@ -79,32 +85,32 @@ const Layout = ({ children, User, Logout }) => {
       // { name: "Agregar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
       // { name: "Eliminar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
     ],
-    [`/UC/detalles/${id}`]: [
-      {
-        name: "Ver Unidad Curricular",
-        path: [`/UC/detalles/${id}`],
-        rol: [
-          "PROFESOR",
-          "BEDELIA",
-          "DIRECTIVO",
-          "ADMINISTRADOR",
-          "ESTUDIANTE",
-        ],
-      },
-      {
-        name: "Ver Materiales",
-        path: [`/UC/detalles/${id}/materiales`],
-        rol: [
-          "PROFESOR",
-          "BEDELIA",
-          "DIRECTIVO",
-          "ADMINISTRADOR",
-          "ESTUDIANTE",
-        ],
-      },
-      // { name: "Subir Materiales", path: [`/UC/detalles/${id}/subir`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
-      // { name: "Ver Trabajos", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
-    ],
+    // [`/UC/detalles/${id}`]: [
+    //   {
+    //     name: "Ver Unidad Curricular",
+    //     path: [`/UC/detalles/${id}`],
+    //     rol: [
+    //       "PROFESOR",
+    //       "BEDELIA",
+    //       "DIRECTIVO",
+    //       "ADMINISTRADOR",
+    //       "ESTUDIANTE",
+    //     ],
+    //   },
+    //   {
+    //     name: "Ver Materiales",
+    //     path: [`/UC/detalles/${id}/materiales`],
+    //     rol: [
+    //       "PROFESOR",
+    //       "BEDELIA",
+    //       "DIRECTIVO",
+    //       "ADMINISTRADOR",
+    //       "ESTUDIANTE",
+    //     ],
+    //   },
+    //   // { name: "Subir Materiales", path: [`/UC/detalles/${id}/subir`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+    //   // { name: "Ver Trabajos", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
+    // ],
   };
 
   let currentBasePath = `/${location.pathname.split("/")[1]}`;

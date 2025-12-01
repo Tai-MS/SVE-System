@@ -9,7 +9,7 @@ const Tarea = new TareaServices()
 export class TareaControllers {
 
   traerTarea = async(req: Request, res: Response) => {
-    const token = (req.headers["auth-token"] as string) || undefined
+    const token = (req.headers["token"] as string) || undefined
     const tarea_id = req.params.tareaId
     console.log(tarea_id);
     console.log(typeof tarea_id);
@@ -23,7 +23,7 @@ export class TareaControllers {
     if (!verificacion.success) {
       return res.status(400).json({ respuesta: "Los datos ingresados para subir una tarea son incorrectos" })
     }
-    const token = (req.headers["auth-token"] as string) || undefined
+    const token = (req.headers["token"] as string) || undefined
 
     const data: TareaAttributes = verificacion.data as unknown as TareaAttributes
     data.token = token!
@@ -39,7 +39,7 @@ export class TareaControllers {
     if (!verificacion.success) {
       return res.status(400).json({ respuesta: "Los datos ingresados para subir una tarea son incorrectos" })
     }
-    const token = (req.headers["auth-token"] as string) || undefined
+    const token = (req.headers["token"] as string) || undefined
 
     const data: TareaAttributes = verificacion.data as unknown as TareaAttributes
     data.token = token!

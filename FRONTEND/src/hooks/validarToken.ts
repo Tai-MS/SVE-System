@@ -33,7 +33,7 @@ export const apiFetch = async (url: string, inputBody: any = null) => {
     // console.log(token);
 
     if (response.status === 401) {
-      console.error("ERROR: Token inválido o expirado");
+      console.error("ERROR: token inválido o expirado");
       window.location.href = "/login";
       throw new Error("Unauthorized");
     }

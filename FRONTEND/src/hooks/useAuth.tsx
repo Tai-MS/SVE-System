@@ -10,14 +10,14 @@ interface AuthReturn {
 
 export function useAuth(): AuthReturn {
   const [user, setUser] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [token, settoken] = useState<string | null>(null);
 
   // Al iniciar, revisamos si ya había sesión guardada
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedtoken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("username");
-    if (storedToken && storedUser) {
-      setToken(storedToken);
+    if (storedtoken && storedUser) {
+      settoken(storedtoken);
       setUser(storedUser);
     }
   }, []);
@@ -44,12 +44,12 @@ export function useAuth(): AuthReturn {
         localStorage.setItem("username", data.nombre);
         localStorage.setItem("userId", data.id);
         localStorage.setItem("rol", data.rol);
-        setToken(data.token);
+        settoken(data.token);
         setUser(data.nombre);
         // localStorage.setItem("token", data.token);
         // console.log(data);
         // setUser(data.nombre)
-        // setToken(data.token);
+        // settoken(data.token);
         return true;
       } else {
         return false;
@@ -65,6 +65,7 @@ export function useAuth(): AuthReturn {
     password: string
   ): Promise<boolean> => {
     try {
+      
       const res = await fetch(
         import.meta.env.VITE_BACKURL + "/public/iniciarSesion",
         {
@@ -80,7 +81,7 @@ export function useAuth(): AuthReturn {
         localStorage.setItem("username", username);
         localStorage.setItem("userId", data.id);
         localStorage.setItem("rol", data.rol);
-        setToken(data.token);
+        settoken(data.token);
         setUser(username);
         return true;
       } else {
@@ -99,7 +100,7 @@ export function useAuth(): AuthReturn {
     localStorage.removeItem("userId");
     localStorage.removeItem("rol");
 
-    setToken(null);
+    settoken(null);
     setUser(null);
   };
 

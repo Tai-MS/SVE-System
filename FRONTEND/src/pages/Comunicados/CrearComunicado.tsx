@@ -48,7 +48,12 @@ const CrearComunicado: React.FC = () => {
     limpiarEstadoImagenes();
     const fetchComisiones = async () => {
       const dataComisiones = await fetch(
-        `${import.meta.env.VITE_BACKURL}/comision/traerTodas`
+        `${import.meta.env.VITE_BACKURL}/comision/traerTodas`,{
+            headers: {
+            "Content-Type": "application/json",
+            "token": localStorage.getItem("token") || "",
+          },
+        }
       );
       const jsonDataComisiones = await dataComisiones.json();
       setComisiones(jsonDataComisiones);

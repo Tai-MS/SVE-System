@@ -20,14 +20,15 @@ function Login({ login }: LoginProps) {
         localStorage.setItem("username", username2!);
         localStorage.setItem("userId", userid!);
         localStorage.setItem("rol", rol!);
-        console.log("hola");
         
         navigate("/comunicados");
       }
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+      const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log(import.meta.env.VITE_BACKURL);
     e.preventDefault();
     const success = await login(username, password);
-
+    console.log(success);
+    
     if (success) {
       navigate("/comunicados");
     } else {

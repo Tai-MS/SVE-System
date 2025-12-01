@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from "express"
 import userController from "./UserController"
 import passport from "#config/passport"
 import upload from "#Utils/multer"
-import { datosDelToken, verificarToken } from "#middlewares/auth"
+import { datosDeltoken, verificartoken } from "#middlewares/auth"
 
 const router = express.Router()
 
@@ -49,6 +49,8 @@ router.put("/incluirEnUC", async (req: Request, res: Response, next: NextFunctio
 })
 
 router.post("/public/iniciarSesion", async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.body);
+  
   await userController.inciarSesion(req, res, next)
 })
 
