@@ -23,7 +23,6 @@ const CrearComunicado: React.FC = () => {
   const [mensajeError, setMensajeError] = useState<string>("");
 
   const rol_usuario = localStorage.getItem("rol");
-
   useEffect(() => {
     const fetchFunction = async () => {
       const url = import.meta.env.VITE_BACKURL;

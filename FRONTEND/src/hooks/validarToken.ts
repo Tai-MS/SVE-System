@@ -8,7 +8,7 @@ export const apiFetch = async (url: string, inputBody: any = null) => {
       const esFormData = inputBody.body instanceof FormData;
 
       const headers: HeadersInit = {
-        "auth-token": `${token}`,
+        token: `${token}`,
       };
 
       if (!esFormData) {
@@ -24,7 +24,7 @@ export const apiFetch = async (url: string, inputBody: any = null) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "auth-token": `${token}`,
+          token: `${token}`,
         },
       });
     }

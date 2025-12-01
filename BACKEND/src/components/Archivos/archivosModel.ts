@@ -13,6 +13,7 @@ class Archivo extends Model<archivoCreation, archivoAttributes> {
   declare actualizado: Date
   declare material_id: number
   declare file_id: string
+  declare tarea_id: number | null
 }
 
 export default Archivo

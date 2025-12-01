@@ -30,7 +30,7 @@ export async function generarToken(data: Usuario) {
 }
 
 export async function verificarToken(req: Request, res: Response, next: NextFunction) {
-  const token = req.headers["auth-token"] as string
+  const token = req.headers["token"] as string
 
   if (!token) return res.status(401).send("Accesso denegado")
 

@@ -244,12 +244,18 @@ async function guardarAlumnosImportados(datos: Usuarios, carrera: string | null 
   try {
     // Guardar cada registro en la DB, en caso de tirar algún error hacer rollback
     const usuarios_sin_comision: Usuario[] = []
+    const usuario_ya_registrados: any[] = []
     await sequelize.transaction(async (t) => {
       for (let alumno of datos) {
         const [apellido, nombre] = alumno["Apellido y nombre"].split(",").map((s) => s.trim())
         const dniLimpio = alumno.Documento.replace(/^DNI\s*-\s*/, "")
         const contraseña_generada = generarContraseña()
         const hashear_contraseña = await hashContraseña(contraseña_generada)
+        const dni_registrado = await Usuario.encontrarPorDNI(dniLimpio)
+
+        if(!dni_registrado){
+
+        
         const usuario = await Usuario.create(
           {
             nombre,
@@ -303,9 +309,24 @@ async function guardarAlumnosImportados(datos: Usuarios, carrera: string | null 
           `,
           })
         }
+        }else{
+          usuario_ya_registrados.push({dni: dniLimpio, nombre: nombre, apellido: apellido})
+        }
       }
     })
+    if(usuario_ya_registrados.length > 0){
+      const usuarios_registrados_respuesta = usuario_ya_registrados
+  .map(u => `DNI: ${u.dni}, Nombre: ${u.nombre}, Apellido: ${u.apellido}`)
+  .join(" - ");
 
+    return { status: 200, mensaje: `Los alumnos se importaron correctamente en la base de datos. Usuarios previamente registrados: ${usuarios_registrados_respuesta}` }
+
+    }
+
+    if(usuarios_sin_comision.length > 0){
+    return { status: 200, mensaje: `Los alumnos se importaron correctamente en la base de datos. Existen usuarios sin comisión: ${usuarios_sin_comision}` }
+
+    }
     return { status: 200, mensaje: "Los alumnos se importaron correctamente en la base de datos" }
   } catch (err) {
     t.rollback()

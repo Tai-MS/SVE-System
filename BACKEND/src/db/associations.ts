@@ -28,7 +28,11 @@ export function applyAssociations() {
   Tarea.belongsTo(Material, {foreignKey: "material_id_fk"})
   Material.hasMany(Tarea, {foreignKey: "material_id_fk"})
 
+  Archivo.belongsTo(Tarea, {foreignKey: "tarea_id"})
+  Tarea.hasMany(Archivo, {foreignKey: "tarea_id"})
 
+  Tarea.belongsTo(Usuario, {foreignKey: "estudiante_id"})
+  Usuario.hasMany(Tarea, {foreignKey: "estudiante_id"})
 
   Usuario.belongsToMany(UnidadCurricular, {
     through: UsuarioUnidadCurricular,

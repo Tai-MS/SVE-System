@@ -76,7 +76,7 @@ async function inciarSesion(req: Request, res: Response, next: NextFunction): Pr
     }
     let token = await generarToken(iniciar_sesion)
     const dato = await datosDelToken(token)
-  
+
     const usuarioParaActualizar = {
       dni: data.email.split("@")[0],
       token: token,
@@ -115,6 +115,7 @@ async function crearUsuario(req: Request, res: Response, next: NextFunction): Pr
     }
     return res.status(200).send(crear)
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       error: "Internal server error",
       message: getErrorMessage(error),
@@ -124,8 +125,8 @@ async function crearUsuario(req: Request, res: Response, next: NextFunction): Pr
 
 async function incluirEnUC(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-      const token = req.headers["auth-token"] as string;
-      
+    const token = req.headers["auth-token"] as string
+
     const datos = {
       dni: req.body.dni,
       token: token,
@@ -137,8 +138,8 @@ async function incluirEnUC(req: Request, res: Response, next: NextFunction): Pro
 
     return res.status(200).send(call)
   } catch (error) {
-    console.log("ERROR:"+error);
-    
+    console.log("ERROR:" + error)
+
     return res.status(500).json({
       error: "Internal server error",
       message: getErrorMessage(error),
@@ -191,7 +192,7 @@ async function deshabilitarUsuario(req: Request, res: Response, next: NextFuncti
 }
 
 async function loginGoogle(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-  passport.authenticate("google", async (error: unknown, user: User, info: any) => {
+  await passport.authenticate("google", async (error: unknown, user: User, info: any) => {
     if (error) {
       return next(error)
     }
@@ -215,16 +216,20 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction): Pro
       }
       UserService.actualizarUsuario(datos, true)
       return res
-        .cookie("auth-token", token, {
+        .cookie("token", token, {
           maxAge: 360 * 100 * 24,
         })
-        .status(200)
-        .json({
-          status: 200,
-          success: true,
-          message: "logeado",
-          token: token,
-        })
+        .cookie("username", datos.email)
+        // .status(200)
+        // .json({
+        //   id: dato.id,
+        //   status: 200,
+        //   success: true,
+        //   message: "logeado",
+        //   token: token,
+        //   rol: dato.rol,
+        // })
+        .redirect(`http://localhost:5173/login?token=${token}&username=${email}&userid=${dato.id}&rol=${dato.rol}`)
     })
   })(req, res, next)
 }
@@ -247,8 +252,8 @@ async function ImportarAlumnos(req: Request, res: Response) {
   const datos = XLSX.utils.sheet_to_json(hoja)
   // Verifica con ZOD que los campos del JSON sean correctos
   const verificacion_datos = await excelSchema.safeParseAsync(datos)
-  console.log(verificacion_datos);
-  
+  console.log(verificacion_datos)
+
   if (!verificacion_datos.success) {
     res.status(400).json({
       respuesta: "Los datos del excel no son compatibles para la importación",

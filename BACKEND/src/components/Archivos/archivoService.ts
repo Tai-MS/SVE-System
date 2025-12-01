@@ -6,7 +6,7 @@ import { drive } from "#Utils/DriveConfig"
 import fs from "fs"
 import { Readable } from "stream"
 import { drive_v3 } from "googleapis"
-import { GaxiosResponse, GaxiosResponseWithHTTP2 } from "googleapis-common"
+import { GaxiosResponseWithHTTP2 } from "googleapis-common"
 export class ArchivoService {
   subirArchivos = async (file: any): Promise<GaxiosResponseWithHTTP2<drive_v3.Schema$File> | string> => {
     const t = await Archivo.sequelize!.transaction()
@@ -16,7 +16,6 @@ export class ArchivoService {
         name: file.originalname,
         parents: [carpeta!],
       }
-
       const media = {
         mimeType: file.mimetype,
         body: Readable.from(file.buffer),
@@ -70,6 +69,8 @@ export class ArchivoService {
           await archivo.destroy({ transaction: t })
         }
       }
+
+      // const response = await drive.files.delete({ fileId: registro_archivo.file_id })
 
       if (no_encontrados.length === lista_ids.length) {
         await t.rollback()

@@ -44,9 +44,25 @@ export default function Header({ user, onLogout }: HeaderProps): JSX.Element {
               Usuarios
             </NavLink>
           )}
-          <NavLink to="/UC" className="hover:text-blue-400 cursor-pointer">
-            Carreras
-          </NavLink>
+          {rol === "ESTUDIANTE" && (
+            <NavLink
+              to="/UC"
+              className="hover:text-blue-400 cursor-pointer"
+            >
+              Mis UCs
+            </NavLink>
+          )}
+           {(rol === "ADMINISTRADOR" ||
+            rol === "BEDELIA" ||
+            rol === "DIRECTIVO") && (
+            <NavLink
+              to="/carreras"
+              className="hover:text-blue-400 cursor-pointer"
+            >
+              Carreras
+            </NavLink>
+          )}
+          
           {user && onLogout && (
             <button
               onClick={onLogout}

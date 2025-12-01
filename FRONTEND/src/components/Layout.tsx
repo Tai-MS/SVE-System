@@ -6,7 +6,6 @@ import Footer from "./Footer";
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Usuario } from "../types/UsuarioTypes";
-import { apiFetch } from "../hooks/validarToken";
 
 const Layout = ({ children, User, Logout }) => {
   // const [isMobile, setIsMobile] = useState(null);
@@ -14,19 +13,13 @@ const Layout = ({ children, User, Logout }) => {
   useEffect(() => {
     const fetchFunction = async () => {
       const id_usuario = localStorage.getItem("userId");
-      const data = await apiFetch(
-        import.meta.env.VITE_BACKURL +
-          `/usuarios/obtenerUsuario?id=${id_usuario}`
+      const data = await fetch(
+        `${
+          import.meta.env.VITE_BACKURL
+        }/usuarios/obtenerUsuario?id=${id_usuario}`
       );
-
-      // const data = await fetch(
-      //   `${
-      //     import.meta.env.VITE_BACKURL
-      //   }/usuarios/obtenerUsuario?id=${id_usuario}`
-      // );
       const dataJson = await data.json();
       setUsuario(dataJson);
-      // console.log(dataJson);
     };
 
     fetchFunction();
@@ -68,7 +61,11 @@ const Layout = ({ children, User, Logout }) => {
       },
     ],
     "/carreras": [
-      { name: "Ver carreras", path: "/carreras", rol: ["ADMINISTRADOR"] },
+      {
+        name: "Ver carreras",
+        path: "/carreras",
+        rol: ["ADMINISTRADOR"],
+      },
     ],
     "/usuarios": [
       {
@@ -78,23 +75,13 @@ const Layout = ({ children, User, Logout }) => {
       },
     ],
     "/UC": [
-      {
-        name: "Ver UCs",
-        path: "/UC",
-        rol: [
-          "PROFESOR",
-          "BEDELIA",
-          "DIRECTIVO",
-          "ADMINISTRADOR",
-          "ESTUDIANTE",
-        ],
-      },
+      { name: "Ver UCs", path: "/UC", rol: ["ESTUDIANTE"] },
       // { name: "Agregar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
       // { name: "Eliminar UCs", path: "/UC", rol: ["BEDELIA", "DIRECTIVO", "ADMINISTRADOR"] },
     ],
     [`/UC/detalles/${id}`]: [
       {
-        name: "Ver Materia",
+        name: "Ver Unidad Curricular",
         path: [`/UC/detalles/${id}`],
         rol: [
           "PROFESOR",
@@ -104,6 +91,18 @@ const Layout = ({ children, User, Logout }) => {
           "ESTUDIANTE",
         ],
       },
+      {
+        name: "Ver Materiales",
+        path: [`/UC/detalles/${id}/materiales`],
+        rol: [
+          "PROFESOR",
+          "BEDELIA",
+          "DIRECTIVO",
+          "ADMINISTRADOR",
+          "ESTUDIANTE",
+        ],
+      },
+      // { name: "Subir Materiales", path: [`/UC/detalles/${id}/subir`], rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
       // { name: "Ver Trabajos", path: "/UC/detalles/:id", rol: ["PROFESOR", "BEDELIA", "DIRECTIVO", "ADMINISTRADOR", "ESTUDIANTE"] },
     ],
   };

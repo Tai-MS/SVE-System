@@ -6,7 +6,9 @@ import { InferCreationAttributes } from "sequelize"
 
 async function traerTodas(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
-    const token = req.headers["auth-token"] as string
+    console.log("sssssssssssssssssssssssssssssssssss")
+    const token = (req.headers["token"] as string) || undefined
+    console.log(token)
     if (token === undefined) {
       return res.status(304).json("Acceso denegado")
     }
@@ -27,6 +29,7 @@ async function traerUnaUC(req: Request, res: Response, next: NextFunction): Prom
       token: token,
       id: req.params.id,
     }
+    console.log(token)
 
     const respuesta = await CurricularUnitService.traerUnaUC(datos)
     return res.status(200).json(respuesta)

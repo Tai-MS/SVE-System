@@ -19,6 +19,7 @@ import { ClassRoomRouter } from "#components/Classroom/ClassRoomRoutes"
 import { MaterialRouter } from "#components/Material/MaterialRoutes"
 import { CalificacionRouter } from "#components/Calification/CalificacionRoutes"
 import AsistenciaRouter from "#components/ClassAttendance/AsistenciaRoutes"
+import { TareaRouter } from "#components/Tareas/TareaRoutes"
 /**
  * Se encarga de levantar el servidor
  * y crear las funciones necesarias
@@ -27,6 +28,7 @@ import AsistenciaRouter from "#components/ClassAttendance/AsistenciaRoutes"
 export const create_server = async () => {
   const app = express()
 
+  app.get("/favicon.ico", (req, res) => res.status(204).end())
   app
     .disable("x-powered-by")
     .use(morgan("dev"))
@@ -52,6 +54,23 @@ export const create_server = async () => {
     .use(passport.initialize())
     .use(passport.session())
     .use("/public", rutasPublicasRouter)
+  app.use((req, res, next) => {
+    const rutasPublicas = [
+      "/favicon.ico",
+      "/public",
+      "/public/auth/google",
+      "/public/google",
+      // "/google",
+      "/public/auth/google/callback",
+    ]
+
+    if (rutasPublicas.some((r) => req.path.startsWith(r))) {
+      return next()
+    }
+
+    return verificarToken(req, res, next)
+  })
+  app
     .use((req, res, next) => {
       console.log("Se ejecuta middleware general para:", req.path)
       next()
@@ -67,6 +86,7 @@ export const create_server = async () => {
     .use("/material", MaterialRouter)
     .use("/calificacion", CalificacionRouter)
     .use("/asistencia", AsistenciaRouter)
+    .use("/tarea", TareaRouter)
 
   await sessionStore.sync()
 

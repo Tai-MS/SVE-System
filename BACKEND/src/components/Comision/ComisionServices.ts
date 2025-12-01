@@ -42,7 +42,21 @@ export class ComisionServices {
     }
     return { status: 404, respuesta: "Esta carrera aún no tiene comisiones." }
   }
-
+/**
+ * 
+ * Arregla login google
+ * Hacer vistas carreras/ucs (hardcodeado)
+ * 
+ * 
+ * mostrar: 
+ *  -login google
+ *  -importacion alumnos
+ *  -subida de archivos/imagenes
+ *  -modificacion de algo
+ *  -diferentes vistas (admin - profesor - estudiante)
+ *  -como se ve la pantalla de materiales siendo admin y estudiante 
+ * 
+ */
   buscarComisionQuery = async (filtros: ComisionFiltros) => {
     const where: WhereOptions = {}
     if (filtros.id) {

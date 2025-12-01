@@ -2,8 +2,8 @@ import { Users, Calendar, MoreVertical } from "lucide-react"
 
 interface CardProps {
   nombre: string
-  instructor: string
-  codigoMateria: string | number
+  instructor?: string
+  codigoMateria?: string | number
   instructorAvatar?: string
   coverImage?: string
   coverColor?: string
