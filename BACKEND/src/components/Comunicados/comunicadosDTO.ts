@@ -32,3 +32,21 @@ export interface Comunicado {
   Usuario?: usuarioI
   creado?: string | Date
 }
+
+export type comunicadosActualizacion = {
+  id?: string
+  id_usuario: string
+  titulo: string
+  descripcion: string
+  img?: Array<string>
+  imagenesExistentes?: Array<string>
+  pdf?: Array<string>
+  eliminado: boolean
+  archivos?: archivos
+  general?: boolean
+  division?: string
+  carrera?: string
+  id_comision?: number
+  creado?: Date
+  actualizado?: Date
+}

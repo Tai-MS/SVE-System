@@ -18,11 +18,9 @@ import {
   Tabs,
   Tab,
   MenuItem,
-  CircularProgress,
 } from "@mui/material";
 import CheckBox from "@mui/material/Button";
 import { Add, Edit } from "@mui/icons-material";
-import { apiFetch } from "../hooks/validarToken";
 
 interface Usuario {
   id: number;
@@ -36,6 +34,8 @@ interface Usuario {
   activo: boolean;
   token: string;
   carrera_id_fk: string | null;
+  division_id?: number | null;
+  numero_comision?: string | null;
 }
 
 export default function Usuarios() {
@@ -46,8 +46,6 @@ export default function Usuarios() {
     "ESTUDIANTE" | "PROFESOR" | "BEDELIA" | "DIRECTIVO"
   >("ESTUDIANTE");
   const [busqueda, setBusqueda] = useState("");
-  const [cargando, setCargando] = useState(false);
-
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
@@ -59,6 +57,8 @@ export default function Usuarios() {
     activo: true,
     token: localStorage.getItem("token"),
     carrera_id_fk: "",
+    division_id: "",
+    numero_comision: "",
   });
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function Usuarios() {
 
   const obtenerUsuarios = async () => {
     try {
-      const res = await apiFetch(import.meta.env.VITE_BACKURL + "/usuarios/obtenerTodos");
+      const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/obtenerTodos");
       const data = await res.json();
       setUsuarios(data);
     } catch (error) {
@@ -83,10 +83,13 @@ export default function Usuarios() {
           form.rol === "ESTUDIANTE" && form.carrera_id_fk
             ? form.carrera_id_fk.toUpperCase()
             : null,
+        division_id: form.rol === "ESTUDIANTE" ? form.division_id : null,
+        numero_comision: form.rol === "ESTUDIANTE" ? form.numero_comision : null,
       };
 
+      let res: Response;
       if (editing) {
-        await fetch(import.meta.env.VITE_BACKURL + "/usuarios/actualizar", {
+        res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/actualizar", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -98,14 +101,16 @@ export default function Usuarios() {
           }),
         });
       } else {
-        const res = await apiFetch(
-          import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario",
-          form
-        );
-
-        const text = await res.text();
-        if (!res.ok) throw new Error(`Error crear: ${res.status} ${text}`);
+        res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/crearUsuario", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
       }
+
+      const text = await res.text();
+      console.log("Guardar usuario status:", res.status, "body:", text);
+      if (!res.ok) throw new Error(`Error guardar: ${res.status} ${text}`);
 
       setOpen(false);
       setEditing(null);
@@ -120,6 +125,8 @@ export default function Usuarios() {
         activo: true,
         token: localStorage.getItem("token"),
         carrera_id_fk: "",
+        division_id: "",
+        numero_comision: "",
       });
       obtenerUsuarios();
     } catch (err) {
@@ -143,37 +150,11 @@ export default function Usuarios() {
 
   return (
     <div className="p-3 mt-10 bg-white rounded-lg shadow-md">
-      
-      {/* 🔹 Overlay LOADING global */}
-      {cargando && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0,0,0,0.35)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 9999,
-            color: "white",
-            fontSize: "1.3rem",
-            backdropFilter: "blur(3px)",
-          }}
-        >
-          <CircularProgress size={65} thickness={5} />
-          <div style={{ marginTop: "15px" }}>Importando usuarios...</div>
-        </div>
-      )}
-
       <Typography variant="h5" className="font-semibold text-purple-700 mb-4">
         Gestión de Usuarios
       </Typography>
 
-      {/* 🔹 Tabs */}
+      {/* 🔹 Tabs de roles */}
       <Tabs
         value={rolActivo}
         onChange={(_, nuevoRol) => {
@@ -186,17 +167,11 @@ export default function Usuarios() {
       >
         <Tab label="Estudiantes" value="ESTUDIANTE" />
         <Tab label="Profesores" value="PROFESOR" />
-        {(localStorage.getItem("rol") === "DIRECTIVO" ||
-          localStorage.getItem("rol") === "ADMINISTRADOR") && (
-          <Tab label="Bedelía" value="BEDELIA" />
-        )}
-        {(localStorage.getItem("rol") === "DIRECTIVO" ||
-          localStorage.getItem("rol") === "ADMINISTRADOR") && (
-          <Tab label="Directivos" value="DIRECTIVO" />
-        )}
+        {(localStorage.getItem("rol") === "DIRECTIVO" || localStorage.getItem("rol") === "ADMINISTRADOR") && <Tab label="Bedelía" value="BEDELIA" />}
+        {(localStorage.getItem("rol") === "DIRECTIVO" || localStorage.getItem("rol") === "ADMINISTRADOR") && <Tab label="Directivos" value="DIRECTIVO" />}
       </Tabs>
 
-      {/* 🔹 Filtros + Botones */}
+      {/* 🔹 Filtros y botones */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mt-4 mb-3">
         <TextField
           label={`Buscar ${rolActivo}`}
@@ -219,28 +194,21 @@ export default function Usuarios() {
                   const file = e.target.files?.[0];
                   if (!file) return;
 
-                  setCargando(true);
-
                   const formData = new FormData();
                   formData.append("file", file);
 
                   try {
-                    const res = await apiFetch(
-                      import.meta.env.VITE_BACKURL + "/usuarios/importarAlumnos",
-                      formData
-                    );
+                    const res = await fetch(import.meta.env.VITE_BACKURL + "/usuarios/public/importarAlumnos", {
+                      method: "POST",
+                      body: formData,
+                    });
 
                     const text = await res.text();
-                    console.log(
-                      "POST /usuarios/importarAlumnos status:",
-                      res.status,
-                      "body:",
-                      text
-                    );
+                    console.log("Importar alumnos:", res.status, text);
 
                     if (res.ok) {
                       alert("Usuarios importados correctamente ✅");
-                      await obtenerUsuarios();
+                      obtenerUsuarios();
                     } else {
                       alert("Error al importar: " + text);
                     }
@@ -249,7 +217,6 @@ export default function Usuarios() {
                     alert("Error al importar el archivo");
                   }
 
-                  setCargando(false);
                   e.target.value = "";
                 }}
               />
@@ -281,6 +248,8 @@ export default function Usuarios() {
                 activo: true,
                 token: localStorage.getItem("token"),
                 carrera_id_fk: "",
+                division_id: "",
+                numero_comision: "",
               });
               setOpen(true);
             }}
@@ -303,7 +272,11 @@ export default function Usuarios() {
               <TableCell><b>Año de ingreso</b></TableCell>
               <TableCell><b>Activo</b></TableCell>
               {rolActivo === "ESTUDIANTE" && (
-                <TableCell><b>Carrera</b></TableCell>
+                <>
+                  <TableCell><b>Carrera</b></TableCell>
+                  <TableCell><b>División</b></TableCell>
+                  <TableCell><b>Comisión</b></TableCell>
+                </>
               )}
               <TableCell><b>Acciones</b></TableCell>
             </TableRow>
@@ -319,7 +292,11 @@ export default function Usuarios() {
                 <TableCell>{usuario.anioIngreso}</TableCell>
                 <TableCell>{usuario.activo ? "Sí" : "No"}</TableCell>
                 {rolActivo === "ESTUDIANTE" && (
-                  <TableCell>{usuario.carrera_id_fk?.toUpperCase() ?? "-"}</TableCell>
+                  <>
+                    <TableCell>{usuario.carrera_id_fk?.toUpperCase() ?? "-"}</TableCell>
+                    <TableCell>{usuario.division_id ?? "-"}</TableCell>
+                    <TableCell>{usuario.numero_comision ?? "-"}</TableCell>
+                  </>
                 )}
                 <TableCell>
                   <IconButton
@@ -337,6 +314,8 @@ export default function Usuarios() {
                         activo: usuario.activo ?? true,
                         token: localStorage.getItem("token"),
                         carrera_id_fk: usuario.carrera_id_fk ?? "",
+                        division_id: usuario.division_id?.toString() ?? "",
+                        numero_comision: usuario.numero_comision ?? "",
                       });
                       setOpen(true);
                     }}
@@ -358,7 +337,7 @@ export default function Usuarios() {
         </Table>
       </TableContainer>
 
-      {/* 🔹 Dialog Crear/Editar */}
+      {/* 🔹 Diálogo Crear/Editar */}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>
           {editing ? "Editar Usuario" : "Agregar Nuevo Usuario"}
@@ -371,7 +350,9 @@ export default function Usuarios() {
           <TextField label="Email" type="email" value={form.email} disabled helperText="El email no puede ser modificado" />
           <TextField label="Año de ingreso" value={form.anioIngreso} onChange={(e) => setForm({ ...form, anioIngreso: e.target.value })} />
 
+          {/* 🔹 Mostrar select de Carrera SOLO si es estudiante */}
           {form.rol === "ESTUDIANTE" && (
+            <>
             <TextField
               select
               label="Carrera"
@@ -384,6 +365,33 @@ export default function Usuarios() {
               <MenuItem value="ITI">ITI</MenuItem>
               <MenuItem value="AF">AF</MenuItem>
             </TextField>
+
+            <TextField
+              select
+              label="División"
+              value={form.division_id}
+              onChange={(e) =>
+                setForm({ ...form, division_id: e.target.value })
+              }
+            >
+              <MenuItem value="1">1</MenuItem>
+              <MenuItem value="2">2</MenuItem>
+              <MenuItem value="3">3</MenuItem>
+            </TextField>
+
+            <TextField
+              select
+              label="Comisión"
+              value={form.numero_comision}
+              onChange={(e) =>
+                setForm({ ...form, numero_comision: e.target.value })
+              }
+            >
+              <MenuItem value="1ro">1ro</MenuItem>
+              <MenuItem value="2da">2da</MenuItem>
+              <MenuItem value="3ra">3ra</MenuItem>
+            </TextField>
+            </>
           )}
 
           <div className="flex items-center gap-2 mt-2">

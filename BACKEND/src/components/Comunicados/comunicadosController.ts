@@ -1,7 +1,8 @@
 import { ComunicadoService } from "./comunicadosService"
 import { Request, Response } from "express"
-import { comunicadoSchema } from "./comunicadoSchemas"
+import { comunicadoSchema, comunicadoUpdateSchema } from "./comunicadoSchemas"
 import { comunicadosAttributes } from "./comunicadosDTO"
+import { string } from "zod"
 
 const comunicadoService = new ComunicadoService()
 
@@ -11,8 +12,6 @@ export class ComunicadoController {
     res.status(respuesta.status).json(respuesta.respuesta)
   }
   crear = async (req: Request, res: Response) => {
-    console.log("ola");
-    
     const archivos = req.files
     if (archivos) {
       req.body.archivos = archivos
@@ -24,14 +23,7 @@ export class ComunicadoController {
     // VERIFICA SI EL COMUNICADO ES PARA UNA DIVISION
     if (req.body.division && req.body.carrera)
       req.body = { ...req.body, carrera: req.body.carrera, division: Number(req.body.division) }
-    console.log("//////////////////////////////");
-    
-    console.log(req.body);
-    console.log("//////////////////////////////");
-    
     const verificacion = await comunicadoSchema.safeParseAsync(req.body)
-    console.log(verificacion);
-
     if (!verificacion.success) {
       res.status(400).json({
         respuesta: "Los datos ingresados para crear un comunicado son incorrectos: " + verificacion.error.message,
@@ -42,11 +34,13 @@ export class ComunicadoController {
       res.status(respuesta.status).json(respuesta.respuesta)
     }
   }
-  // filtrar = async (req: Request, res: Response) => {
-  //   const id_comunicado = req.params.id
-  //   const respuesta = await comunicadoService.filtrarComunicado(id_comunicado as string)
-  //   res.status(respuesta.status).json(respuesta.respuesta)
-  // }
+
+  filtrar = async (req: Request, res: Response) => {
+    const id = req.params.id
+
+    const respuesta = await comunicadoService.filtrarUno(id as string)
+    res.status(respuesta.status).json(respuesta.respuesta)
+  }
 
   comunicadosPorUsuario = async (req: Request, res: Response) => {
     const { idUser, type, career } = req.query
@@ -64,11 +58,42 @@ export class ComunicadoController {
     return res.status(respuesta.status).json(respuesta.respuesta)
   }
 
+  comunicadosDeUnUsuario = async (req: Request, res: Response) => {
+    const idUser = req.params.idUser
+
+    const respuesta = await comunicadoService.ComunicadosDeUnUsuario(idUser as string)
+    return res.status(respuesta.status).json(respuesta.respuesta)
+  }
+
   actualizar = async (req: Request, res: Response) => {
     const id_comunicado = req.params.id
-    const verificacion = await comunicadoSchema.safeParseAsync(req.body)
+    const archivos = req.files
+    if (archivos) {
+      req.body.archivos = archivos
+    }
+    req.body.imagenesExistentes
+      ? (req.body = { ...req.body, imagenesExistentes: JSON.parse(req.body.imagenesExistentes) })
+      : (req.body = { ...req.body, imagenesExistentes: [] })
+    // Asegurar boolean
+    req.body.general = Boolean(req.body.general)
+
+    // Manejar id_comision
+    req.body.id_comision = req.body.id_comision && req.body.id_comision !== "null" ? Number(req.body.id_comision) : null
+
+    // Manejar división y carrera
+    if (req.body.division && req.body.carrera && req.body.carrera !== "none") {
+      req.body.division = Number(req.body.division)
+      req.body.carrera = req.body.carrera
+    } else {
+      req.body.division = null
+      req.body.carrera = null
+    }
+
+    const verificacion = await comunicadoUpdateSchema.safeParseAsync(req.body)
     if (!verificacion.success) {
-      res.status(400).json({ respuesta: "Los datos ingresados para actualizar un comunicado son incorrectos" })
+      res.status(400).json({
+        respuesta: "Los datos ingresados para actualizar un comunicado son incorrectos: " + verificacion.error.message,
+      })
     } else {
       const respuesta = await comunicadoService.actualizarComunicado(
         id_comunicado as string,
@@ -78,8 +103,8 @@ export class ComunicadoController {
     }
   }
   eliminar = async (req: Request, res: Response) => {
-    const id_comunicado = req.params.id_comunicado
-    const respuesta = await comunicadoService.eliminarComunicado(id_comunicado as string)
+    const id = req.params.id
+    const respuesta = await comunicadoService.eliminarComunicado(id as string)
     res.status(respuesta.status).json(respuesta.respuesta)
   }
 }

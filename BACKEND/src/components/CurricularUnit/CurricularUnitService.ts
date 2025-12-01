@@ -11,6 +11,7 @@ async function traerTodas(token: string): Promise<any> {
 
   if (usuario.rol !== Rol.ADMINISTRADOR && usuario.rol !== Rol.BEDELIA && usuario.rol !== Rol.DIRECTIVO) {
     const id = usuario.id
+
     // Sequelize realiza una serie de inner joins partiendo de Usuario hasta llegar a Comision
     // y limitando los datos que debe traer
     const usuario_con_uc = await Usuario.findByPk(id, {
@@ -40,7 +41,6 @@ async function traerTodas(token: string): Promise<any> {
         },
       ],
     })
-    
     return usuario_con_uc
   }
 
@@ -74,14 +74,12 @@ async function traerUnaUC(datos: any): Promise<UnidadCurricular | string | null>
 
   const usuario = await Usuario.findByPk(datos_token.id)
 
-  if(!usuario){
+  if (!usuario) {
     return "Error token"
   }
 
-
-
   const uc = await UnidadCurricular.findOne({
-    where: {id},
+    where: { id },
     attributes: ["id", "nombre"],
     include: [
       {
@@ -106,7 +104,6 @@ async function traerUnaUC(datos: any): Promise<UnidadCurricular | string | null>
   if (!uc) return "UC no encontrada"
   return uc
 }
-
 
 async function crearUc(
   datos: InferCreationAttributes<UnidadCurricular>,

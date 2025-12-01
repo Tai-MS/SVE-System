@@ -1,12 +1,13 @@
 import Comunicado from "./comunicadosModel"
-import { comunicadosAttributes } from "./comunicadosDTO"
+import { comunicadosActualizacion, comunicadosAttributes } from "./comunicadosDTO"
 import { ArchivoService } from "#components/Archivos/archivoService"
 import Usuario from "#components/User/UserModel"
 import { archivoAttributes } from "#components/Archivos/archivoDTO"
 import UsuarioComision from "#components/UsuarioComision/UsuarioComisionModel"
 import { Comision } from "#components/Comision/ComisionModel"
 import { Division } from "#components/Division/divisionModel"
-import { Op } from "sequelize"
+import { Op, where } from "sequelize"
+import Archivo from "#components/Archivos/archivosModel"
 
 const archivoService = new ArchivoService()
 
@@ -67,6 +68,30 @@ export class ComunicadoService {
       return { status: 500, respuesta: "Ocurrio un error en el servidor al momento de subir el comunicado" }
     }
   }
+
+  filtrarUno = async (id: string) => {
+    try {
+      const respuesta = await Comunicado.findByPk(id)
+      if (!respuesta) return { status: 404, respuesta: "No se encontró el comunicado" }
+      // Convertimos a objetos con tipo comunicadosAttributes
+
+      // Buscar imágenes
+      const plain = respuesta.get({ plain: true })
+
+      const imagenes = await archivoService.buscarImagenes(id as string)
+      if (imagenes.status === 200 && imagenes.respuesta.length > 0) {
+        plain.img = (imagenes.respuesta as unknown as archivoAttributes[]).map((img) => img.ruta)
+      } else {
+        plain.img = []
+      }
+
+      return { status: 200, respuesta }
+    } catch (err) {
+      console.error("Error buscando comunicados por usuario:", err)
+      return { status: 500, respuesta: "Ocurrió un error al obtener los comunicados." }
+    }
+  }
+
   comunicadosPorUsuario = async (idUser: string, type: string, career?: string) => {
     type FiltroTipo = "comision" | "division"
     try {
@@ -114,6 +139,10 @@ export class ComunicadoService {
             eliminado: false,
             [Op.or]: [whereByType],
           },
+          include: {
+            model: Usuario,
+            attributes: ["nombre", "apellido", "rol"],
+          },
           order: [["creado", "DESC"]],
         })
 
@@ -133,6 +162,10 @@ export class ComunicadoService {
           eliminado: false,
           [Op.or]: [whereByType],
         },
+        include: {
+          model: Usuario,
+          attributes: ["nombre", "apellido", "rol"],
+        },
         order: [["creado", "DESC"]],
       })
       if (comunicados.length === 0) {
@@ -145,25 +178,83 @@ export class ComunicadoService {
     }
   }
 
-  actualizarComunicado = async (id: string, data: comunicadosAttributes) => {
+  ComunicadosDeUnUsuario = async (id: string) => {
+    try {
+      const respuestaDB = await Comunicado.findAll({
+        where: { eliminado: false, id_usuario: id },
+        order: [["creado", "DESC"]],
+        include: {
+          model: Usuario,
+          attributes: ["nombre", "apellido", "rol"],
+        },
+      })
+      if (respuestaDB.length === 0) {
+        return { status: 404, respuesta: "No hay comunicados" }
+      }
+      // Convertimos a objetos con tipo comunicadosAttributes
+      const respuesta: comunicadosAttributes[] = []
+
+      for (const comunicado of respuestaDB) {
+        // Sequelize → objeto plano
+        const plain = comunicado.get({ plain: true }) as comunicadosAttributes
+        plain.img = []
+        plain.pdf = []
+
+        // Buscar imágenes
+        const imagenes = await archivoService.buscarImagenes(comunicado.id as string)
+        if (imagenes.status === 200 && imagenes.respuesta.length > 0) {
+          plain.img = (imagenes.respuesta as unknown as archivoAttributes[]).map((img) => img.ruta)
+        }
+
+        respuesta.push(plain)
+      }
+
+      return { status: 200, respuesta: respuesta }
+    } catch (err) {
+      console.error("Error buscando comunicados de un usuario:", err)
+      return { status: 500, respuesta: "Ocurrió un error al obtener los comunicados." }
+    }
+  }
+
+  actualizarComunicado = async (id: string, data: comunicadosActualizacion) => {
     const t = await Comunicado.sequelize!.transaction()
     try {
-      if (data.archivos !== undefined) {
-        const { archivos, ...datosComunicado } = data
-
-        await Comunicado.update(datosComunicado, {
+      const { imagenesExistentes, archivos, ...datos } = data
+      console.log(imagenesExistentes)
+      // SCRIPT PARA LA ELIMINACION DE IMAGENES QUE YA ESTABAN INCLUIDAS EN EL COMUNICADO (TIENE EL BUG DE QUE EN CASO QUE LA IMAGEN ESTE EN OTRO COMUNICADO, TAMBIEN SE ELIMINAA. ESTO ES PORQUE COMPARTEN EL MISMO NOMBRE DE RUTA)
+      const imagenesComunicado = await archivoService.buscarImagenes(id)
+      if (imagenesComunicado.status === 200) {
+        if (imagenesExistentes?.length === 0) {
+          for (let imagenComunicado of imagenesComunicado.respuesta as Archivo[]) {
+            await Archivo.destroy({ where: { ruta: imagenComunicado.ruta }, transaction: t })
+          }
+        } else {
+          const imagenesUrl = (imagenesComunicado.respuesta as Archivo[]).map((imagen) => {
+            return imagen.ruta
+          })
+          for (let imagenUrl of imagenesUrl as string[]) {
+            const comprobacion = (imagenesExistentes as string[]).includes(imagenUrl)
+            console.log(comprobacion)
+            if (!comprobacion) {
+              await Archivo.destroy({ where: { ruta: imagenUrl }, transaction: t })
+            }
+          }
+        }
+      }
+      // ACTUALIZA EL COMUNICADO Y AGREGA LAS IMAGENES QUE ANTES NO ESTABAN
+      if (archivos !== undefined) {
+        await Comunicado.update(datos, {
           where: {
             id,
           },
           transaction: t,
         })
+        const creacionDeArchivos = await archivoService.crear(archivos, "Comunicados", id)
+        if (creacionDeArchivos.status !== 200) {
+          new Error("Ocurrio un error a la hora de subir las imagenes")
+        }
       } else {
-        await Comunicado.update(data, {
-          where: {
-            id,
-          },
-          transaction: t,
-        })
+        await Comunicado.create(data, { transaction: t })
       }
 
       await t.commit()
@@ -174,6 +265,7 @@ export class ComunicadoService {
       return { status: 500, respuesta: "Error en el servidor al momento de actualizar el comunicado" }
     }
   }
+
   eliminarComunicado = async (id: string) => {
     try {
       await Comunicado.update({ eliminado: true }, { where: { id } })

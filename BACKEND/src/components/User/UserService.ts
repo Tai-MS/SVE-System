@@ -117,7 +117,6 @@ async function crearUsuario(datos: usuarioI): Promise<Usuario | string> {
 }
 
 async function incluirEnUC(datos: any): Promise<Usuario | string> {
-  
   if (typeof datos.token !== "string" || typeof datos.dni !== "string") {
     return "Campos incompatibles"
   }
@@ -133,14 +132,14 @@ async function incluirEnUC(datos: any): Promise<Usuario | string> {
   if (!usuario) {
     return "Alumno no encontrado"
   }
-  
+
   const lista_UC = datos.unidad_curricular_id_fk
   const uc_no_encontrada = []
   for (let i = 0; i < lista_UC.length; i++) {
     const uc = await UnidadCurricular.findByPk(lista_UC[i])
     const com = datos.comision_id
     const comision = await Comision.encontrarPorNro(com.toString())
-    
+
     if (uc && usuario.carrera_id_fk === uc?.carrera_id_fk) {
       await UsuarioUnidadCurricular.create({
         usuario_id: usuario.id,
@@ -165,11 +164,19 @@ async function actualizarUsuario(
   const actualizarCampos: Partial<InferCreationAttributes<Usuario>> = {}
 
   if (guardarToken) {
-      actualizarCampos.token = datos.token
+    if (process.env.ENV === "dev") {
+      actualizarCampos.token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRjZmEyYzMyLWMxM2QtNGNmMi1hY2I1LTAxYmQ4YjU2ODBiMSIsImRuaSI6IjQ0MDYyODI4Iiwibm9tYnJlIjoiQ0FSTEEgVkVSw5NOSUNBIiwiYXBlbGxpZG8iOiJGRVJOw4FOREVaIiwicm9sIjoiQURNSU5JU1RSQURPUiIsImlhdCI6MTc1OTM1MTIzNSwiZXhwIjoxNzU5NDM3NjM1fQ.hZHbAZQgtuTs5pQACFiOu20YMDTf08DUkInoe6Nth5s"
       await Usuario.update(actualizarCampos, {
         where: { dni: datos.dni },
       })
-    
+    } else {
+      actualizarCampos.token = datos.token
+
+      await Usuario.update(actualizarCampos, {
+        where: { dni: datos.dni },
+      })
+    }
     return "token guardado"
   }
 
@@ -244,18 +251,12 @@ async function guardarAlumnosImportados(datos: Usuarios, carrera: string | null 
   try {
     // Guardar cada registro en la DB, en caso de tirar algún error hacer rollback
     const usuarios_sin_comision: Usuario[] = []
-    const usuario_ya_registrados: any[] = []
     await sequelize.transaction(async (t) => {
       for (let alumno of datos) {
         const [apellido, nombre] = alumno["Apellido y nombre"].split(",").map((s) => s.trim())
         const dniLimpio = alumno.Documento.replace(/^DNI\s*-\s*/, "")
         const contraseña_generada = generarContraseña()
         const hashear_contraseña = await hashContraseña(contraseña_generada)
-        const dni_registrado = await Usuario.encontrarPorDNI(dniLimpio)
-
-        if(!dni_registrado){
-
-        
         const usuario = await Usuario.create(
           {
             nombre,
@@ -309,24 +310,9 @@ async function guardarAlumnosImportados(datos: Usuarios, carrera: string | null 
           `,
           })
         }
-        }else{
-          usuario_ya_registrados.push({dni: dniLimpio, nombre: nombre, apellido: apellido})
-        }
       }
     })
-    if(usuario_ya_registrados.length > 0){
-      const usuarios_registrados_respuesta = usuario_ya_registrados
-  .map(u => `DNI: ${u.dni}, Nombre: ${u.nombre}, Apellido: ${u.apellido}`)
-  .join(" - ");
 
-    return { status: 200, mensaje: `Los alumnos se importaron correctamente en la base de datos. Usuarios previamente registrados: ${usuarios_registrados_respuesta}` }
-
-    }
-
-    if(usuarios_sin_comision.length > 0){
-    return { status: 200, mensaje: `Los alumnos se importaron correctamente en la base de datos. Existen usuarios sin comisión: ${usuarios_sin_comision}` }
-
-    }
     return { status: 200, mensaje: "Los alumnos se importaron correctamente en la base de datos" }
   } catch (err) {
     t.rollback()
